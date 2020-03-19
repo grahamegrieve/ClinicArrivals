@@ -6,7 +6,7 @@ The application is appointment based.
 
 ### Pre-arrival
 
-if a mobile phone is registed for the patient
+if a mobile phone is registered for the patient
 
 2 hours before appointment, it sends and SMS to the person saying something like
 "Due to the COVID-19 pandemic, the clinic no longer has an open patient waiting room.
@@ -47,10 +47,10 @@ text like:
 ## Carers
 
 Note: Many patients are brought in by someone else, and so the phone may be 
-associated with a carer not the patient (e.g. perent, partner or son/daughter). 
+associated with a carer not the patient (e.g. parent, partner or son/daughter). 
 
-Todo: how much support does the PMS have for tracking associated mobile phone numbers? 
-* include a database for the app so it can remember links made ?
+TODO: how much support does the PMS have for tracking associated mobile phone numbers? 
+* include a database for the application so it can remember links made ?
 
 ## PMS Interface
 

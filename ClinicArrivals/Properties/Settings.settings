@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClinicArrivals.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="IntroSmsMessage" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Due to the COVID-19 pandemic, the clinic no longer has an open patient waiting room.
+When you arrive at the clinic, stay in your car and respond to this SMS with the word
+"arrived". The wait in your car until you are invited in. If you do not arrive by car,
+then wait [instructions]</Value>
+    </Setting>
+    <Setting Name="FromTwilioMobileNumber" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ACCOUNT_SID" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AUTH_TOKEN" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>
