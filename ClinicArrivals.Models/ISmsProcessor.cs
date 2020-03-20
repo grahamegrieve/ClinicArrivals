@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -34,7 +35,13 @@ namespace ClinicArrivals.Models
             this.phone = phone;
             this.message = message;
         }
+        [JsonProperty("from")]
         public string phone { get; set; }
+
+        [JsonProperty("body")]
         public string message { get; set; }
+
+        [JsonProperty("date")]
+        public string date { get; set; }
     }
 }

@@ -69,17 +69,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TwilioTests.cs" />
     <Compile Include="FhirAppointmentHandling.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClinicArrivals.Models\ClinicArrivals.Models.csproj">
       <Project>{49a713d8-5786-4be4-8c50-b0b3053329e1}</Project>
       <Name>ClinicArrivals.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClinicArrivals\ClinicArrivals.csproj">
+      <Project>{eeb4014b-6c7f-4c09-a39e-d37a206e81eb}</Project>
+      <Name>ClinicArrivals</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

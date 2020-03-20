@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
+using System.Net.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ClinicArrivals.Models
 {
@@ -14,18 +17,13 @@ namespace ClinicArrivals.Models
     {
         public void Initialize()
         {
-            // TODO: Is this all the settings that are required for intializing Twilio correctly
+            System.Diagnostics.Debug.WriteLine("account: " + ConfigurationManager.AppSettings.Get("ACCOUNT_SID"));
+            System.Diagnostics.Debug.WriteLine("token: " + ConfigurationManager.AppSettings.Get("AUTH_TOKEN"));
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             Twilio.TwilioClient.Init(
                 ConfigurationManager.AppSettings.Get("ACCOUNT_SID"),
                 ConfigurationManager.AppSettings.Get("AUTH_TOKEN"));
         }
-
-        /// <summary>
-        /// Have this whitelist of numbers for testing
-        /// </summary>
-        List<String> whitelistedNumbers = new List<string>() {
-        };
 
         /// <summary>
         /// Send a message to the twilio gateway
@@ -36,10 +34,9 @@ namespace ClinicArrivals.Models
             // TODO: Work out what options are the most sensible to use here
             var message = MessageResource.Create(
                 new PhoneNumber(sendMessage.phone),
-                from: new PhoneNumber(ConfigurationManager.AppSettings.Get("FromTwilioMobileNumber")),
+                from: new PhoneNumber(ConfigurationManager.AppSettings.Get("SEND_NUMBER")),
                 body: sendMessage.message
             );
-            Console.WriteLine(message.Sid);
         }
 
         /// <summary>
@@ -48,7 +45,24 @@ namespace ClinicArrivals.Models
         /// <returns></returns>
         public IEnumerable<SmsMessage> ReceiveMessages()
         {
-            List<SmsMessage> results = new List<SmsMessage>();
+            List<SmsMessage> messages = new List<SmsMessage>();
+            string url = "http://test.fhir.org/twilio?AccountSid="+ ConfigurationManager.AppSettings.Get("ACCOUNT_SID");
+            try
+            {
+                using (var webClient = new System.Net.WebClient())
+                {
+                    var json = webClient.DownloadString(url);
+                    var list = JsonConvert.DeserializeObject<List<SmsMessage>>(json);
+                    return list;
+                }
+            }
+            catch (Exception exception)
+            {
+                // not sure what to do
+                return null;
+            }
+      
+                List<SmsMessage> results = new List<SmsMessage>();
             // create some test data
             results.Add(new SmsMessage("08523138542", "arrived"));
             results.Add(new SmsMessage("0423857505", "Arrived"));
@@ -57,4 +71,6 @@ namespace ClinicArrivals.Models
             return results;
         }
     }
+
+   
 }
