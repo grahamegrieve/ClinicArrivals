@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ClinicArrivals.Models
 {
-    public class SmsProcessor
+    public class SmsProcessor : ISmsProcessor
     {
         public void Initialize()
         {
@@ -71,20 +71,5 @@ namespace ClinicArrivals.Models
         }
     }
 
-    public class SmsMessage
-    {
-        public SmsMessage(string phone, string message)
-        {
-            this.phone = phone;
-            this.message = message;
-        }
-        [JsonProperty("from")]
-        public string phone { get; set; }
-
-        [JsonProperty("body")]
-        public string message { get; set; }
-
-        [JsonProperty("date")]
-        public string date { get; set; }
-    }
+   
 }

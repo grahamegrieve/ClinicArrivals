@@ -13,7 +13,7 @@ namespace ClinicArrivals.Properties {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+    public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
@@ -25,49 +25,51 @@ namespace ClinicArrivals.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"Due to the COVID-19 pandemic, the clinic no longer has an open patient waiting room.
-When you arrive at the clinic, stay in your car and respond to this SMS with the word
-""arrived"". The wait in your car until you are invited in. If you do not arrive by car,
-then wait [instructions]")]
-        public string IntroSmsMessage {
-            get {
-                return ((string)(this["IntroSmsMessage"]));
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string FromTwilioMobileNumber {
             get {
                 return ((string)(this["FromTwilioMobileNumber"]));
             }
-            set {
-                this["FromTwilioMobileNumber"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ACCOUNT_SID {
             get {
                 return ((string)(this["ACCOUNT_SID"]));
             }
-            set {
-                this["ACCOUNT_SID"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string AUTH_TOKEN {
             get {
                 return ((string)(this["AUTH_TOKEN"]));
             }
-            set {
-                this["AUTH_TOKEN"] = value;
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int PollIntervalSeconds {
+            get {
+                return ((int)(this["PollIntervalSeconds"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"
+          Due to the COVID-19 pandemic, the clinic no longer has an open patient waiting room.
+          When you arrive at the clinic, stay in your car and respond to this SMS with the word
+          ""arrived"". The wait in your car until you are invited in. If you do not arrive by car,
+          then wait [instructions]
+        ")]
+        public string IntroSmsMessage {
+            get {
+                return ((string)(this["IntroSmsMessage"]));
             }
         }
     }
