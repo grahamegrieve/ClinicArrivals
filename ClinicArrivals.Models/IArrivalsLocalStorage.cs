@@ -28,8 +28,14 @@ namespace ClinicArrivals.Models
         /// <returns></returns>
         Task SaveUnprocessableMessage(SmsMessage message);
 
+        /// <summary>
+        /// In the event of a system shutdown, re-reading the unprocessed messages
+        /// </summary>
+        /// <returns></returns>
         Task<IEnumerable<SmsMessage>> LoadUnprocessableMessages();
 
+        // TODO: Not sure if we actually need to store anything in here, maybe the actual message content that was received.
+        // Could this go into a note in the Appointment itself as a write-back instead?
         Task SaveAppointmentStatus(PmsAppointment appt);
         Task LoadAppointmentStatus(PmsAppointment appt);
     }
