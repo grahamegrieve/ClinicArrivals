@@ -10,12 +10,39 @@ namespace ClinicArrivals.Models
 {
     public class MessageProcessing
     {
+
+        private static ClinicArrivals.Server.Server server = null;
+
+        private static void InitServer()
+        {
+            if (server == null)
+            {
+                server = new Server.Server();
+                server.Start();
+            }
+        }
+       
         private static FhirClient GetServerConnection()
         {
-            return new FhirClient("http://demo.oridashi.com.au:8304", false);
+            InitServer();
+
+            if (server.IsRunning)
+            {
+                FhirClient client = new FhirClient(server.Url, false);   // "http://demo.oridashi.com.au:8304"
+                client.OnBeforeRequest += Client_OnBeforeRequest;
+                return client;
+            }
+
+            return null;
         }
 
-        ISmsProcessor GetSmsProcessor()
+        private static void Client_OnBeforeRequest(object sender, BeforeRequestEventArgs e)
+        {
+            if(server.IsRunning)
+                e.RawRequest.Headers.Add(System.Net.HttpRequestHeader.Authorization, server.Token);
+        }
+
+            ISmsProcessor GetSmsProcessor()
         {
             return new TestSmsProcessor();
         }
@@ -32,8 +59,11 @@ namespace ClinicArrivals.Models
             var oldwaiting = model.Waiting.ToList();
 
             var server = GetServerConnection();
+            if (server == null)
+                return;
+
             var criteria = new SearchParams();
-            criteria.Add("date", "2020-03-19"); // TODO: Change this to today's date
+            criteria.Add("date",  DateTime.Now.ToString("yyyy-MM-dd") ); // TODO: Change this to today's date
             criteria.Include.Add("Appointment:actor");
             var bundle = await server.SearchAsync<Appointment>(criteria);
 
@@ -172,4 +202,6 @@ namespace ClinicArrivals.Models
 
         // Handle 
     }
-}
+
+     
+    }
