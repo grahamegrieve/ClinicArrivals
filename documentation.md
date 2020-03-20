@@ -56,3 +56,40 @@ TODO: how much support does the PMS have for tracking associated mobile phone nu
 
 The system works with multiple PMS software. these details are abstracted behind
 the PMS interface. The interface has the following features:
+
+
+
+# FHIR Interface
+
+The interface to the PMS is a FHIR interface (R4). 
+
+## Running the FHIR interface
+
+Start the provided DLL. This connects to the relevant PMS autoamtically and starts a FHIR interface.
+The interface start function returns both the port that the FHIR server is running on, and also a 
+GUID that must be used for making phone calls
+
+## Querying for appointments 
+
+The fundamental query is to make a list of appointments for the day. 
+
+    GET [base]/Appointment?date=YYYY-MM-DD&_include=patient&_include=practitioner
+    
+This returns a list of appointments with 
+
+* id
+* patient reference
+* practitioner reference
+* time of start & end
+* status code:  booked | arrived | fulfilled
+* comments
+
+## Updating an appintment 
+
+The interface accepts a PUT on an appointment 
+
+Only 2 fields can be changed:
+* status from booked to arrived
+* appending "Appointment URL: {{url}}" to the comments
+
+
