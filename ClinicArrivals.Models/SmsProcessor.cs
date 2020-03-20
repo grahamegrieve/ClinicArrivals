@@ -17,7 +17,8 @@ namespace ClinicArrivals.Models
     {
         public void Initialize()
         {
-            System.Diagnostics.Debug.WriteLine("account: " +ConfigurationManager.AppSettings.Get("ACCOUNT_SID"));
+            System.Diagnostics.Debug.WriteLine("account: " + ConfigurationManager.AppSettings.Get("ACCOUNT_SID"));
+            System.Diagnostics.Debug.WriteLine("token: " + ConfigurationManager.AppSettings.Get("AUTH_TOKEN"));
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             Twilio.TwilioClient.Init(
                 ConfigurationManager.AppSettings.Get("ACCOUNT_SID"),
