@@ -62,13 +62,13 @@ namespace ClinicArrivals.Models
                 return null;
             }
       
-                List<SmsMessage> results = new List<SmsMessage>();
-            // create some test data
-            results.Add(new SmsMessage("08523138542", "arrived"));
-            results.Add(new SmsMessage("0423857505", "Arrived"));
-            results.Add(new SmsMessage("0423857505", "Here"));
-            results.Add(new SmsMessage("0423857505", "Ok"));
-            return results;
+//                List<SmsMessage> results = new List<SmsMessage>();
+//            // create some test data
+//            results.Add(new SmsMessage("08523138542", "arrived"));
+//            results.Add(new SmsMessage("0423857505", "Arrived"));
+//            results.Add(new SmsMessage("0423857505", "Here"));
+//           results.Add(new SmsMessage("0423857505", "Ok"));
+//            return results;
         }
     }
 
