@@ -14,6 +14,12 @@ namespace ClinicArrivals.Models
         {
             return new FhirClient("http://demo.oridashi.com.au:8304", false);
         }
+
+        ISmsProcessor GetSmsProcessor()
+        {
+            return new TestSmsProcessor();
+        }
+
         /// <summary>
         /// Check for outgoing messages
         /// If new appts are found, they will be added, missing ones will be removed
@@ -83,7 +89,7 @@ namespace ClinicArrivals.Models
 
         public async System.Threading.Tasks.Task CheckForMessages(ArrivalsModel model)
         {
-            SmsProcessor sms = new SmsProcessor();
+            ISmsProcessor sms = GetSmsProcessor();
             // sms.Initialize();
             // TODO: Thread this into the background, but report errors back to the status screen
             // TODO: If this needs paging or something, repeat this call till its complete, or similar

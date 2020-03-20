@@ -10,22 +10,11 @@ using Twilio.Types;
 
 namespace ClinicArrivals.Models
 {
-    public class SmsProcessor : ISmsProcessor
+    public class TestSmsProcessor : ISmsProcessor
     {
         public void Initialize()
         {
-            // TODO: Is this all the settings that are required for intializing Twilio correctly
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            Twilio.TwilioClient.Init(
-                ConfigurationManager.AppSettings.Get("ACCOUNT_SID"),
-                ConfigurationManager.AppSettings.Get("AUTH_TOKEN"));
         }
-
-        /// <summary>
-        /// Have this whitelist of numbers for testing
-        /// </summary>
-        List<String> whitelistedNumbers = new List<string>() {
-        };
 
         /// <summary>
         /// Send a message to the twilio gateway
@@ -33,13 +22,7 @@ namespace ClinicArrivals.Models
         /// <param name="message"></param>
         public void SendMessage(SmsMessage sendMessage)
         {
-            // TODO: Work out what options are the most sensible to use here
-            var message = MessageResource.Create(
-                new PhoneNumber(sendMessage.phone),
-                from: new PhoneNumber(ConfigurationManager.AppSettings.Get("FromTwilioMobileNumber")),
-                body: sendMessage.message
-            );
-            Console.WriteLine(message.Sid);
+            System.Diagnostics.Trace.WriteLine($"SendMessage: {sendMessage.phone} - {sendMessage.message}");
         }
 
         /// <summary>
@@ -50,6 +33,7 @@ namespace ClinicArrivals.Models
         {
             List<SmsMessage> results = new List<SmsMessage>();
             // create some test data
+            // TODO: Read these from a test data file
             results.Add(new SmsMessage("08523138542", "arrived"));
             results.Add(new SmsMessage("0423857505", "Arrived"));
             results.Add(new SmsMessage("0423857505", "Here"));
