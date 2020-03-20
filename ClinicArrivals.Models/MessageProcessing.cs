@@ -49,7 +49,7 @@ namespace ClinicArrivals.Models
                 var resource = bundle.Entry.FirstOrDefault(e => e.Resource.ResourceType.GetLiteral() == ri.ResourceType && e.Resource.Id == ri.Id)?.Resource;
                 if (resource == null)
                 {
-                    // was't returned in the bundle, so go searching for it
+                    // wasn't returned in the bundle, so go searching for it
                     resource = await server.ReadAsync<Resource>(reference.Reference);
                 }
                 return resource;
