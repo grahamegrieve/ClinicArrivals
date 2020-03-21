@@ -15,6 +15,25 @@ namespace ClinicArrivals.Models
     [AddINotifyPropertyChangedInterface]
     public class PmsAppointment
     {
+        // Things from the PMS 
+        public string PatientFhirID { get; set; }
+        public string PatientName { get; set; }
+        public string PatientMobilePhone { get; set; }
+        public string PractitionerName { get; set; }
+        public string PractitionerFhirID { get; set; }
+        public string AppointmentFhirID { get; set; }
+        public AppointmentStatus ArrivalStatus { get; set; }
+        public DateTime AppointmentStartTime { get; set; }
+        public DateTime ArrivalTime { get; set; }
+        public Boolean IsVideoConsultation { get; set; }
+
+        // Record of actions we've taken with the Appointment
+        public bool PostRegistrationMessageSent { get; set; }
+        public bool ScreeningMessageSent { get; set; }
+        public bool VideoInviteSent { get; set; }
+
+        // Other stuff - slated for removal? (or at least, review)
+
         [JsonIgnore]
         public ICommand RebookAppointment { get; set; }
         [JsonIgnore]
@@ -22,20 +41,11 @@ namespace ClinicArrivals.Models
         [JsonIgnore]
         public ICommand StartAppointment { get; set; }
 
-        public string PatientFhirID { get; set; }
-        public string PatientName { get; set; }
-
-        public byte[] PatientPhoto { get; set; }
 
         /// <summary>
         /// This is last message that came in via SMS (will be in memory only - cleared if service restarts)
         /// </summary>
         public string LastPatientMessage { get; set; }
-
-        public string PatientMobilePhone { get; set; }
-
-        public string PractitionerName { get; set; }
-        public string PractitionerFhirID { get; set; }
 
         /// <summary>
         /// e.g. Allocated room number
@@ -43,15 +53,9 @@ namespace ClinicArrivals.Models
         /// </summary>
         public string LocationName { get; set; }
 
-        public string AppointmentFhirID { get; set; }
-        public AppointmentStatus ArrivalStatus { get; set; } 
-        public DateTime AppointmentStartTime { get; set; }
-        public DateTime ArrivalTime { get; set; }
-
         public bool ReadyToBeNotifiedToComeInside { get; set; } 
 
         public bool NotifiedToComeInside { get; set; }
 
-        public bool PostRegistrationMessageSent { get; set; }
     }
 }

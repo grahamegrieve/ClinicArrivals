@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Hl7.Fhir.Model.Appointment;
 
 namespace ClinicArrivals.Models
 {
@@ -71,6 +72,37 @@ namespace ClinicArrivals.Models
             //   has the status changed from arrived to fulfilled? - send the invite message if it's not a telehealth consultation
             //   if the appointment is within 3 hours, and the screening message hasn't been sent, send it 
             //   if the appointment is within 10 minutes a telehelth consultation, and the setup message hasn't been sent, send it 
+            foreach (var appt in incoming.Where(n => n.PatientMobilePhone != null && IsToday(n.AppointmentStartTime)))
+            {
+                var oldAppt = findApp(stored, appt.AppointmentFhirID);
+                if (oldAppt == null)
+                {
+                    // we don't do anything new with this; we haven't seen it before but that doesn't really make any difference. We add it to the list, and store it 
+                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    oldAppt = appt;
+                }
+                if (oldAppt.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
+                {
+                    // this is the trigger for sending a please come in message
+                    throw new NotImplementedException("Not implemented yet - come in");
+                }
+                else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !oldAppt.ScreeningMessageSent)
+                {
+                    SmsMessage msg = new SmsMessage(appt.PatientMobilePhone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
+                    SmsSender.SendMessage(msg);
+                    appt.ScreeningMessageSent = true;
+                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                }
+                else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, 10) && !oldAppt.VideoInviteSent)
+                {
+                    Dictionary<string, string> vars = new Dictionary<string, string>();
+                    vars.Add("url", VideoManager.getConferenceUrl(appt.AppointmentFhirID));
+                    SmsMessage msg = new SmsMessage(appt.PatientMobilePhone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_INVITE, appt, vars));
+                    SmsSender.SendMessage(msg);
+                    appt.VideoInviteSent = true;
+                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                }
+            }
         }
 
         /// <summary>
@@ -85,15 +117,14 @@ namespace ClinicArrivals.Models
             // pseudo code
             // for each incoming appointment
             //   is it new - send the pre-registration message, and add it to stored
-            foreach (var napp in incoming)
+            foreach (var appt in incoming.Where(n => n.PatientMobilePhone != null && IsNearFuture(n.AppointmentStartTime))) // we only send these messages 2-3 days in the future
             {
-                if (napp.PatientMobilePhone != null)
-                {
-                    var oapp = findApp(stored, napp.AppointmentFhirID);
-                    if (oapp == null)
-                    {
-
-                    }
+                if (findApp(stored, appt.AppointmentFhirID) == null) 
+                { 
+                    SmsMessage msg = new SmsMessage(appt.PatientMobilePhone, TemplateProcessor.processTemplate(MessageTemplate.MSG_REGISTRATION, appt, null));
+                    SmsSender.SendMessage(msg);
+                    appt.PostRegistrationMessageSent = true;
+                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
                 }
             }
         }
@@ -118,6 +149,20 @@ namespace ClinicArrivals.Models
             //   process as a response to the screening
             // else
             //   we are not expecting a response - send message explaining that 
+        }
+
+        private Boolean IsInTimeWindow(DateTime start, int minutes)
+        {
+            DateTime endWindow = TimeNow.AddMinutes(minutes);
+            return TimeNow <= start && endWindow > start;
+        }
+        private Boolean IsToday(DateTime start)
+        {
+            return TimeNow.Date == start.Date;
+        }
+        private Boolean IsNearFuture(DateTime start)
+        {
+            return TimeNow.Date < start.Date;
         }
 
         private PmsAppointment findApp(List<PmsAppointment> appointments, string id)
