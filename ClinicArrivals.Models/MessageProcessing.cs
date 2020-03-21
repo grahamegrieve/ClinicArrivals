@@ -202,7 +202,7 @@ namespace ClinicArrivals.Models
         {
             PmsAppointment appt = new PmsAppointment();
             appt.AppointmentFhirID = entry.Id;
-            appt.AppointmentStartTime = entry.Start.Value.ToString("HH:mm");
+            appt.AppointmentStartTime = entry.Start.Value.ToString("HH:MM");
             appt.ArrivalStatus = entry.Status.GetDocumentation();
             appt.PatientFhirID = entry.Participant.FirstOrDefault(p => p.Actor.Reference?.StartsWith("Patient") == true)?.Actor?.Reference;
             appt.PractitionerFhirID = entry.Participant.FirstOrDefault(p => p.Actor.Reference?.StartsWith("Practitioner") == true)?.Actor?.Reference;
