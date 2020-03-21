@@ -33,7 +33,7 @@ namespace ClinicArrivals
             if (DataContext == null)
                 DataContext = new Model();
             var model = DataContext as Model;
-            model.Waiting.Clear(co);
+            model.Waiting.Clear();
             model.Expecting.Clear();
             model.Fulfilled.Clear();
             model.Fulfilled.CollectionChanged += Fulfilled_CollectionChanged;
