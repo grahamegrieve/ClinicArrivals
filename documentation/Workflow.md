@@ -77,7 +77,7 @@ If:
 
 ## Appointment
 
-In the PMS., amke the consult as in process. The Application will send the patient 
+In the PMS., mark the consult as 'in-process'. The Application will send the patient 
 this message: 
 
 "The doctor is ready for you now. Please come in to room ##"
