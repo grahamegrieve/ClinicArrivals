@@ -22,6 +22,19 @@ namespace ClinicArrivals.Models
         Task<IEnumerable<DoctorRoomLabelMappings>> LoadRoomMappings();
 
         /// <summary>
+        /// Save the templates to storage
+        /// </summary>
+        /// <param name="templates"></param>
+        /// <returns></returns>
+        Task SaveTemplates(IEnumerable<MessageTemplate> templates);
+
+        /// <summary>
+        /// Load the templates from storage
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<MessageTemplate>> LoadTemplates();
+
+        /// <summary>
         /// Save that this received message was not able to be 
         /// </summary>
         /// <param name="message"></param>

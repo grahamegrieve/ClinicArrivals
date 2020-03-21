@@ -35,12 +35,21 @@ namespace ClinicArrivals
             UnprocessableMessages.Add(new SmsMessage("+61 432 857505", "test") { date= "21-3-2020 12:40pm" });
             UnprocessableMessages.Add(new SmsMessage("+61 432 857505", "test 2") { date = "21-3-2020 1:15pm" });
             UnprocessableMessages.Add(new SmsMessage("+61 432 857505", "test 3") { date = "21-3-2020 1:23pm" });
+
+            Templates.Add(new MessageTemplate("Registration", "Thank you making an appointment to see Dr X. [X] hours before the appointment, we will send you an SMS asking with you meet the criteria documented at http://www.rcpa.org.au/xxx, to decide whether you will talk to the doctor by telephone video, or physically come to the clinic. Please respond to this message to confirm you have seen it (or your appointment will be canceled"));
+            Templates.Add(new MessageTemplate("Cancellation")); // no message means no sending
+            Templates.Add(new MessageTemplate("ConsiderTeleHealth", "Please consult the web page http://www.rcpa.org.au/xxx to determine whether you are eligable to meet with the doctor by phone/video. If you are, respond to this message with YES otherwise respond with NO")); // no message means no sending
+            Templates.Add(new MessageTemplate("PreApppointment", "Due to the COVID-19 Pandemic, this clinic has closed it's waiting room. Please wait in your car, and SMS \"arrived\" to [phone number]"));
+            Templates.Add(new MessageTemplate("UnknownPatient", "Your mobile phone number is not registered with the clinic, please call reception to confirm your details"));
+            Templates.Add(new MessageTemplate("DoctorReady", "The doctor is ready for you now. [Room Mapping Notes]"));
 #endif
             Storage = new ArrivalsFileSystemStorage();
             Settings.Save = new SaveSettingsCommand(Storage);
             Settings.Reload = new ReloadSettingsCommand(Storage);
             SaveRoomMappings = new SaveRoomMappingsCommand(Storage);
             ReloadRoomMappings = new ReloadRoomMappingsCommand(Storage);
+            SaveTemplates = new SaveTemplatesCommand(Storage);
+            ReloadTemplates = new ReloadTemplatesCommand(Storage);
         }
     }
 }

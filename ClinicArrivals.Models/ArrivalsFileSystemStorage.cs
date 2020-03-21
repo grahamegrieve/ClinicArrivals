@@ -75,6 +75,25 @@ namespace ClinicArrivals.Models
             return LoadFile<IEnumerable<DoctorRoomLabelMappings>>(null, "room-mappings.json", new List<DoctorRoomLabelMappings>());
         }
 
+        /// <summary>
+        /// Save the templates to storage
+        /// </summary>
+        /// <param name="templates"></param>
+        /// <returns></returns>
+        public Task SaveTemplates(IEnumerable<MessageTemplate> templates)
+        {
+            return SaveFile(null, "message-templates.json", templates);
+        }
+
+        /// <summary>
+        /// Load the templates from storage
+        /// </summary>
+        /// <returns></returns>
+        public Task<IEnumerable<MessageTemplate>> LoadTemplates()
+        {
+            return LoadFile<IEnumerable<MessageTemplate>>(null, "message-templates.json", new List<MessageTemplate>());
+        }
+
 
         /// <summary>
         /// Save that this received message was not able to be 

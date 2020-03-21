@@ -19,6 +19,8 @@ namespace ClinicArrivals.Models
         public string DisplayingDate { get; set; }
         public ICommand SaveRoomMappings { get; set; }
         public ICommand ReloadRoomMappings { get; set; }
+        public ICommand SaveTemplates { get; set; }
+        public ICommand ReloadTemplates { get; set; }
 
         public Settings Settings { get; set; } = new Settings();
 
@@ -35,16 +37,16 @@ namespace ClinicArrivals.Models
         /// <summary>
         /// Incoming SMS messages that couldn't be processed
         /// </summary>
-        public ObservableCollection<SmsMessage> UnprocessableMessages { get; set; } = new ObservableCollection<SmsMessage>();
+        public ObservableCollection<SmsMessage> UnprocessableMessages { get; private set; } = new ObservableCollection<SmsMessage>();
 
         /// <summary>
         /// List of templates for each of the different message types
         /// </summary>
-        public ObservableCollection<KeyValuePair<string, string>> Templates { get; set; } = new ObservableCollection<KeyValuePair<string, string>>();
+        public ObservableCollection<MessageTemplate> Templates { get; private set; } = new ObservableCollection<MessageTemplate>();
 
         /// <summary>
         /// Room Labels/Doctor mappings
         /// </summary>
-        public ObservableCollection<DoctorRoomLabelMappings> RoomMappings { get; set; } = new ObservableCollection<DoctorRoomLabelMappings>();
+        public ObservableCollection<DoctorRoomLabelMappings> RoomMappings { get; private set; } = new ObservableCollection<DoctorRoomLabelMappings>();
     }
 }

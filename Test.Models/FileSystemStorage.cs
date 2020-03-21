@@ -55,5 +55,47 @@ namespace Test.Models
             // Cleanup the test folder
             Directory.Delete(storage.GetFolder(), true);
         }
+
+        [TestMethod]
+        public async Task SaveLoadTemplates()
+        {
+            // delete any pre-existing settings file
+            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage("ClinicArrivals.Test");
+            string pathSettings = Path.Combine(storage.GetFolder(), "message-templates.json");
+            if (File.Exists(pathSettings))
+                File.Delete(pathSettings);
+
+            // read a non existent settings file
+            var templates = (await storage.LoadTemplates())?.ToList();
+            Assert.IsNotNull(templates);
+
+            // Add in a template
+            templates.Add(new MessageTemplate("Intro"));
+            templates.Add(new MessageTemplate("PleaseWait"));
+            templates.Add(new MessageTemplate("ComeInside"));
+            await storage.SaveTemplates(templates);
+
+            // Check that they are in there
+            templates = (await storage.LoadTemplates())?.ToList();
+            Assert.AreEqual(3, templates.Count, "Expected the same number of templates to come out");
+
+            // append another
+            templates.Add(new MessageTemplate("ComeInside"));
+            await storage.SaveTemplates(templates);
+            templates = (await storage.LoadTemplates())?.ToList();
+            Assert.AreEqual(4, templates.Count, "Expected the same number of templates to come out");
+
+            // Update the contents of a template
+            string TemplateContent = "this is the template";
+            templates[2].Template = TemplateContent;
+
+            await storage.SaveTemplates(templates);
+            templates = (await storage.LoadTemplates())?.ToList();
+            Assert.AreEqual(4, templates.Count, "Expected the same number of templates to come out");
+            Assert.AreEqual(TemplateContent, templates[2].Template, "The updated template content was not the same");
+
+            // Cleanup the test folder
+            Directory.Delete(storage.GetFolder(), true);
+        }
     }
 }

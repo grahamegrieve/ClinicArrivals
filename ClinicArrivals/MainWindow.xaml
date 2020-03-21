@@ -161,6 +161,41 @@
                 </ListView>
             </Grid>
         </TabItem>
+        <TabItem Header="Message Templates">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" >
+                    <Button Content="Save" Command="{Binding SaveTemplates}" CommandParameter="{Binding Templates}"/>
+                    <Button Content="Reload" Command="{Binding ReloadTemplates}" CommandParameter="{Binding Templates}"/>
+                </StackPanel>
+                <ListView Grid.Row="1" ItemsSource="{Binding Path=Templates, Mode=OneWay}"
+                          VerticalAlignment="Stretch"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Style.Triggers>
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter Property="IsSelected" Value="True" />
+                                </Trigger>
+                            </Style.Triggers>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="12" HorizontalAlignment="Stretch">
+                                <TextBlock Text="{Binding Path=MessageType}" TextWrapping="Wrap" FontSize="16"/>
+                                <TextBox Text="{Binding Path=Template, Mode=TwoWay}" TextWrapping="Wrap" FontWeight="Normal" FontSize="16" AcceptsReturn="True" Height="80" Padding="4" SpellCheck.IsEnabled="True"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </TabItem>
         <TabItem Header="Settings">
             <local:SettingsControl DataContext="{Binding Settings, Mode=OneWay}"></local:SettingsControl>
         </TabItem>
