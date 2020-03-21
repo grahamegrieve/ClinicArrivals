@@ -12,7 +12,7 @@
         <local:Model/>
     </Window.DataContext>
     <TabControl>
-        <TabItem Header="Expecting">
+        <TabItem Header="Appointments">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -112,7 +112,7 @@
                 <TextBox Text="{Binding Path=StatusBarMessage}" Grid.Row="2" Grid.ColumnSpan="2" AcceptsReturn="True" IsReadOnly="True"/>
             </Grid>
         </TabItem>
-        <TabItem Header="Messages">
+        <TabItem Header="Unknown Incoming Messages">
             <ListView Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Path=UnprocessableMessages, Mode=OneWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
