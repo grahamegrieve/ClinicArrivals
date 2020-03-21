@@ -17,4 +17,5 @@ Documentation:
 * [Setting up the SMS phone # using Twilio](Twilio.md)
 * [Program Settings](Settings.md)
 * [Managing SMS templates](Templates.md)
+* [Jitsi Integration details]{Jitsi.md}
 * [Technical Specifications for the PMS integration](FHIRDocumentation.md)
