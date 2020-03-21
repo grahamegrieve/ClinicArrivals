@@ -6,8 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
 
 namespace ClinicArrivals.Models
 {
