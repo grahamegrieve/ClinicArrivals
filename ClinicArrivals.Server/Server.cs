@@ -8,12 +8,19 @@ namespace ClinicArrivals.Server
 {
     public class Server
     {
+        public delegate void StartedServer();
+        public delegate void StoppedServer();
+
         private Oridashi.Fhir.Host.Configuration configuration;
         private Oridashi.Fhir.Host.FhirHost host;
         private bool running = false;
 
-        public void Start(bool UseExamples)
+        public event StartedServer OnStarted;
+        public event StoppedServer OnStopped;
+
+        public async Task Start(bool UseExamples)
         {
+
             configuration = new Oridashi.Fhir.Host.Configuration()
             {
                 ProfileName = "clinicarrivals",
@@ -22,20 +29,28 @@ namespace ClinicArrivals.Server
                 IsLive = !UseExamples,
             };
 
-            new System.Threading.Thread(() =>
-            {
-                host = new Oridashi.Fhir.Host.FhirHost();
+            host = new Oridashi.Fhir.Host.FhirHost();
+            await Task<Oridashi.Fhir.Host.Configuration>.Run( new Action(() => {
                 configuration = host.Start(configuration);
                 running = true;
-            }).Start();
+                OnStarted?.Invoke();
+            }));          
         }
 
-        public void Stop()
+        public async Task Stop()
         {
-            if (host != null)
-                host.Stop();
+            await Task<Oridashi.Fhir.Host.Configuration>.Run(new Action(() =>
+            {
+                if (host != null)
+                    host.Stop();
 
-            running = false;
+
+                running = false;
+                OnStopped?.Invoke();
+            }));
+
+
+           
         }
 
         public bool IsRunning

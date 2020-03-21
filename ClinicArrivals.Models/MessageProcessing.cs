@@ -10,16 +10,36 @@ namespace ClinicArrivals.Models
 {
     public class MessageProcessing
     {
+        public delegate void StartedServer();
+        public delegate void StoppedServer();
+        public delegate void VisitStarted(PmsAppointment appt);
 
         private static ClinicArrivals.Server.Server server = null;
+
+        public static event StartedServer OnStarted;
+        public static event StoppedServer OnStopped;
+        public static event VisitStarted OnVisitStarted;
 
         public static void StartServer(bool UseExamples)
         {
             if (server == null)
             {
                 server = new Server.Server();
+                server.OnStarted += Server_OnStarted;
+                server.OnStopped += Server_OnStopped;
                 server.Start(UseExamples);
+
             }
+        }
+
+        private static void Server_OnStopped()
+        {
+            OnStopped?.Invoke();
+        }
+
+        private static void Server_OnStarted()
+        {
+            OnStarted?.Invoke();
         }
 
         private static FhirClient GetServerConnection()
@@ -32,11 +52,6 @@ namespace ClinicArrivals.Models
             }
 
             return null;
-        }
-
-        public static bool IsRunning()
-        {
-            return server.IsRunning;
         }
 
 
@@ -107,6 +122,14 @@ namespace ClinicArrivals.Models
                     if (app != null && !model.Waiting.Contains(app))
                     {
                         model.Waiting.Add(app);
+                    }
+                }
+                if(entry.Status == Appointment.AppointmentStatus.Fulfilled)
+                {
+                    if(oldwaiting.Select(x => x.AppointmentFhirID).Contains(entry.Id))
+                    {
+                        app = await ToPmsAppointment(entry, resolveReference);
+                        OnVisitStarted?.BeginInvoke(app, null, null);
                     }
                 }
 
