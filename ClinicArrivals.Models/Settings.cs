@@ -25,6 +25,8 @@ namespace ClinicArrivals.Models
         public string IntroSmsMessage { get; set; }
         public bool ExamplesServer { get; set; }
 
+        public string DeveloperPhoneNumber { get; set; }
+
         public void CopyFrom(Settings other)
         {
             FromTwilioMobileNumber = other.FromTwilioMobileNumber;
@@ -33,6 +35,7 @@ namespace ClinicArrivals.Models
             PollIntervalSeconds = other.PollIntervalSeconds;
             IntroSmsMessage = other.IntroSmsMessage;
             ExamplesServer = other.ExamplesServer;
+            DeveloperPhoneNumber = other.DeveloperPhoneNumber;
         }
     }
 }
