@@ -26,22 +26,21 @@ namespace Test.Models
             Assert.IsNotNull(settings);
 
             // Put in some values
-            settings.ACCOUNT_SID = "ACaab8ee23cacbf7f30da842053d91f3aa";
-            settings.AUTH_TOKEN = "fcebb79799bc2d4a132802580763ae17";
-            settings.FromTwilioMobileNumber = "+12678434041";
+            settings.ACCOUNT_SID = "asdf";
+            settings.AUTH_TOKEN = "qwerqwqwer";
+            settings.FromTwilioMobileNumber = "+555 testme";
             settings.PollIntervalSeconds = 30;
-            settings.IntroSmsMessage = "Velcome to the test of ClinicArrivals";
             storage.SaveSettings(settings);
 
             // Now re-read the settings 
             settings = storage.LoadSettings().GetAwaiter().GetResult();
             Assert.IsNotNull(settings);
             Assert.AreEqual(30, settings.PollIntervalSeconds);
-            Assert.AreEqual("Velcome to the test of ClinicArrivals", settings.IntroSmsMessage);
+            Assert.AreEqual("qwerqwqwer", settings.AUTH_TOKEN);
 
             // Update some values and re-save
             settings.PollIntervalSeconds = 60;
-            settings.IntroSmsMessage = "Welcome to the test of ClinicArrivals";
+            settings.AUTH_TOKEN = "Welcome to the test of ClinicArrivals";
             settings.Save = new SaveSettingsCommand(storage);
             storage.SaveSettings(settings);
 
@@ -49,7 +48,7 @@ namespace Test.Models
             settings = storage.LoadSettings().GetAwaiter().GetResult();
             Assert.IsNotNull(settings);
             Assert.AreEqual(60, settings.PollIntervalSeconds);
-            Assert.AreEqual("Welcome to the test of ClinicArrivals", settings.IntroSmsMessage);
+            Assert.AreEqual("Welcome to the test of ClinicArrivals", settings.AUTH_TOKEN);
             Assert.IsNull(settings.Save);
 
             // Cleanup the test folder
