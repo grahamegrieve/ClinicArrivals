@@ -47,6 +47,9 @@ namespace ClinicArrivals
                 // reload any unmatched messages
                 var messages = await model.Storage.LoadUnprocessableMessages(model.DisplayingDate);
 
+                // Start the FHIR server
+                MessageProcessing.StartServer(model.Settings.ExamplesServer);
+
                 // check for any appointments
                 await MessageProcessing.CheckAppointments(model);
             });

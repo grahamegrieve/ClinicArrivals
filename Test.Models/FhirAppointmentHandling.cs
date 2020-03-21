@@ -8,6 +8,13 @@ namespace Test.Models
     [TestClass]
     public class FhirAppointmentHandling
     {
+        [TestInitialize]
+        public void Initialize()
+        {
+            // Start the FHIR Server
+            MessageProcessing.StartServer(true);
+        }
+
         [TestMethod]
         public async System.Threading.Tasks.Task ReadTodaysAppointments()
         {

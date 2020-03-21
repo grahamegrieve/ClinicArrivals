@@ -12,14 +12,14 @@ namespace ClinicArrivals.Server
         private Oridashi.Fhir.Host.FhirHost host;
         private bool running = false;
 
-        public void Start()
+        public void Start(bool UseExamples)
         {
             configuration = new Oridashi.Fhir.Host.Configuration()
             {
                 ProfileName = "clinicarrivals",
                 LicenseKey = "3B36E5E1AD7645C6AD18F7A1",
                 Mode = Oridashi.Fhir.Host.Configuration.SelectSystem.AUTO,
-                IsLive = true,
+                IsLive = !UseExamples,
             };
 
             new System.Threading.Thread(() =>

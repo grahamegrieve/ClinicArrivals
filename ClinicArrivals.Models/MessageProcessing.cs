@@ -13,19 +13,17 @@ namespace ClinicArrivals.Models
 
         private static ClinicArrivals.Server.Server server = null;
 
-        private static void InitServer()
+        public static void StartServer(bool UseExamples)
         {
             if (server == null)
             {
                 server = new Server.Server();
-                server.Start();
+                server.Start(UseExamples);
             }
         }
-       
+
         private static FhirClient GetServerConnection()
         {
-            InitServer();
-
             if (server.IsRunning)
             {
                 FhirClient client = new FhirClient(server.Url, false);   // "http://demo.oridashi.com.au:8304"
@@ -38,20 +36,17 @@ namespace ClinicArrivals.Models
 
         public static bool IsRunning()
         {
-            
-                InitServer();
-                return server.IsRunning;
-          
+            return server.IsRunning;
         }
 
 
         private static void Client_OnBeforeRequest(object sender, BeforeRequestEventArgs e)
         {
-            if(server.IsRunning)
+            if (server.IsRunning)
                 e.RawRequest.Headers.Add(System.Net.HttpRequestHeader.Authorization, server.Token);
         }
 
-            ISmsProcessor GetSmsProcessor()
+        ISmsProcessor GetSmsProcessor()
         {
             return new TestSmsProcessor();
         }
@@ -230,5 +225,5 @@ namespace ClinicArrivals.Models
         // Handle 
     }
 
-     
-    }
+
+}
