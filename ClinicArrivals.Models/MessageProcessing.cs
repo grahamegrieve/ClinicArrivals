@@ -93,6 +93,8 @@ namespace ClinicArrivals.Models
                 }
                 return resource;
             };
+
+
             foreach (var entry in bundle.Entry.Select(e => e.Resource as Appointment).Where(e => e != null))
             {
                 if (entry.Status == Appointment.AppointmentStatus.Booked)
@@ -109,6 +111,16 @@ namespace ClinicArrivals.Models
                     if (app != null && !model.Waiting.Contains(app))
                     {
                         model.Waiting.Add(app);
+                    }
+                }
+                if (entry.Status == Appointment.AppointmentStatus.Fulfilled)
+                {
+               
+                    PmsAppointment app = await ToPmsAppointment(entry, resolveReference);
+                    if (app != null && !model.Fulfilled.Contains(app) && !model.Fulfilled.Select(x => x.AppointmentFhirID).Contains(entry.Id) )
+                    {
+                        model.Fulfilled.Add(app);
+                        app.ReadyToBeNotifiedToComeInside = model.Waiting.Select(x => x.AppointmentFhirID).Contains(entry.Id);
                     }
                 }
             }

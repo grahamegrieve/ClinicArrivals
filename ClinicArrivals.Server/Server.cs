@@ -30,8 +30,6 @@ namespace ClinicArrivals.Server
             }).Start();
 
 
-           
-
         }
 
         public void Stop()

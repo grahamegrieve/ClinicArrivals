@@ -14,6 +14,8 @@ namespace ClinicArrivals.Models
 
         public ObservableCollection<PmsAppointment> Expecting { get; set; } = new ObservableCollection<PmsAppointment>();
 
+        public ObservableCollection<PmsAppointment> Fulfilled { get; set; } = new ObservableCollection<PmsAppointment>();
+
         public string StatusBarMessage { get; set; }
 
         // Incoming SMS messages that couldn't be processed

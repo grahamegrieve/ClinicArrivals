@@ -36,6 +36,8 @@ namespace ClinicArrivals.Models
         public string AppointmentStartTime { get; set; }
         public string ArrivalTime { get; set; }
 
+        public bool ReadyToBeNotifiedToComeInside { get; set; } 
+
         public bool NotifiedToComeInside { get; set; }
     }
 }
