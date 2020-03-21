@@ -31,14 +31,14 @@ message with YES otherwise respond with NO
 If the patient is eligible for a teleconsultation (reply matches 'yes') then:
 
 * ClinicalArrivals app registers a meeting with Jitsi --> [id]
-* the URL for the meeting is aded to the notes for the appointment
-* sends patient 
+* the URL for the meeting is added to the notes for the appointment
+* the URL is sent to the patient with a note to join the meeting:
 
 You will meet with the Doctor by phone/video. At [2:15pm], open the URL 
 http://meet.jit.si/[id]. (Note: if you join from a mobile phone, you will
 need to install the jitsi app first).
 
-When the patient joins the room, they will be marked as arrived in the PMS 
+When the patient joins the room, they will be marked as arrived in the PMS .
 When the doctor is ready to see the patient, they copy the URL out of the 
 appointment notes and paste into their browser. 
 

@@ -9,7 +9,6 @@
     <PackageReference Include="Hl7.Fhir.R4" Version="1.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.2.6" />
-    <PackageReference Include="Twilio" Version="5.38.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -14,7 +14,7 @@ namespace Test.Models
     public class TwilioTests
     {
         // retrieve the settings for the unit tests (the appSettings file in the test project)
-        Settings GetSettings()
+        private Settings GetSettings()
         {
             string json = File.ReadAllText("appSettings.json");
             return JsonConvert.DeserializeObject<Settings>(json);
@@ -25,7 +25,7 @@ namespace Test.Models
         {
             SmsProcessor sms = new SmsProcessor();
             sms.Initialize(GetSettings());
-            SmsMessage msg = new SmsMessage("+61411867065", "Twilio Test Message");
+            SmsMessage msg = new SmsMessage("+61411867065", "Twilio Testing Message");
             sms.SendMessage(msg);
             Assert.IsTrue(true);
         }
