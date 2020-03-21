@@ -88,6 +88,8 @@ namespace ClinicArrivals.Models
                 }
                 return resource;
             };
+
+
             foreach (var entry in bundle.Entry.Select(e => e.Resource as Appointment).Where(e => e != null))
             {
                 PmsAppointment app = null;

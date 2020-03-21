@@ -21,7 +21,7 @@ namespace ClinicArrivals
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+         public MainWindow()
         {
             InitializeComponent();
         }
@@ -34,6 +34,8 @@ namespace ClinicArrivals
             var model = DataContext as Model;
             model.Waiting.Clear();
             model.Expecting.Clear();
+            model.Fulfilled.Clear();
+            // model.Fulfilled.CollectionChanged += Fulfilled_CollectionChanged;
             Dispatcher.Invoke(async () =>
             {
                 // read the settings from storage
@@ -65,7 +67,6 @@ namespace ClinicArrivals
         private async void buttonRefresh_Click(object sender, RoutedEventArgs e)
         {
             var model = DataContext as Model;
-
             await MessageProcessing.CheckAppointments(model);
         }
     }
