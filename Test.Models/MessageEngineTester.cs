@@ -117,12 +117,17 @@ namespace Test.Models
                 throw new NotImplementedException();
             }
 
-            public Task<IEnumerable<DoctorRoomLabelMappings>> LoadRoomMappings()
+            public Task<IEnumerable<DoctorRoomLabelMapping>> LoadRoomMappings()
             {
                 throw new NotImplementedException();
             }
 
             public Task<Settings> LoadSettings()
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<IEnumerable<MessageTemplate>> LoadTemplates()
             {
                 throw new NotImplementedException();
             }
@@ -137,12 +142,17 @@ namespace Test.Models
                 throw new NotImplementedException();
             }
 
-            public Task SaveRoomMappings(IEnumerable<DoctorRoomLabelMappings> mappings)
+            public Task SaveRoomMappings(IEnumerable<DoctorRoomLabelMapping> mappings)
             {
                 throw new NotImplementedException();
             }
 
             public Task SaveSettings(Settings settings)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task SaveTemplates(IEnumerable<MessageTemplate> templates)
             {
                 throw new NotImplementedException();
             }
