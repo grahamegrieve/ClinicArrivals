@@ -49,6 +49,7 @@ namespace ClinicArrivals
         private async void buttonRefresh_Click(object sender, RoutedEventArgs e)
         {
             var model = DataContext as Model;
+
             await MessageProcessing.CheckAppointments(model);
         }
     }

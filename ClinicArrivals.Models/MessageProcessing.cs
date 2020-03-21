@@ -36,6 +36,15 @@ namespace ClinicArrivals.Models
             return null;
         }
 
+        public static bool IsRunning()
+        {
+            
+                InitServer();
+                return server.IsRunning;
+          
+        }
+
+
         private static void Client_OnBeforeRequest(object sender, BeforeRequestEventArgs e)
         {
             if(server.IsRunning)
@@ -184,9 +193,12 @@ namespace ClinicArrivals.Models
         // Check for incoming messages
 
         // Handle arrived message
-        public async System.Threading.Tasks.Task ArriveAppointment(PmsAppointment appt)
+        public async static System.Threading.Tasks.Task ArriveAppointment(PmsAppointment appt)
         {
             var server = GetServerConnection();
+            if (server == null)
+                return;
+
             Appointment appointment = await server.ReadAsync<Appointment>($"{server}/Appointment/{appt.AppointmentFhirID}");
             if (appointment.Status != Appointment.AppointmentStatus.Arrived)
             {

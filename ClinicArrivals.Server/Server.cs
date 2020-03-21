@@ -19,7 +19,7 @@ namespace ClinicArrivals.Server
                 ProfileName = "clinicarrivals",
                 LicenseKey = "3B36E5E1AD7645C6AD18F7A1",
                 Mode = Oridashi.Fhir.Host.Configuration.SelectSystem.AUTO,
-                IsLive = false,
+                IsLive = true,
             };
 
             new System.Threading.Thread(() =>
