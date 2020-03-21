@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ClinicArrivals.Models
 {
     /// <summary>
-    ///   This is the core logic of the ClinicalArrivals class; it's where all the processing logic lives
+    ///   This is the core logic of the ClinicalArrivals application; it's where all the processing logic lives
     ///   
     ///   There's 3 different ways that this gets called:
     ///     * every X seconds (typically, 30), processing today's appointments 
@@ -16,10 +16,10 @@ namespace ClinicArrivals.Models
     ///     
     ///     
     /// </summary>
-    class MessagingLogic
+    public class MessagingEngine
     {
-        // this specifies what day it is today. In production, this is *always* the current date 
-        // but it can be overridden to another ay by testing code. That makes it easier to manage the tests.
+        // this specifies what day it is today. In production, this is *always* the current date/time 
+        // but it can be overridden to another date/time by testing code (that makes it easier to manage the tests).
         public DateTime TimeNow { get; set; }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace ClinicArrivals.Models
         /// <summary>
         /// Provides the services to update the state of the Appointment on the PMS
         /// </summary>
-        public IAppointmentUpdater AppointmentUpdateer { get; set; }
+        public IFhirAppointmentUpdater AppointmentUpdateer { get; set; }
 
         /// <summary>
         /// Provides template processing services to turn a template + variables into ready to go text
@@ -85,6 +85,17 @@ namespace ClinicArrivals.Models
             // pseudo code
             // for each incoming appointment
             //   is it new - send the pre-registration message, and add it to stored
+            foreach (var napp in incoming)
+            {
+                if (napp.PatientMobilePhone != null)
+                {
+//                    var oapp = findApp(stored, napp);
+//                    if (oapp == null)
+//                    {
+//                        processNewFutureAppointment(napp);
+//                    }
+                }
+            }
         }
 
         /// <summary>

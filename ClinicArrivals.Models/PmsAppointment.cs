@@ -51,5 +51,7 @@ namespace ClinicArrivals.Models
         public bool ReadyToBeNotifiedToComeInside { get; set; } 
 
         public bool NotifiedToComeInside { get; set; }
+
+        public bool PostRegistrationMessageSent { get; set; }
     }
 }
