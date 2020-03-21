@@ -26,6 +26,8 @@ namespace ClinicArrivals.Models
 
         public void AllocateNewSystemIdentifier() { SystemIdentifier = Guid.NewGuid(); }
 
+        public string DeveloperPhoneNumber { get; set; }
+
         public void CopyFrom(Settings other)
         {
             FromTwilioMobileNumber = other.FromTwilioMobileNumber;
@@ -34,6 +36,7 @@ namespace ClinicArrivals.Models
             PollIntervalSeconds = other.PollIntervalSeconds;
             ExamplesServer = other.ExamplesServer;
             SystemIdentifier = other.SystemIdentifier;
+            DeveloperPhoneNumber = other.DeveloperPhoneNumber;
         }
     }
 }
