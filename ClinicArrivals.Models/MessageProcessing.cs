@@ -28,7 +28,17 @@ namespace ClinicArrivals.Models
                 server.OnStarted += Server_OnStarted;
                 server.OnStopped += Server_OnStopped;
                 server.Start(UseExamples);
+            }
+        }
 
+        public static async System.Threading.Tasks.Task StopServer()
+        {
+            if (server != null)
+            {
+                await server.Stop();
+                server.OnStarted -= Server_OnStarted;
+                server.OnStopped -= Server_OnStopped;
+                server = null;
             }
         }
 
@@ -44,7 +54,7 @@ namespace ClinicArrivals.Models
 
         private static FhirClient GetServerConnection()
         {
-            if (server.IsRunning)
+            if (server?.IsRunning == true)
             {
                 FhirClient client = new FhirClient(server.Url, false);   // "http://demo.oridashi.com.au:8304"
                 client.OnBeforeRequest += Client_OnBeforeRequest;
@@ -57,7 +67,7 @@ namespace ClinicArrivals.Models
 
         private static void Client_OnBeforeRequest(object sender, BeforeRequestEventArgs e)
         {
-            if (server.IsRunning)
+            if (server?.IsRunning == true)
                 e.RawRequest.Headers.Add(System.Net.HttpRequestHeader.Authorization, server.Token);
         }
 
@@ -139,7 +149,7 @@ namespace ClinicArrivals.Models
                     if (!model.RoomMappings.Any(m => m.PractitionerFhirID == app.PractitionerFhirID))
                     {
                         // Add in an empty room mapping
-                        model.RoomMappings.Add(new DoctorRoomLabelMappings()
+                        model.RoomMappings.Add(new DoctorRoomLabelMapping()
                         {
                             PractitionerFhirID = app.PractitionerFhirID,
                             PractitionerName = app.PractitionerName

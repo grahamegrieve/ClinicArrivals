@@ -16,6 +16,11 @@ namespace ClinicArrivals.Models
             DisplayingDate = DateTime.Now.Date.ToString("yyyy-MM-dd");
         }
 
+        /// <summary>
+        /// The Status of each of the server processes running in the App
+        /// </summary>
+        public ServerStatuses serverStatuses { get; set; } = new ServerStatuses();
+
         public string DisplayingDate { get; set; }
         public ICommand SaveRoomMappings { get; set; }
         public ICommand ReloadRoomMappings { get; set; }

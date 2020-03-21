@@ -1,6 +1,7 @@
 ﻿using ClinicArrivals.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace ClinicArrivals
 
         private System.Threading.Timer poll;
 
-         public MainWindow()
+        public MainWindow()
         {
             InitializeComponent();
         }
@@ -64,7 +65,17 @@ namespace ClinicArrivals
                 MessageProcessing.OnVisitStarted += MessageProcessing_OnVisitStarted;
                 MessageProcessing.StartServer(model.Settings.ExamplesServer);
 
-
+                model.serverStatuses.Oridashi.CurrentStatus = "starting...";
+                model.serverStatuses.Oridashi.Start = new ServerStatusCommand(model.serverStatuses.Oridashi, "stopped", () =>
+                {
+                    model.serverStatuses.Oridashi.CurrentStatus = "starting...";
+                    MessageProcessing.StartServer(model.Settings.ExamplesServer);
+                });
+                model.serverStatuses.Oridashi.Stop = new ServerStatusCommand(model.serverStatuses.Oridashi, "running", async () =>
+                {
+                    model.serverStatuses.Oridashi.CurrentStatus = "stopping...";
+                    await MessageProcessing.StopServer();
+                });
             });
         }
 
@@ -75,27 +86,41 @@ namespace ClinicArrivals
 
         private void MessageProcessing_OnStopped()
         {
-            throw new NotImplementedException();
+            poll.Dispose();
+            poll = null;
+
+            Dispatcher.Invoke(async () =>
+            {
+                var model = DataContext as Model;
+                model.serverStatuses.Oridashi.CurrentStatus = "stopped";
+            });
         }
 
         private void MessageProcessing_OnStarted()
         {
-           poll = new System.Threading.Timer((o) =>
-           {
-               try
-               {
-                   Dispatcher.Invoke(async () =>
-                   {
-                       var model = DataContext as Model;
-                       // check for any appointments
-                       await MessageProcessing.CheckAppointments(model);
-                   });
-               }
-               catch
-               {
-
-               }
-           }, null, 0, 5000);
+            Dispatcher.Invoke(() =>
+            {
+                var model = DataContext as Model;
+                model.serverStatuses.Oridashi.CurrentStatus = "started";
+                poll = new System.Threading.Timer((o) =>
+                {
+                    Dispatcher.Invoke(async () =>
+                    {
+                        // check for any appointments
+                        // var model = DataContext as Model;
+                        try
+                        {
+                            model.serverStatuses.Oridashi.CurrentStatus = "now scanning";
+                            await MessageProcessing.CheckAppointments(model);
+                            model.serverStatuses.Oridashi.CurrentStatus = "running";
+                        }
+                        catch (Exception ex)
+                        {
+                            model.serverStatuses.Oridashi.CurrentStatus = $"Error: {ex.Message}";
+                        }
+                    });
+                }, null, 0, model.Settings.PollIntervalSeconds * 1000);
+            });
         }
 
         private async void buttonSmsOut_Click(object sender, RoutedEventArgs e)

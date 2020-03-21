@@ -20,7 +20,6 @@ namespace ClinicArrivals.Server
 
         public async Task Start(bool UseExamples)
         {
-
             configuration = new Oridashi.Fhir.Host.Configuration()
             {
                 ProfileName = "clinicarrivals",
