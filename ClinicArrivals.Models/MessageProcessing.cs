@@ -189,6 +189,11 @@ namespace ClinicArrivals.Models
                         appt.LastPatientMessage = item.message;
                     }
                 }
+                if (!appts.Any())
+                {
+                    item.date = DateTimeOffset.Now.ToString();
+                    model.UnprocessableMessages.Add(item);
+                }
             }
         }
 

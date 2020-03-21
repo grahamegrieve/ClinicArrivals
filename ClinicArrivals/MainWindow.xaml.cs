@@ -63,6 +63,15 @@ namespace ClinicArrivals
                     model.serverStatuses.Oridashi.CurrentStatus = "stopping...";
                     await MessageProcessing.StopServer();
                 });
+                model.ReadSmsMessage = new BackgroundProcess(model.Settings, model.serverStatuses.IncomingSmsReader, Dispatcher, async () => 
+                {
+                    // Logic to run on this process
+                    // (called every settings.interval)
+                    model.StatusBarMessage = $"Last read SMS messages at {DateTime.Now.ToLongTimeString()}";
+                    var processor = new MessageProcessing();
+                    await processor.CheckForMessages(model);
+                    // return System.Threading.Tasks.Task.CompletedTask;
+                });
             });
         }
 

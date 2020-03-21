@@ -42,8 +42,7 @@
                 </Grid.RowDefinitions>
                 <StackPanel>
                     <Button x:Name="buttonRefresh" Content="Refresh" Click="buttonRefresh_Click"/>
-                    <Button x:Name="buttonSmsOut" Content="SMS Out" Click="buttonSmsOut_Click"/>
-                    <ProgressBar Height="6"/>
+                    <Button x:Name="buttonSmsOut" Content="Read SMS" Click="buttonSmsOut_Click"/>
                 </StackPanel>
 
                 <TextBlock Grid.Row="0" Text="Expecting" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Bold">

@@ -12,6 +12,7 @@ namespace ClinicArrivals
     public class Model : ArrivalsModel
     {
         public string Text { get { return System.IO.File.ReadAllText("about.md"); }  }
+        public BackgroundProcess ReadSmsMessage;
 
         public Model()
         {
