@@ -23,6 +23,7 @@ namespace ClinicArrivals.Models
         public string AUTH_TOKEN { get; set; }
         public int PollIntervalSeconds { get; set; }
         public string IntroSmsMessage { get; set; }
+        public bool ExamplesServer { get; set; }
 
         public void CopyFrom(Settings other)
         {
@@ -31,6 +32,7 @@ namespace ClinicArrivals.Models
             AUTH_TOKEN = other.AUTH_TOKEN;
             PollIntervalSeconds = other.PollIntervalSeconds;
             IntroSmsMessage = other.IntroSmsMessage;
+            ExamplesServer = other.ExamplesServer;
         }
     }
 }

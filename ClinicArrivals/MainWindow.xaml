@@ -50,7 +50,7 @@
                         </TransformGroup>
                     </TextBlock.RenderTransform>
                 </TextBlock>
-                <ListView Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Path=Expecting, Mode=OneWay}">
+                <ListView Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Path=Expecting, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel/>
@@ -78,7 +78,7 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <ListView Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Path=Waiting, Mode=OneWay}">
+                <ListView Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Path=Waiting, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel></WrapPanel>
