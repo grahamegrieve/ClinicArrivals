@@ -28,10 +28,6 @@ namespace ClinicArrivals.Server
                 configuration = host.Start(configuration);
                 running = true;
             }).Start();
-
-
-           
-
         }
 
         public void Stop()
@@ -91,7 +87,5 @@ namespace ClinicArrivals.Server
                 return sb.ToString();
             }
         }
-
-
     }
 }
