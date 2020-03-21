@@ -50,10 +50,8 @@
         <Label Grid.Row="4" Grid.ColumnSpan="2" Content="Other" FontWeight="Bold" FontSize="14" />
         <Label Grid.Row="5" Grid.Column="0" Content="Poll Interval (seconds)"/>
         <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Path=PollIntervalSeconds, Mode=TwoWay}" Width="65" HorizontalAlignment="Left"/>
-        <Label Grid.Row="6" Grid.Column="0" Content="Intro SMS Message"/>
-        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Path=IntroSmsMessage, Mode=TwoWay}"/>
-        <Label Grid.Row="7" Grid.Column="0" Content="Use Samples Server"/>
-        <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding Path=ExamplesServer, Mode=TwoWay}" Margin="6"/>
+        <Label Grid.Row="6" Grid.Column="0" Content="Use Samples Server"/>
+        <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding Path=ExamplesServer, Mode=TwoWay}" Margin="6"/>
 
         <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal">
             <Button Content="Save" Command="{Binding Save}" CommandParameter="{Binding Mode=OneWay}"/>

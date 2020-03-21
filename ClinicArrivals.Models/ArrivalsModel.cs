@@ -26,13 +26,11 @@ namespace ClinicArrivals.Models
 
         public IArrivalsLocalStorage Storage { get; set; }
 
-        public ObservableCollection<PmsAppointment> Waiting { get; set; } = new ObservableCollection<PmsAppointment>();
-
-        public ObservableCollection<PmsAppointment> Expecting { get; set; } = new ObservableCollection<PmsAppointment>();
-
-        public ObservableCollection<PmsAppointment> Fulfilled { get; set; } = new ObservableCollection<PmsAppointment>();
-
         public string StatusBarMessage { get; set; }
+
+        public ObservableCollection<PmsAppointment> Waiting { get; private set; } = new ObservableCollection<PmsAppointment>();
+
+        public ObservableCollection<PmsAppointment> Expecting { get; private set; } = new ObservableCollection<PmsAppointment>();
 
         /// <summary>
         /// Incoming SMS messages that couldn't be processed

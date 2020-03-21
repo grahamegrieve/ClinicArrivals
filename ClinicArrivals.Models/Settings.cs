@@ -17,13 +17,14 @@ namespace ClinicArrivals.Models
         [JsonIgnore]
         public ICommand Reload { get; set; }
 
-
         public string FromTwilioMobileNumber { get; set; }
         public string ACCOUNT_SID { get; set; }
         public string AUTH_TOKEN { get; set; }
         public int PollIntervalSeconds { get; set; }
-        public string IntroSmsMessage { get; set; }
         public bool ExamplesServer { get; set; }
+        public Guid SystemIdentifier { get; private set; }
+
+        public void AllocateNewSystemIdentifier() { SystemIdentifier = Guid.NewGuid(); }
 
         public void CopyFrom(Settings other)
         {
@@ -31,8 +32,8 @@ namespace ClinicArrivals.Models
             ACCOUNT_SID = other.ACCOUNT_SID;
             AUTH_TOKEN = other.AUTH_TOKEN;
             PollIntervalSeconds = other.PollIntervalSeconds;
-            IntroSmsMessage = other.IntroSmsMessage;
             ExamplesServer = other.ExamplesServer;
+            SystemIdentifier = other.SystemIdentifier;
         }
     }
 }

@@ -37,12 +37,18 @@ namespace ClinicArrivals
             var model = DataContext as Model;
             model.Waiting.Clear();
             model.Expecting.Clear();
-            model.Fulfilled.Clear();
-            // model.Fulfilled.CollectionChanged += Fulfilled_CollectionChanged;
             Dispatcher.Invoke(async () =>
             {
                 // read the settings from storage
                 model.Settings.CopyFrom(await model.Storage.LoadSettings());
+                if (model.Settings.SystemIdentifier == Guid.Empty)
+                {
+                    // this only occurs when the system hasn't had one allocated
+                    // so we can create a new one, then save the settings.
+                    // (this will force an empty setting file with the System Identifier if needed)
+                    model.Settings.AllocateNewSystemIdentifier();
+                    await model.Storage.SaveSettings(model.Settings);
+                }
 
                 // read the room mappings from storage
                 model.RoomMappings.Clear();
