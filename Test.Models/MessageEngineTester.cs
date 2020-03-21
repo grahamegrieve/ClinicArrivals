@@ -29,11 +29,9 @@ namespace Test.Models
             // run it
             engine.ProcessUpcomingAppointments(new List<PmsAppointment>(), nl);
             // inspect outputs:
-            Assert.IsTrue(OutputMsgs.Count == 2);
+            Assert.IsTrue(OutputMsgs.Count == 1);
             Assert.IsTrue(OutputMsgs[0].phone == "+0411012345");
-            Assert.IsTrue(OutputMsgs[0].message == "Patient Test Patient #1 has an appointment with Dr Adam Ant at 9:15am on 2-Jan 2021");
-            Assert.IsTrue(OutputMsgs[1].phone == "+0411012345");
-            Assert.IsTrue(OutputMsgs[2].message == "3 hours prior to the appointment, you will be sent a COVID-19 screening check to decide whether you should do a video consultation rather than seeing the doctor in person");
+            Assert.IsTrue(OutputMsgs[0].message == "Patient Test Patient #1 has an appointment with Dr Adam Ant at 9:15am on 2-Jan 2021. 3 hours prior to the appointment, you will be sent a COVID-19 screening check to decide whether you should do a video consultation rather than seeing the doctor in person");
             Assert.IsTrue(StorageOps.Count == 1);
             Assert.IsTrue(StorageOps[0].Appointment.AppointmentFhirID == "1234");
             Assert.IsTrue(StorageOps[0].Appointment.PostRegistrationMessageSent);
@@ -66,6 +64,8 @@ namespace Test.Models
             engine.Initialise(testSettings());
             engine.SmsSender = new MessageLogicTesterSmsHandler(this);
             engine.Storage = new MessageLogicTesterStorageHandler(this);
+            engine.TemplateProcessor = new TemplateProcessor();
+            engine.TemplateProcessor.Initialise(testSettings());
             return engine;
         }
         private void reset()

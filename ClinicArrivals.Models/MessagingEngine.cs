@@ -40,7 +40,7 @@ namespace ClinicArrivals.Models
         /// <summary>
         /// Provides template processing services to turn a template + variables into ready to go text
         /// </summary>
-        public ITemplateProcessor TemplateProcessor { get; set; }
+        public TemplateProcessor TemplateProcessor { get; set; }
 
         /// <summary>
         /// Cconnects to the VideoConferencing engine
@@ -89,11 +89,11 @@ namespace ClinicArrivals.Models
             {
                 if (napp.PatientMobilePhone != null)
                 {
-//                    var oapp = findApp(stored, napp);
-//                    if (oapp == null)
-//                    {
-//                        processNewFutureAppointment(napp);
-//                    }
+                    var oapp = findApp(stored, napp.AppointmentFhirID);
+                    if (oapp == null)
+                    {
+
+                    }
                 }
             }
         }
@@ -118,6 +118,18 @@ namespace ClinicArrivals.Models
             //   process as a response to the screening
             // else
             //   we are not expecting a response - send message explaining that 
+        }
+
+        private PmsAppointment findApp(List<PmsAppointment> appointments, string id)
+        {
+            foreach (PmsAppointment t in appointments)
+            {
+                if (t.AppointmentFhirID == id)
+                {
+                    return t;
+                }
+            }
+            return null;
         }
     }
 }
