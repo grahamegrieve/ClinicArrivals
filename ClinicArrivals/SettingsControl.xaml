@@ -48,7 +48,7 @@
         
         <Label Grid.Row="4" Grid.ColumnSpan="2" Content="Other" FontWeight="Bold" FontSize="14" />
         <Label Grid.Row="5" Grid.Column="0" Content="Poll Interval (seconds)"/>
-        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Path=PollIntervalSeconds, Mode=TwoWay}"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Path=PollIntervalSeconds, Mode=TwoWay}" Width="65" HorizontalAlignment="Left"/>
         <Label Grid.Row="6" Grid.Column="0" Content="Intro SMS Message"/>
         <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Path=IntroSmsMessage, Mode=TwoWay}"/>
 
