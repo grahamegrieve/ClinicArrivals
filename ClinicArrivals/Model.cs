@@ -11,6 +11,8 @@ namespace ClinicArrivals
 {
     public class Model : ArrivalsModel
     {
+        public string Text { get { return System.IO.File.ReadAllText("about.md"); }  }
+
         public Model()
         {
 #if DEBUG
