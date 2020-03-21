@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Windows.Input;
 
 namespace ClinicArrivals.Models
 {
@@ -12,8 +13,12 @@ namespace ClinicArrivals.Models
     {
         public ArrivalsModel()
         {
-
+            DisplayingDate = DateTime.Now.Date.ToString("yyyy-MM-dd");
         }
+
+        public string DisplayingDate { get; set; }
+        public ICommand SaveRoomMappings { get; set; }
+        public ICommand ReloadRoomMappings { get; set; }
 
         public Settings Settings { get; set; } = new Settings();
 

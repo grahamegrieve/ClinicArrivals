@@ -39,6 +39,8 @@ namespace ClinicArrivals
             Storage = new ArrivalsFileSystemStorage();
             Settings.Save = new SaveSettingsCommand(Storage);
             Settings.Reload = new ReloadSettingsCommand(Storage);
+            SaveRoomMappings = new SaveRoomMappingsCommand(Storage);
+            ReloadRoomMappings = new ReloadRoomMappingsCommand(Storage);
         }
     }
 }

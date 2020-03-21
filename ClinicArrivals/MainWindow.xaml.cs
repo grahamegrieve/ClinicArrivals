@@ -38,6 +38,15 @@ namespace ClinicArrivals
             {
                 // read the settings from storage
                 model.Settings.CopyFrom(await model.Storage.LoadSettings());
+
+                // read the room mappings from storage
+                model.RoomMappings.Clear();
+                foreach (var map in await model.Storage.LoadRoomMappings())
+                    model.RoomMappings.Add(map);
+
+                // reload any unmatched messages
+                var messages = await model.Storage.LoadUnprocessableMessages(model.DisplayingDate);
+
                 // check for any appointments
                 await MessageProcessing.CheckAppointments(model);
             });

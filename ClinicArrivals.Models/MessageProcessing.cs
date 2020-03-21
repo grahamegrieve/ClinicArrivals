@@ -63,7 +63,7 @@ namespace ClinicArrivals.Models
                 return;
 
             var criteria = new SearchParams();
-            criteria.Add("date",  DateTime.Now.ToString("yyyy-MM-dd") ); // TODO: Change this to today's date
+            criteria.Add("date", model.DisplayingDate);
             criteria.Include.Add("Appointment:actor");
             var bundle = await server.SearchAsync<Appointment>(criteria);
 
