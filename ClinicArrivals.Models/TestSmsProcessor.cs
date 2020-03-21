@@ -12,7 +12,7 @@ namespace ClinicArrivals.Models
 {
     public class TestSmsProcessor : ISmsProcessor
     {
-        public void Initialize()
+        public void Initialize(Settings settings)
         {
         }
 
@@ -29,7 +29,7 @@ namespace ClinicArrivals.Models
         /// Receive the current messages from the Twilio sms gateway
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<SmsMessage> ReceiveMessages()
+        public Task<IEnumerable<SmsMessage>> ReceiveMessages()
         {
             List<SmsMessage> results = new List<SmsMessage>();
             // create some test data
@@ -38,7 +38,7 @@ namespace ClinicArrivals.Models
             results.Add(new SmsMessage("0423857505", "Arrived"));
             results.Add(new SmsMessage("0423857505", "Here"));
             results.Add(new SmsMessage("0423857505", "Ok"));
-            return results;
+            return Task.FromResult(results as IEnumerable<SmsMessage>);
         }
     }
 }

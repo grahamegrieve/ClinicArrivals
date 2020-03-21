@@ -138,7 +138,7 @@ namespace ClinicArrivals.Models
             // sms.Initialize();
             // TODO: Thread this into the background, but report errors back to the status screen
             // TODO: If this needs paging or something, repeat this call till its complete, or similar
-            var messages = sms.ReceiveMessages();
+            var messages = await sms.ReceiveMessages();
             foreach (var item in messages)
             {
                 var appts = MatchPatient(model, item.phone);

@@ -13,7 +13,7 @@ namespace ClinicArrivals.Models
 {
     public interface ISmsProcessor
     {
-        void Initialize();
+        void Initialize(Settings settings);
 
         /// <summary>
         /// Send a message to the twilio gateway
@@ -25,7 +25,7 @@ namespace ClinicArrivals.Models
         /// Receive the current messages from the Twilio sms gateway
         /// </summary>
         /// <returns></returns>
-        IEnumerable<SmsMessage> ReceiveMessages();
+        Task<IEnumerable<SmsMessage>> ReceiveMessages();
     }
 
     public class SmsMessage

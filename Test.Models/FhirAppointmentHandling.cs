@@ -16,16 +16,19 @@ namespace Test.Models
         }
 
         [TestMethod]
+        public async System.Threading.Tasks.Task MarkAppointmentBooked()
+        {
+            await new MessageProcessing().ArriveAppointment(null);
+        }
+
+        [TestMethod]
         public void MarkAppointmentArrived()
         {
         }
 
         [TestMethod]
-        public void ReadSettings()
+        public void MarkAppointmentStarted()
         {
-            Console.WriteLine($"Poll interval: {ConfigurationManager.AppSettings.Get("PollIntervalSeconds")}");
-            Console.WriteLine($"Intro SMS Message: {ConfigurationManager.AppSettings.Get("IntroSmsMessage")}");
-            Assert.IsNotNull(ConfigurationManager.AppSettings.Get("PollIntervalSeconds"));
         }
     }
 }
