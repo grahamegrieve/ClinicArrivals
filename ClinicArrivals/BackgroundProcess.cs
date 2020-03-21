@@ -55,8 +55,11 @@ namespace ClinicArrivals.Models
 
         public void Stop()
         {
-            _poll.Dispose();
-            _poll = null;
+            if (_poll != null)
+            {
+                _poll.Dispose();
+                _poll = null;
+            }
 
             _dispatcher.Invoke(() =>
             {

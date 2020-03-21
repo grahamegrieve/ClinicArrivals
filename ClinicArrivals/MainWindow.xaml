@@ -25,7 +25,7 @@
 
     </Window.Resources>
     <Window.DataContext>
-        <local:Model/>
+        <local:ViewModel/>
     </Window.DataContext>
     <TabControl>
         <TabItem Header="Appointments">
@@ -41,8 +41,8 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel>
-                    <Button x:Name="buttonRefresh" Content="Refresh" Click="buttonRefresh_Click"/>
-                    <Button x:Name="buttonSmsOut" Content="Read SMS" Click="buttonSmsOut_Click"/>
+                    <Button Content="Scan Appts" Click="buttonScanAppointments_Click"/>
+                    <Button Content="Read SMS" Click="buttonReadSms_Click"/>
                 </StackPanel>
 
                 <TextBlock Grid.Row="0" Text="Expecting" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Bold">

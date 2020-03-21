@@ -32,19 +32,19 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Content="{Binding Path=IncomingSmsReader.Name}"/>
-        <Label Grid.Row="1" Content="{Binding Path=OutgoingSmsSender.Name}"/>
+        <Label Grid.Row="1" Content="{Binding Path=AppointmentScanner.Name}"/>
         <Label Grid.Row="2" Content="{Binding Path=Oridashi.Name}"/>
 
         <Label Grid.Row="0" Grid.Column="3" Content="{Binding Path=IncomingSmsReader.CurrentStatus}"/>
-        <Label Grid.Row="1" Grid.Column="3" Content="{Binding Path=OutgoingSmsSender.CurrentStatus}"/>
+        <Label Grid.Row="1" Grid.Column="3" Content="{Binding Path=AppointmentScanner.CurrentStatus}"/>
         <Label Grid.Row="2" Grid.Column="3" Content="{Binding Path=Oridashi.CurrentStatus}"/>
 
         <Button Grid.Row="0" Grid.Column="1" Content="Start" Command="{Binding Path=IncomingSmsReader.Start}" CommandParameter="{Binding IncomingSmsReader.CurrentStatus, Mode=OneWay}"/>
-        <Button Grid.Row="1" Grid.Column="1" Content="Start" Command="{Binding Path=OutgoingSmsSender.Start}" CommandParameter="{Binding OutgoingSmsSender.CurrentStatus, Mode=OneWay}"/>
+        <Button Grid.Row="1" Grid.Column="1" Content="Start" Command="{Binding Path=AppointmentScanner.Start}" CommandParameter="{Binding AppointmentScanner.CurrentStatus, Mode=OneWay}"/>
         <Button Grid.Row="2" Grid.Column="1" Content="Start" Command="{Binding Path=Oridashi.Start}" CommandParameter="{Binding Oridashi.CurrentStatus, Mode=OneWay}"/>
 
         <Button Grid.Row="0" Grid.Column="2" Content="Stop" Command="{Binding Path=IncomingSmsReader.Stop}"/>
-        <Button Grid.Row="1" Grid.Column="2" Content="Stop" Command="{Binding Path=OutgoingSmsSender.Stop}"/>
+        <Button Grid.Row="1" Grid.Column="2" Content="Stop" Command="{Binding Path=AppointmentScanner.Stop}"/>
         <Button Grid.Row="2" Grid.Column="2" Content="Stop" Command="{Binding Path=Oridashi.Stop}"/>
     </Grid>
 </UserControl>

@@ -119,7 +119,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model.cs" />
+    <Compile Include="ViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

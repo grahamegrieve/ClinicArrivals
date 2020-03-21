@@ -171,7 +171,7 @@ namespace ClinicArrivals.Models
             return mobile?.Replace(" ", "");
         }
 
-        public async System.Threading.Tasks.Task CheckForMessages(ArrivalsModel model)
+        public async System.Threading.Tasks.Task CheckForInboundSmsMessages(ArrivalsModel model)
         {
             ISmsProcessor sms = GetSmsProcessor();
             // sms.Initialize();

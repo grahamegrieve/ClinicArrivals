@@ -6,15 +6,74 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace ClinicArrivals
 {
-    public class Model : ArrivalsModel
+    public class ViewModel : ArrivalsModel
     {
         public string Text { get { return System.IO.File.ReadAllText("about.md"); }  }
         public BackgroundProcess ReadSmsMessage;
+        public BackgroundProcess ScanAppointments;
 
-        public Model()
+        public ViewModel()
+        {
+            CreateTestDataForDebug();
+
+            // Assign all of the implementations for the interfaces
+            Storage = new ArrivalsFileSystemStorage();
+            Settings.Save = new SaveSettingsCommand(Storage);
+            Settings.Reload = new ReloadSettingsCommand(Storage);
+            SaveRoomMappings = new SaveRoomMappingsCommand(Storage);
+            ReloadRoomMappings = new ReloadRoomMappingsCommand(Storage);
+            SaveTemplates = new SaveTemplatesCommand(Storage);
+            ReloadTemplates = new ReloadTemplatesCommand(Storage);
+        }
+
+        public async Task Initialize(Dispatcher dispatcher)
+        {
+            // read the settings from storage
+            Settings.CopyFrom(await Storage.LoadSettings());
+            if (Settings.SystemIdentifier == Guid.Empty)
+            {
+                // this only occurs when the system hasn't had one allocated
+                // so we can create a new one, then save the settings.
+                // (this will force an empty setting file with the System Identifier if needed)
+                Settings.AllocateNewSystemIdentifier();
+                await Storage.SaveSettings(Settings);
+            }
+
+            // read the room mappings from storage
+            RoomMappings.Clear();
+            foreach (var map in await Storage.LoadRoomMappings())
+                RoomMappings.Add(map);
+
+            // reload any unmatched messages
+            var messages = await Storage.LoadUnprocessableMessages(DisplayingDate);
+            foreach (var item in messages)
+                UnprocessableMessages.Add(item);
+
+            // setup the background worker routines
+            ReadSmsMessage = new BackgroundProcess(Settings, serverStatuses.IncomingSmsReader, dispatcher, async () =>
+            {
+                // Logic to run on this process
+                // (called every settings.interval)
+                StatusBarMessage = $"Last read SMS messages at {DateTime.Now.ToLongTimeString()}";
+                var processor = new MessageProcessing();
+                await processor.CheckForInboundSmsMessages(this);
+                // return System.Threading.Tasks.Task.CompletedTask;
+            });
+
+            ScanAppointments = new BackgroundProcess(Settings, serverStatuses.AppointmentScanner, dispatcher, async () =>
+            {
+                // Logic to run on this process
+                // (called every settings.interval)
+                await MessageProcessing.CheckAppointments(this);
+                // return System.Threading.Tasks.Task.CompletedTask;
+            });
+        }
+
+        private void CreateTestDataForDebug()
         {
 #if DEBUG
             // This is some test data to assist in the UI Designer
@@ -35,7 +94,7 @@ namespace ClinicArrivals
                 LocationName = "Room 2",
                 LocationDescription = "Proceed through the main lobby and its the 2nd door on the right"
             });
-            UnprocessableMessages.Add(new SmsMessage("+61 432 857505", "test") { date= "21-3-2020 12:40pm" });
+            UnprocessableMessages.Add(new SmsMessage("+61 432 857505", "test") { date = "21-3-2020 12:40pm" });
             UnprocessableMessages.Add(new SmsMessage("+61 432 857505", "test 2") { date = "21-3-2020 1:15pm" });
             UnprocessableMessages.Add(new SmsMessage("+61 432 857505", "test 3") { date = "21-3-2020 1:23pm" });
 
@@ -46,13 +105,6 @@ namespace ClinicArrivals
             Templates.Add(new MessageTemplate("UnknownPatient", "Your mobile phone number is not registered with the clinic, please call reception to confirm your details"));
             Templates.Add(new MessageTemplate("DoctorReady", "The doctor is ready for you now. [Room Mapping Notes]"));
 #endif
-            Storage = new ArrivalsFileSystemStorage();
-            Settings.Save = new SaveSettingsCommand(Storage);
-            Settings.Reload = new ReloadSettingsCommand(Storage);
-            SaveRoomMappings = new SaveRoomMappingsCommand(Storage);
-            ReloadRoomMappings = new ReloadRoomMappingsCommand(Storage);
-            SaveTemplates = new SaveTemplatesCommand(Storage);
-            ReloadTemplates = new ReloadTemplatesCommand(Storage);
         }
     }
 }

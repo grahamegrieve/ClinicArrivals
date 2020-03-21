@@ -22,6 +22,7 @@ namespace ClinicArrivals.Models
         public ServerStatuses serverStatuses { get; set; } = new ServerStatuses();
 
         public string DisplayingDate { get; set; }
+
         public ICommand SaveRoomMappings { get; set; }
         public ICommand ReloadRoomMappings { get; set; }
         public ICommand SaveTemplates { get; set; }
