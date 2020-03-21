@@ -1,15 +1,24 @@
-﻿using PropertyChanged;
+﻿using Newtonsoft.Json;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Windows.Input;
 
 namespace ClinicArrivals.Models
 {
     [AddINotifyPropertyChangedInterface]
     public class PmsAppointment
     {
+        [JsonIgnore]
+        public ICommand RebookAppointment { get; set; }
+        [JsonIgnore]
+        public ICommand ArriveAppointment { get; set; }
+        [JsonIgnore]
+        public ICommand StartAppointment { get; set; }
+
         public string PatientFhirID { get; set; }
         public string PatientName { get; set; }
 

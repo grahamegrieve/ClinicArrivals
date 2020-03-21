@@ -86,9 +86,10 @@ namespace ClinicArrivals.Models
             };
             foreach (var entry in bundle.Entry.Select(e => e.Resource as Appointment).Where(e => e != null))
             {
+                PmsAppointment app = null;
                 if (entry.Status == Appointment.AppointmentStatus.Booked)
                 {
-                    PmsAppointment app = await ToPmsAppointment(entry, resolveReference);
+                    app = await ToPmsAppointment(entry, resolveReference);
                     if (app != null && !model.Expecting.Contains(app))
                     {
                         model.Expecting.Add(app);
@@ -96,10 +97,24 @@ namespace ClinicArrivals.Models
                 }
                 if (entry.Status == Appointment.AppointmentStatus.Arrived)
                 {
-                    PmsAppointment app = await ToPmsAppointment(entry, resolveReference);
+                    app = await ToPmsAppointment(entry, resolveReference);
                     if (app != null && !model.Waiting.Contains(app))
                     {
                         model.Waiting.Add(app);
+                    }
+                }
+
+                if (app != null)
+                {
+                    // Check if the practitioner has a mapping already
+                    if (!model.RoomMappings.Any(m => m.PractitionerFhirID == app.PractitionerFhirID))
+                    {
+                        // Add in an empty room mapping
+                        model.RoomMappings.Add(new DoctorRoomLabelMappings()
+                        {
+                            PractitionerFhirID = app.PractitionerFhirID,
+                            PractitionerName = app.PractitionerName
+                        });
                     }
                 }
             }

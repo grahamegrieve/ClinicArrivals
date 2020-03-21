@@ -21,13 +21,11 @@ namespace ClinicArrivals
     /// </summary>
     public partial class MainWindow : Window
     {
-         public MainWindow()
+        public MainWindow()
         {
             InitializeComponent();
-
-         
-
         }
+
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
@@ -36,7 +34,13 @@ namespace ClinicArrivals
             var model = DataContext as Model;
             model.Waiting.Clear();
             model.Expecting.Clear();
-            Dispatcher.Invoke(async ()=> { await MessageProcessing.CheckAppointments(model); });
+            Dispatcher.Invoke(async () =>
+            {
+                // read the settings from storage
+                model.Settings.CopyFrom(await model.Storage.LoadSettings());
+                // check for any appointments
+                await MessageProcessing.CheckAppointments(model);
+            });
         }
 
         private async void buttonSmsOut_Click(object sender, RoutedEventArgs e)

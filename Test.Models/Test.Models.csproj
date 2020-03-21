@@ -66,6 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileSystemStorage.cs" />
     <Compile Include="TwilioTests.cs" />
     <Compile Include="FhirAppointmentHandling.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

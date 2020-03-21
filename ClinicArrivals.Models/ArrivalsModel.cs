@@ -10,19 +10,34 @@ namespace ClinicArrivals.Models
     [AddINotifyPropertyChangedInterface]
     public class ArrivalsModel
     {
+        public ArrivalsModel()
+        {
+
+        }
+
+        public Settings Settings { get; set; } = new Settings();
+
+        public IArrivalsLocalStorage Storage { get; set; }
+
         public ObservableCollection<PmsAppointment> Waiting { get; set; } = new ObservableCollection<PmsAppointment>();
 
         public ObservableCollection<PmsAppointment> Expecting { get; set; } = new ObservableCollection<PmsAppointment>();
 
         public string StatusBarMessage { get; set; }
 
-        // Incoming SMS messages that couldn't be processed
+        /// <summary>
+        /// Incoming SMS messages that couldn't be processed
+        /// </summary>
         public ObservableCollection<SmsMessage> UnprocessableMessages { get; set; } = new ObservableCollection<SmsMessage>();
 
-        // List of templates for each of the differrent message types
+        /// <summary>
+        /// List of templates for each of the different message types
+        /// </summary>
         public ObservableCollection<KeyValuePair<string, string>> Templates { get; set; } = new ObservableCollection<KeyValuePair<string, string>>();
 
-        // Room Labels/Doctor mappings
+        /// <summary>
+        /// Room Labels/Doctor mappings
+        /// </summary>
         public ObservableCollection<DoctorRoomLabelMappings> RoomMappings { get; set; } = new ObservableCollection<DoctorRoomLabelMappings>();
     }
 }

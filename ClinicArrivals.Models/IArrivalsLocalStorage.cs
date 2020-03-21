@@ -26,17 +26,30 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        Task SaveUnprocessableMessage(SmsMessage message);
+        Task SaveUnprocessableMessage(string date, SmsMessage message);
 
         /// <summary>
         /// In the event of a system shutdown, re-reading the unprocessed messages
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<SmsMessage>> LoadUnprocessableMessages();
+        Task<IEnumerable<SmsMessage>> LoadUnprocessableMessages(string date);
 
         // TODO: Not sure if we actually need to store anything in here, maybe the actual message content that was received.
         // Could this go into a note in the Appointment itself as a write-back instead?
-        Task SaveAppointmentStatus(PmsAppointment appt);
-        Task LoadAppointmentStatus(PmsAppointment appt);
+        Task SaveAppointmentStatus(string date, PmsAppointment appt);
+        Task LoadAppointmentStatus(string date, PmsAppointment appt);
+
+        #region << Settings >>
+        Task<Settings> LoadSettings();
+        Task SaveSettings(Settings settings);
+        #endregion
+
+        #region << Storage Maintenance Operations >>
+        /// <summary>
+        /// Cleanup any temporary or historic files
+        /// </summary>
+        /// <returns></returns>
+        Task CleanupHistoricCont();
+        #endregion
     }
 }
