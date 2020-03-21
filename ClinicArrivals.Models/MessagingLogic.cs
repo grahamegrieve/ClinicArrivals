@@ -39,6 +39,11 @@ namespace ClinicArrivals.Models
         public ITemplateProcessor TemplateProcessor { get; set; }
 
         /// <summary>
+        /// Cconnects to the VideoConferencing engine
+        /// </summary>
+        public IVideoConferenceManager videoManager { get; set; }
+
+        /// <summary>
         ///   Logging errors somewhere..
         /// </summary>
         public ILoggingService Logger { get; set; }
