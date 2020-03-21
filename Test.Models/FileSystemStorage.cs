@@ -12,7 +12,7 @@ namespace Test.Models
     [TestClass]
     public class TestFileSystemStorage
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Storage")]
         public void SaveLoadSettings() 
         {
             // delete any pre-existing settings file
@@ -55,7 +55,7 @@ namespace Test.Models
             Directory.Delete(storage.GetFolder(), true);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Storage")]
         public async Task SaveLoadTemplates()
         {
             // delete any pre-existing settings file

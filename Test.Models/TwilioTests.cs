@@ -30,7 +30,7 @@ namespace Test.Models
             Assert.IsTrue(true);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Twilio")]
         public async Task TestFetch()
         {
             SmsProcessor sms = new SmsProcessor();
