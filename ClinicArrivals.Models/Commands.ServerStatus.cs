@@ -25,6 +25,7 @@ namespace ClinicArrivals.Models
 
         private void ServerStatusCommand_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            // This is ok just to fire on any change, as only 1 property changes, and it is the status
             CanExecuteChanged?.Invoke(null, new EventArgs());
         }
 
