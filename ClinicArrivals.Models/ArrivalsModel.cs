@@ -45,6 +45,6 @@ namespace ClinicArrivals.Models
         /// <summary>
         /// Room Labels/Doctor mappings
         /// </summary>
-        public ObservableCollection<DoctorRoomLabelMappings> RoomMappings { get; private set; } = new ObservableCollection<DoctorRoomLabelMappings>();
+        public ObservableCollection<DoctorRoomLabelMapping> RoomMappings { get; private set; } = new ObservableCollection<DoctorRoomLabelMapping>();
     }
 }

@@ -27,7 +27,7 @@ namespace ClinicArrivals.Models
 
         public void Execute(object parameter)
         {
-            if (parameter is IEnumerable<DoctorRoomLabelMappings> mappings)
+            if (parameter is IEnumerable<DoctorRoomLabelMapping> mappings)
             {
                 processing = true;
                 try
@@ -66,7 +66,7 @@ namespace ClinicArrivals.Models
 
         public void Execute(object parameter)
         {
-            if (parameter is ObservableCollection<DoctorRoomLabelMappings> mappings)
+            if (parameter is ObservableCollection<DoctorRoomLabelMapping> mappings)
             {
                 processing = true;
                 try

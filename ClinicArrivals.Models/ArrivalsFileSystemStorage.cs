@@ -61,7 +61,7 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="mappings"></param>
         /// <returns></returns>
-        public Task SaveRoomMappings(IEnumerable<DoctorRoomLabelMappings> mappings)
+        public Task SaveRoomMappings(IEnumerable<DoctorRoomLabelMapping> mappings)
         {
             return SaveFile(null, "room-mappings.json", mappings);
         }
@@ -70,9 +70,9 @@ namespace ClinicArrivals.Models
         /// Load the room mappings from storage
         /// </summary>
         /// <returns></returns>
-        public Task<IEnumerable<DoctorRoomLabelMappings>> LoadRoomMappings()
+        public Task<IEnumerable<DoctorRoomLabelMapping>> LoadRoomMappings()
         {
-            return LoadFile<IEnumerable<DoctorRoomLabelMappings>>(null, "room-mappings.json", new List<DoctorRoomLabelMappings>());
+            return LoadFile<IEnumerable<DoctorRoomLabelMapping>>(null, "room-mappings.json", new List<DoctorRoomLabelMapping>());
         }
 
         /// <summary>

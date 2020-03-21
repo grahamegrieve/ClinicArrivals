@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ClinicArrivals.Models
 {
     [AddINotifyPropertyChangedInterface]
-    public class DoctorRoomLabelMappings
+    public class DoctorRoomLabelMapping
     {
         /// <summary>
         /// FHIR ID of the Practitioner Record

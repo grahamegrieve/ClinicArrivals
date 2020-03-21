@@ -13,13 +13,13 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="mappings"></param>
         /// <returns></returns>
-        Task SaveRoomMappings(IEnumerable<DoctorRoomLabelMappings> mappings);
+        Task SaveRoomMappings(IEnumerable<DoctorRoomLabelMapping> mappings);
 
         /// <summary>
         /// Load the room mappings from storage
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<DoctorRoomLabelMappings>> LoadRoomMappings();
+        Task<IEnumerable<DoctorRoomLabelMapping>> LoadRoomMappings();
 
         /// <summary>
         /// Save the templates to storage
