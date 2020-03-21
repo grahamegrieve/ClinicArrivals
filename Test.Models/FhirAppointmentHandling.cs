@@ -16,14 +16,21 @@ namespace Test.Models
         }
 
         [TestMethod]
-        public async System.Threading.Tasks.Task MarkAppointmentBooked()
+        public async System.Threading.Tasks.Task MarkAppointmentArrived()
         {
-            await new MessageProcessing().ArriveAppointment(null);
-        }
+            ArrivalsModel model = new ArrivalsModel();
 
-        [TestMethod]
-        public void MarkAppointmentArrived()
-        {
+            while( !MessageProcessing.IsRunning() )
+            {
+                System.Threading.Thread.Sleep(500);
+            }
+
+            await MessageProcessing.CheckAppointments(model);
+
+            var e = model.Expecting.GetEnumerator();
+            e.MoveNext();
+            PmsAppointment appt = e.Current ;
+            var result = MessageProcessing.ArriveAppointment(appt);
         }
 
         [TestMethod]
