@@ -21,6 +21,9 @@ namespace ClinicArrivals
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        private System.Threading.Timer poll;
+
          public MainWindow()
         {
             InitializeComponent();
@@ -50,11 +53,43 @@ namespace ClinicArrivals
                 var messages = await model.Storage.LoadUnprocessableMessages(model.DisplayingDate);
 
                 // Start the FHIR server
+                MessageProcessing.OnStarted += MessageProcessing_OnStarted;
+                MessageProcessing.OnStopped += MessageProcessing_OnStopped;
+                MessageProcessing.OnVisitStarted += MessageProcessing_OnVisitStarted;
                 MessageProcessing.StartServer(model.Settings.ExamplesServer);
 
-                // check for any appointments
-                await MessageProcessing.CheckAppointments(model);
+
             });
+        }
+
+        private void MessageProcessing_OnVisitStarted(PmsAppointment appt)
+        {
+            System.Windows.MessageBox.Show("SMS TO " + appt.PatientName, "", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK, MessageBoxOptions.ServiceNotification);
+        }
+
+        private void MessageProcessing_OnStopped()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MessageProcessing_OnStarted()
+        {
+           poll = new System.Threading.Timer((o) =>
+           {
+               try
+               {
+                   Dispatcher.Invoke(async () =>
+                   {
+                       var model = DataContext as Model;
+                       // check for any appointments
+                       await MessageProcessing.CheckAppointments(model);
+                   });
+               }
+               catch
+               {
+
+               }
+           }, null, 0, 5000);
         }
 
         private async void buttonSmsOut_Click(object sender, RoutedEventArgs e)

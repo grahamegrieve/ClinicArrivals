@@ -27,11 +27,6 @@ namespace Test.Models
         {
             ArrivalsModel model = new ArrivalsModel();
 
-            while( !MessageProcessing.IsRunning() )
-            {
-                System.Threading.Thread.Sleep(500);
-            }
-
             await MessageProcessing.CheckAppointments(model);
 
             var e = model.Expecting.GetEnumerator();
