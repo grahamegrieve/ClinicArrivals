@@ -6,9 +6,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 using System.Windows.Input;
+using static Hl7.Fhir.Model.Appointment;
 
 namespace ClinicArrivals.Models
 {
+
+
     [AddINotifyPropertyChangedInterface]
     public class PmsAppointment
     {
@@ -41,9 +44,9 @@ namespace ClinicArrivals.Models
         public string LocationName { get; set; }
 
         public string AppointmentFhirID { get; set; }
-        public string ArrivalStatus { get; set; } 
-        public string AppointmentStartTime { get; set; }
-        public string ArrivalTime { get; set; }
+        public AppointmentStatus ArrivalStatus { get; set; } 
+        public DateTime AppointmentStartTime { get; set; }
+        public DateTime ArrivalTime { get; set; }
 
         public bool ReadyToBeNotifiedToComeInside { get; set; } 
 
