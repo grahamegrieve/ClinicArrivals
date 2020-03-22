@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Test.Models
 {
-    [TestClass]
+    [TestClass, Ignore]
     public class FhirAppointmentHandling
     {
         [TestInitialize]
@@ -15,14 +15,14 @@ namespace Test.Models
             MessageProcessing.StartServer(true);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public async System.Threading.Tasks.Task ReadTodaysAppointments()
         {
             ArrivalsModel model = new ArrivalsModel();
             await MessageProcessing.CheckAppointments(model);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public async System.Threading.Tasks.Task MarkAppointmentArrived()
         {
             ArrivalsModel model = new ArrivalsModel();

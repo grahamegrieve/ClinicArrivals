@@ -37,8 +37,8 @@
     <Reference Include="Common.Logging.Core, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
     </Reference>
-    <Reference Include="FHIR-SERVER, Version=4.0.12.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Oridashi.Hiasobi.4.0.12\lib\net452\FHIR-SERVER.dll</HintPath>
+    <Reference Include="FHIR-SERVER, Version=4.0.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oridashi.Hiasobi.4.0.13\lib\net452\FHIR-SERVER.dll</HintPath>
     </Reference>
     <Reference Include="FirebirdSql.Data.FirebirdClient, Version=6.0.0.0, Culture=neutral, PublicKeyToken=3750abcc3150b00c, processorArchitecture=MSIL">
       <HintPath>..\packages\FirebirdSql.Data.FirebirdClient.6.0.0\lib\net452\FirebirdSql.Data.FirebirdClient.dll</HintPath>
