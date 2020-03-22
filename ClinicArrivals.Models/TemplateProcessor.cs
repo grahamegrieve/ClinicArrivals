@@ -23,18 +23,21 @@ namespace ClinicArrivals.Models
         public string processTemplate(string templateId, PmsAppointment appt, Dictionary<string, string> vars)
         {
             string source = getTemplate(templateId);
-            source = source.Replace("{{Patient.id}}", appt.PatientFhirID); // might be useful internal/debugging
-            source = source.Replace("{{Patient.name}}", appt.PatientName);
-            source = source.Replace("{{Patient.telecom.mobile}}", appt.PatientMobilePhone);
-            source = source.Replace("{{Practitioner.name}}", appt.PractitionerName);
-            source = source.Replace("{{Practitioner.id}}", appt.PractitionerFhirID);
-            source = source.Replace("{{Appointment.id}}", appt.AppointmentFhirID);
-            source = source.Replace("{{Appointment.status}}", appt.ArrivalStatus.ToString());
-            source = source.Replace("{{Appointment.start}}", appt.AppointmentStartTime.ToString());
-            source = source.Replace("{{Appointment.start.date}}", appt.AppointmentStartTime.ToString("d-MMM"));
-            source = source.Replace("{{Appointment.start.time}}", appt.AppointmentStartTime.ToString("hh:mm tt"));
-            source = source.Replace("{{Appointment.arrival}}", appt.ArrivalTime == null ? "??" : appt.ArrivalTime.ToString());
-            source = source.Replace("{{Appointment.id}}", appt.AppointmentFhirID);
+            if (appt != null)
+            {
+                source = source.Replace("{{Patient.id}}", appt.PatientFhirID); // might be useful internal/debugging
+                source = source.Replace("{{Patient.name}}", appt.PatientName);
+                source = source.Replace("{{Patient.telecom.mobile}}", appt.PatientMobilePhone);
+                source = source.Replace("{{Practitioner.name}}", appt.PractitionerName);
+                source = source.Replace("{{Practitioner.id}}", appt.PractitionerFhirID);
+                source = source.Replace("{{Appointment.id}}", appt.AppointmentFhirID);
+                source = source.Replace("{{Appointment.status}}", appt.ArrivalStatus.ToString());
+                source = source.Replace("{{Appointment.start}}", appt.AppointmentStartTime.ToString());
+                source = source.Replace("{{Appointment.start.date}}", appt.AppointmentStartTime.ToString("d-MMM"));
+                source = source.Replace("{{Appointment.start.time}}", appt.AppointmentStartTime.ToString("hh:mm tt"));
+                source = source.Replace("{{Appointment.arrival}}", appt.ArrivalTime == null ? "??" : appt.ArrivalTime.ToString());
+                source = source.Replace("{{Appointment.id}}", appt.AppointmentFhirID);
+            }
             if (vars != null)
             {
                 foreach (var s in vars.Keys)

@@ -10,6 +10,16 @@ namespace ClinicArrivals.Models
     [AddINotifyPropertyChangedInterface]
     public class DoctorRoomLabelMapping
     {
+        public DoctorRoomLabelMapping(string id, string msg)
+        {
+            this.PractitionerFhirID = id;
+            this.LocationName = msg;
+        }
+
+        public DoctorRoomLabelMapping()
+        {
+        }
+
         /// <summary>
         /// FHIR ID of the Practitioner Record
         /// </summary>

@@ -1,11 +1,20 @@
-﻿namespace ClinicArrivals.Models
+﻿using Hl7.Fhir.Model;
+
+namespace ClinicArrivals.Models
 {
     public interface IFhirAppointmentUpdater
     {
-        void MarkAppointmentAsVideoMeeting(PmsAppointment appointment);
+        /// <summary>
+        ///   Fetch the appointment prior to using one of the put methods below
+        /// </summary>
+        /// <param name="id">the id of the resource </param>
+        /// <returns></returns>
+        Appointment fetch(string id);
 
-        void MarkPatientAsArrived(PmsAppointment appointment);
+        void PutAsVideoMeeting(Appointment appointment);
 
-        void AddViedoConferencingUrl(PmsAppointment appointment, string url);
+        void PutStatusArrived(Appointment appointment);
+
+        void PutVideoUrl(Appointment appointment);
     }
 }
