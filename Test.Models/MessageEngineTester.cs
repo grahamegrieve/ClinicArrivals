@@ -17,6 +17,7 @@ namespace Test.Models
     {
         private readonly List<SmsMessage> OutputMsgs = new List<SmsMessage>();
         private readonly List<StorageOp> StorageOps = new List<StorageOp>();
+        private readonly List<FhirUpdateOp> FhirUpdateOps = new List<FhirUpdateOp>();
 
         [TestMethod]
         public void testPreRegistrationMessageSent()
@@ -227,7 +228,9 @@ namespace Test.Models
             sl.Add(appt1pm());
             sl[1].ExternalData.ScreeningMessageSent = true;
             sl[1].ArrivalStatus = AppointmentStatus.Arrived;
+            sl[1].ExternalData.ArrivalStatus = AppointmentStatus.Arrived;
             nl[1].ArrivalStatus = AppointmentStatus.Fulfilled;
+            nl[1].ExternalData.ArrivalStatus = AppointmentStatus.Arrived;
 
             // run it
             engine.ProcessTodaysAppointments(sl, nl);
@@ -238,6 +241,7 @@ namespace Test.Models
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
             Assert.IsTrue(StorageOps[0].Appointment.ArrivalStatus == AppointmentStatus.Fulfilled);
+            Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ArrivalStatus == AppointmentStatus.Fulfilled);
         }
 
         [TestMethod]
@@ -292,6 +296,8 @@ namespace Test.Models
         public void testScreeningResponseYes()
         {
             MessagingEngine engine = makeEngine();
+            var fhirServerUpdater = new MessageLogicFhirUpdaterHandler(this);
+            engine.AppointmentUpdater = fhirServerUpdater;
             engine.TimeNow = new DateTime(2021, 1, 1, 13, 0, 0);
             reset();
             List<PmsAppointment> appts = new List<PmsAppointment>();
@@ -314,6 +320,8 @@ namespace Test.Models
             Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ScreeningMessageSent == true);
             Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ScreeningMessageResponse == true);
             Assert.IsTrue(StorageOps[0].Appointment.IsVideoConsultation == true);
+            Assert.AreEqual("save-video-meeting", FhirUpdateOps[0].type);
+            Assert.IsNotNull(FhirUpdateOps[0].comment);
         }
 
         [TestMethod]
@@ -372,6 +380,8 @@ namespace Test.Models
         public void testArrived()
         {
             MessagingEngine engine = makeEngine();
+            var fhirServerUpdater = new MessageLogicFhirUpdaterHandler(this);
+            engine.AppointmentUpdater = fhirServerUpdater;
             engine.TimeNow = new DateTime(2021, 1, 1, 12, 58, 0);
             reset();
             List<PmsAppointment> appts = new List<PmsAppointment>();
@@ -392,7 +402,11 @@ namespace Test.Models
             Assert.AreEqual("Thanks for letting us know that you're here. We'll let you know as soon as the doctor is ready for you", OutputMsgs[0].message);
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
-            Assert.IsTrue(StorageOps[0].Appointment.ArrivalStatus == AppointmentStatus.Arrived);
+            Assert.AreEqual("save-appt", StorageOps[0].type);
+            Assert.AreEqual(AppointmentStatus.Arrived, StorageOps[0].Appointment.ArrivalStatus);
+            Assert.AreEqual(AppointmentStatus.Arrived, StorageOps[0].Appointment.ExternalData.ArrivalStatus);
+            Assert.AreEqual("save-status", FhirUpdateOps[0].type);
+            Assert.AreEqual(AppointmentStatus.Arrived, FhirUpdateOps[0].status);
         }
 
         [TestMethod]
@@ -451,6 +465,8 @@ namespace Test.Models
         public void testVideoJoined()
         {
             MessagingEngine engine = makeEngine();
+            var fhirServerUpdater = new MessageLogicFhirUpdaterHandler(this);
+            engine.AppointmentUpdater = fhirServerUpdater;
             engine.TimeNow = new DateTime(2021, 1, 1, 12, 58, 0);
             reset();
             List<PmsAppointment> appts = new List<PmsAppointment>();
@@ -474,6 +490,9 @@ namespace Test.Models
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
             Assert.IsTrue(StorageOps[0].Appointment.ArrivalStatus == AppointmentStatus.Arrived);
+            Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ArrivalStatus == AppointmentStatus.Arrived);
+            Assert.AreEqual("save-status", FhirUpdateOps[0].type);
+            Assert.AreEqual(AppointmentStatus.Arrived, FhirUpdateOps[0].status);
         }
 
         [TestMethod]
@@ -637,8 +656,40 @@ namespace Test.Models
             {
                 return false;
             }
+        }
+
+        private class MessageLogicFhirUpdaterHandler : IFhirAppointmentUpdater
+        {
+            private MessageEngineTester owner;
+
+            public MessageLogicFhirUpdaterHandler(MessageEngineTester messageLogicTester)
+            {
+                this.owner = messageLogicTester;
+            }
 
 
+            public void SaveAsVideoMeeting(PmsAppointment appt, string videoLinkComment)
+            {
+                // Get the Appointment based on the appointment having an ID
+                // Hl7.Fhir.Model.Appointment fhirAppt = server.Get(appt.FhirAppointmentID);
+                // fhirAppt.AppointmentType = new CodeableConcept("http://hl7.org/au/fhir/CodeSystem/AppointmentType", "teleconsultation");
+                // fhirAppt.Comment = String.IsNullOrEmpty(fhirAppt.Comment) ?
+                //    videoLinkComment
+                //    : fhirAppt.Comment +
+                //    Environment.NewLine + Environment.NewLine +
+                //    videoLinkComment;
+                owner.FhirUpdateOps.Add(new FhirUpdateOp("save-video-meeting", appt.AppointmentFhirID) { comment = videoLinkComment });
+            }
+
+            public void SaveAppointmentStatusValue(PmsAppointment appt)
+            {
+                // Get the Appointment based on the appointment having an ID 
+                // and update the status value
+                // Hl7.Fhir.Model.Appointment fhirAppt = server.Get(appt.FhirAppointmentID);
+                // fhirAppt.Status = appt.Status;
+                // server.Update(fhirAppt);
+                owner.FhirUpdateOps.Add(new FhirUpdateOp("save-status", appt.AppointmentFhirID) { status = appt.ArrivalStatus });
+            }
         }
 
         private class MessageLogicTesterSmsHandler : ISmsProcessor
@@ -742,6 +793,20 @@ namespace Test.Models
             public PmsAppointment Appointment { get; set; }
             public string type { get; set; }
 
+        }
+
+        private class FhirUpdateOp
+        {
+            public FhirUpdateOp(string type, string FhirAppointmentId)
+            {
+                this.type = type;
+                this.FhirAppointmentId = FhirAppointmentId;
+            }
+
+            public string FhirAppointmentId { get; set; }
+            public string type { get; set; }
+            public AppointmentStatus status;
+            public string comment;
         }
     }
 

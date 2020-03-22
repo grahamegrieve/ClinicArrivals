@@ -39,6 +39,11 @@ namespace ClinicArrivals.Models
     [AddINotifyPropertyChangedInterface]
     public class PmsAppointmentExtendedData
     {
+        /// <summary>
+        /// The status of the appointment when it was last processed
+        /// </summary>
+        public AppointmentStatus ArrivalStatus { get; set; }
+
         // Record of actions we've taken with the Appointment
         public bool PostRegistrationMessageSent { get; set; }
         public bool ScreeningMessageSent { get; set; }

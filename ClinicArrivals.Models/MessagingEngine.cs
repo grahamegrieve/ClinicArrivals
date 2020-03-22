@@ -87,12 +87,13 @@ namespace ClinicArrivals.Models
                     Storage.SaveAppointmentStatus(TimeNow, appt);
                     oldAppt = appt;
                 }
-                if (oldAppt.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
+                if (oldAppt.ExternalData.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
                 {
                     Dictionary<string, string> vars = new Dictionary<string, string>();
                     vars.Add("room", findRoomNote(appt.PractitionerFhirID));
                     SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_APPT_READY, appt, vars));
                     SmsSender.SendMessage(msg);
+                    appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
                     Storage.SaveAppointmentStatus(TimeNow, appt);
                 }
                 else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !oldAppt.ExternalData.ScreeningMessageSent)
@@ -209,12 +210,12 @@ namespace ClinicArrivals.Models
                 // twilio:
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_THX, appt, null));
                 SmsSender.SendMessage(rmsg);
-                // PMS:
-                Appointment ap = AppointmentUpdater.fetch(appt.AppointmentFhirID);
-                ap.Status = AppointmentStatus.Arrived;
-                AppointmentUpdater.PutStatusArrived(ap);
-                // local storage:
                 appt.ArrivalStatus = AppointmentStatus.Arrived;
+
+                // PMS:
+                AppointmentUpdater.SaveAppointmentStatusValue(appt);
+                // local storage:
+                appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
                 Storage.SaveAppointmentStatus(TimeNow, appt);
             }
             else
@@ -235,14 +236,8 @@ namespace ClinicArrivals.Models
                 SmsSender.SendMessage(rmsg);
 
                 // PMS:
-                Appointment ap = AppointmentUpdater.fetch(appt.AppointmentFhirID);
-                ap.AppointmentType = new CodeableConcept("http://hl7.org/au/fhir/CodeSystem/AppointmentType", "teleconsultation");
-                ap.Comment = String.IsNullOrEmpty(ap.Comment) ? 
-                    "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID) 
-                    : ap.Comment + 
-                    Environment.NewLine + Environment.NewLine + 
-                    "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID);
-                AppointmentUpdater.PutAsVideoMeeting(ap);
+                AppointmentUpdater.SaveAsVideoMeeting(appt, "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID));
+
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;
                 appt.IsVideoConsultation = true;
@@ -275,13 +270,12 @@ namespace ClinicArrivals.Models
                 // twilio:
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_ARRIVED_THX, appt, null));
                 SmsSender.SendMessage(rmsg);
+                appt.ArrivalStatus = AppointmentStatus.Arrived;
                 // PMS:
-                Appointment ap = AppointmentUpdater.fetch(appt.AppointmentFhirID);
-                ap.Status = AppointmentStatus.Arrived;
-                AppointmentUpdater.PutStatusArrived(ap);
+                AppointmentUpdater.SaveAppointmentStatusValue(appt);
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;
-                appt.ArrivalStatus = AppointmentStatus.Arrived;
+                appt.ExternalData.ArrivalStatus = AppointmentStatus.Arrived;
                 Storage.SaveAppointmentStatus(TimeNow, appt);
             }
             else
