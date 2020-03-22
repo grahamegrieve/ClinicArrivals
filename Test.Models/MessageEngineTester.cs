@@ -35,7 +35,7 @@ namespace Test.Models
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("save-appt", StorageOps[0].type);
             Assert.AreEqual("1234", StorageOps[0].Appointment.AppointmentFhirID);
-            Assert.IsTrue(StorageOps[0].Appointment.PostRegistrationMessageSent);
+            Assert.IsTrue(StorageOps[0].Appointment.ExternalData.PostRegistrationMessageSent);
         }
 
         [TestMethod]
@@ -112,7 +112,7 @@ namespace Test.Models
             Assert.AreEqual("Please consult the web page http://www.rcpa.org.au/xxx to determine whether you are eligible to meet with the doctor by phone/video. If you are, respond to this message with YES otherwise respond with NO", OutputMsgs[0].message);
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
-            Assert.IsTrue(StorageOps[0].Appointment.ScreeningMessageSent);
+            Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ScreeningMessageSent);
         }
 
         [TestMethod]
@@ -128,7 +128,7 @@ namespace Test.Models
             nl.Add(appt1pm());
             sl.Add(appt10am());
             sl.Add(appt1pm());
-            sl[1].ScreeningMessageSent = true;
+            sl[1].ExternalData.ScreeningMessageSent = true;
             // run it
             engine.ProcessTodaysAppointments(sl, nl);
             // inspect outputs:
@@ -149,7 +149,7 @@ namespace Test.Models
             nl.Add(appt1pm());
             sl.Add(appt10am());
             sl.Add(appt1pm());
-            sl[1].ScreeningMessageSent = true;
+            sl[1].ExternalData.ScreeningMessageSent = true;
             sl[1].IsVideoConsultation = true;
 
             // run it
@@ -172,7 +172,7 @@ namespace Test.Models
             nl.Add(appt1pm());
             sl.Add(appt10am());
             sl.Add(appt1pm());
-            sl[1].ScreeningMessageSent = true;
+            sl[1].ExternalData.ScreeningMessageSent = true;
             nl[1].IsVideoConsultation = true;
 
             // run it
@@ -183,7 +183,7 @@ namespace Test.Models
             Assert.AreEqual("Please start your video call at https://meet.jit.si/:guid:-1002. When you have started it, reply to this message with the word \"joined\"", OutputMsgs[0].message);
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
-            Assert.IsTrue(StorageOps[0].Appointment.VideoInviteSent);
+            Assert.IsTrue(StorageOps[0].Appointment.ExternalData.VideoInviteSent);
         }
 
         // test case generation
@@ -344,7 +344,7 @@ namespace Test.Models
                 throw new NotImplementedException();
             }
 
-            public Task LoadAppointmentStatus(string date, PmsAppointment appt)
+            public Task LoadAppointmentStatus(DateTime date, PmsAppointment appt)
             {
                 throw new NotImplementedException();
             }
@@ -369,7 +369,7 @@ namespace Test.Models
                 throw new NotImplementedException();
             }
 
-            public Task SaveAppointmentStatus(string date, PmsAppointment appt)
+            public Task SaveAppointmentStatus(DateTime date, PmsAppointment appt)
             {
                 owner.StorageOps.Add(new StorageOp("save-appt", appt));
                 return null;

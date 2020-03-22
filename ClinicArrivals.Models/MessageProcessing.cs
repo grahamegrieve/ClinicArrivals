@@ -186,7 +186,7 @@ namespace ClinicArrivals.Models
                     if (ActionForMessage(item.message) == "arrived")
                     {
                         await ArriveAppointment(appt);
-                        appt.LastPatientMessage = item.message;
+                        appt.ExternalData.LastPatientMessage = item.message;
                     }
                 }
                 if (!appts.Any())

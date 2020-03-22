@@ -29,7 +29,7 @@ namespace ClinicArrivals.Models
         public ISmsProcessor SmsSender { get; set; }
 
         /// <summary>
-        ///  Used to update the stored state of a single appointment, after a message has been sent, or to store Sms messages that cannot be understood 
+        ///  Used to update the stored state of a single appointment, after a message has been sent, or to store SMS messages that cannot be understood 
         /// </summary>
         public IArrivalsLocalStorage Storage { get; set; }
 
@@ -44,7 +44,7 @@ namespace ClinicArrivals.Models
         public TemplateProcessor TemplateProcessor { get; set; }
 
         /// <summary>
-        /// Cconnects to the VideoConferencing engine
+        /// Connects to the VideoConferencing engine
         /// </summary>
         public IVideoConferenceManager VideoManager { get; set; }
 
@@ -69,16 +69,16 @@ namespace ClinicArrivals.Models
             // pseudo code
             // for each incoming appointment
             //   is it new?- add it to the stored list
-            //   has the status changed from arrived to fulfilled? - send the invite message if it's not a telehealth consultation
+            //   has the status changed from arrived to fulfilled? - send the invite message if it's not a TeleHealth consultation
             //   if the appointment is within 3 hours, and the screening message hasn't been sent, send it 
-            //   if the appointment is within 10 minutes a telehelth consultation, and the setup message hasn't been sent, send it 
+            //   if the appointment is within 10 minutes a TeleHealth consultation, and the setup message hasn't been sent, send it 
             foreach (var appt in incoming.Where(n => n.PatientMobilePhone != null && IsToday(n.AppointmentStartTime)))
             {
                 var oldAppt = findApp(stored, appt.AppointmentFhirID);
                 if (oldAppt == null)
                 {
                     // we don't do anything new with this; we haven't seen it before but that doesn't really make any difference. We add it to the list, and store it 
-                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    Storage.SaveAppointmentStatus(TimeNow, appt);
                     oldAppt = appt;
                 }
                 if (oldAppt.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
@@ -86,21 +86,21 @@ namespace ClinicArrivals.Models
                     // this is the trigger for sending a please come in message
                     throw new NotImplementedException("Not implemented yet - come in");
                 }
-                else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !oldAppt.ScreeningMessageSent)
+                else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !oldAppt.ExternalData.ScreeningMessageSent)
                 {
                     SmsMessage msg = new SmsMessage(appt.PatientMobilePhone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
                     SmsSender.SendMessage(msg);
-                    appt.ScreeningMessageSent = true;
-                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    appt.ExternalData.ScreeningMessageSent = true;
+                    Storage.SaveAppointmentStatus(TimeNow, appt);
                 }
-                else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, 10) && !oldAppt.VideoInviteSent)
+                else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, 10) && !oldAppt.ExternalData.VideoInviteSent)
                 {
                     Dictionary<string, string> vars = new Dictionary<string, string>();
                     vars.Add("url", VideoManager.getConferenceUrl(appt.AppointmentFhirID));
                     SmsMessage msg = new SmsMessage(appt.PatientMobilePhone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_INVITE, appt, vars));
                     SmsSender.SendMessage(msg);
-                    appt.VideoInviteSent = true;
-                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    appt.ExternalData.VideoInviteSent = true;
+                    Storage.SaveAppointmentStatus(TimeNow, appt);
                 }
             }
         }
@@ -123,8 +123,8 @@ namespace ClinicArrivals.Models
                 { 
                     SmsMessage msg = new SmsMessage(appt.PatientMobilePhone, TemplateProcessor.processTemplate(MessageTemplate.MSG_REGISTRATION, appt, null));
                     SmsSender.SendMessage(msg);
-                    appt.PostRegistrationMessageSent = true;
-                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    appt.ExternalData.PostRegistrationMessageSent = true;
+                    Storage.SaveAppointmentStatus(TimeNow, appt);
                 }
             }
         }
@@ -133,14 +133,14 @@ namespace ClinicArrivals.Models
         /// This method is called every X seconds to process any incoming SMS appointments
         /// </summary>
         /// <param name="stored">The view of the appointments we already had (important, because it remembers what messages we already sent)</param>
-        /// <param name="incoming">Sms Messages received since last poll</param>
+        /// <param name="incoming">SMS Messages received since last poll</param>
         public void ProcessIncomingMessages(List<PmsAppointment> stored, List<SmsMessage> incoming)
         {
             // pseudo code 
             // find the candidate appointments for this mobile phone 
             // if there aren't any - return the 'please call reception message', and drop this message
             // if there's more than one, pick one
-            // ok, now we have appointment and message
+            // OK, now we have appointment and message
             // if we sent an invitation for a video conference 
             //   process as a response to the invitation
             // else if we are expecting them to arrive 
