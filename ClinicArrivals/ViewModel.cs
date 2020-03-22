@@ -18,6 +18,8 @@ namespace ClinicArrivals
         public BackgroundProcess ScanAppointments;
         public SimulationSmsProcessor smsProcessor { get; set; } = new SimulationSmsProcessor();
 
+        private NLogAdapter logger = new NLogAdapter();
+
         public ViewModel()
         {
             CreateTestDataForDebug();
