@@ -236,7 +236,7 @@ namespace ClinicArrivals.Models
                 SmsSender.SendMessage(rmsg);
 
                 // PMS:
-                AppointmentUpdater.SaveAsVideoMeeting(appt, "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID));
+                AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID));
 
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;
