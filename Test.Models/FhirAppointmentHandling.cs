@@ -19,25 +19,7 @@ namespace Test.Models
         public async System.Threading.Tasks.Task ReadTodaysAppointments()
         {
             ArrivalsModel model = new ArrivalsModel();
-            await MessageProcessing.CheckAppointments(model);
-        }
-
-        [TestMethod, Ignore]
-        public async System.Threading.Tasks.Task MarkAppointmentArrived()
-        {
-            ArrivalsModel model = new ArrivalsModel();
-
-            await MessageProcessing.CheckAppointments(model);
-
-            var e = model.Expecting.GetEnumerator();
-            e.MoveNext();
-            PmsAppointment appt = e.Current ;
-            var result = MessageProcessing.ArriveAppointment(appt);
-        }
-
-        [TestMethod]
-        public void MarkAppointmentStarted()
-        {
+            var appts = await MessageProcessing.SearchAppointments(model.DisplayingDate, model.RoomMappings, model.Storage);
         }
     }
 }

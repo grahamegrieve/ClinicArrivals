@@ -10,6 +10,7 @@ namespace ClinicArrivals.Models
 {
     public class MessageProcessing
     {
+        #region << Oridashi Server Configuration and Management >>
         public delegate void StartedServer();
         public delegate void StoppedServer();
         public delegate void VisitStarted(PmsAppointment appt);
@@ -51,8 +52,9 @@ namespace ClinicArrivals.Models
         {
             OnStarted?.Invoke();
         }
+        #endregion
 
-        private static FhirClient GetServerConnection()
+        public static FhirClient GetServerConnection()
         {
             if (server?.IsRunning == true)
             {
@@ -64,16 +66,10 @@ namespace ClinicArrivals.Models
             return null;
         }
 
-
         private static void Client_OnBeforeRequest(object sender, BeforeRequestEventArgs e)
         {
             if (server?.IsRunning == true)
                 e.RawRequest.Headers.Add(System.Net.HttpRequestHeader.Authorization, server.Token);
-        }
-
-        ISmsProcessor GetSmsProcessor()
-        {
-            return new TestSmsProcessor();
         }
 
         /// <summary>
@@ -82,17 +78,16 @@ namespace ClinicArrivals.Models
         /// (not a flush and add in again - as this will lose data)
         /// </summary>
         /// <param name="model"></param>
-        public static async System.Threading.Tasks.Task CheckAppointments(ArrivalsModel model)
+        public static async System.Threading.Tasks.Task<List<PmsAppointment>> SearchAppointments(DateTime date, IList<DoctorRoomLabelMapping> roomMappings, IArrivalsLocalStorage storage)
         {
-            var oldexptecting = model.Expecting.ToList();
-            var oldwaiting = model.Waiting.ToList();
+            List<PmsAppointment> results = new List<PmsAppointment>();
 
             var server = GetServerConnection();
             if (server == null)
-                return;
+                return null;
 
             var criteria = new SearchParams();
-            criteria.Add("date", model.DisplayingDate);
+            criteria.Add("date", date.Date.ToString("yyyy-MM-dd"));
             criteria.Include.Add("Appointment:actor");
             var bundle = await server.SearchAsync<Appointment>(criteria);
 
@@ -114,103 +109,35 @@ namespace ClinicArrivals.Models
                 return resource;
             };
 
-
             foreach (var entry in bundle.Entry.Select(e => e.Resource as Appointment).Where(e => e != null))
             {
-                PmsAppointment app = null;
-                if (entry.Status == Appointment.AppointmentStatus.Booked)
+                PmsAppointment appt = null;
+                if (entry.Status == Appointment.AppointmentStatus.Booked 
+                    || entry.Status == Appointment.AppointmentStatus.Arrived
+                    || entry.Status == Appointment.AppointmentStatus.Fulfilled)
                 {
-                    app = await ToPmsAppointment(entry, resolveReference);
-                    if (app != null && !model.Expecting.Contains(app))
+                    appt = await ToPmsAppointment(entry, resolveReference);
+                    if (appt != null)
                     {
-                        model.Expecting.Add(app);
-                    }
-                }
-                if (entry.Status == Appointment.AppointmentStatus.Arrived)
-                {
-                    app = await ToPmsAppointment(entry, resolveReference);
-                    if (app != null && !model.Waiting.Contains(app))
-                    {
-                        model.Waiting.Add(app);
-                    }
-                }
-                if(entry.Status == Appointment.AppointmentStatus.Fulfilled)
-                {
-                    if(oldwaiting.Select(x => x.AppointmentFhirID).Contains(entry.Id))
-                    {
-                        app = await ToPmsAppointment(entry, resolveReference);
-                        OnVisitStarted?.BeginInvoke(app, null, null);
-                    }
-                }
+                        results.Add(appt);
 
-                if (app != null)
-                {
-                    // Check if the practitioner has a mapping already
-                    if (!model.RoomMappings.Any(m => m.PractitionerFhirID == app.PractitionerFhirID))
-                    {
-                        // Add in an empty room mapping
-                        model.RoomMappings.Add(new DoctorRoomLabelMapping()
+                        // Check if the practitioner has a mapping already
+                        if (!roomMappings.Any(m => m.PractitionerFhirID == appt.PractitionerFhirID))
                         {
-                            PractitionerFhirID = app.PractitionerFhirID,
-                            PractitionerName = app.PractitionerName
-                        });
+                            // Add in an empty room mapping
+                            roomMappings.Add(new DoctorRoomLabelMapping()
+                            {
+                                PractitionerFhirID = appt.PractitionerFhirID,
+                                PractitionerName = appt.PractitionerName
+                            });
+                        }
+
+                        // And read in the extended content from storage
+                        await storage.LoadAppointmentStatus(date, appt);
                     }
                 }
             }
-
-            // finished processing all the items, so remove any that are left
-            foreach (var item in oldexptecting)
-                model.Expecting.Remove(item);
-            foreach (var item in oldwaiting)
-                model.Waiting.Remove(item);
-        }
-
-        public string StandardiseMobileNumber(string mobile)
-        {
-            // Simply clear the values
-            return mobile?.Replace(" ", "");
-        }
-
-        public async System.Threading.Tasks.Task CheckForInboundSmsMessages(ArrivalsModel model)
-        {
-            ISmsProcessor sms = GetSmsProcessor();
-            // sms.Initialize();
-            // TODO: Thread this into the background, but report errors back to the status screen
-            // TODO: If this needs paging or something, repeat this call till its complete, or similar
-            var messages = await sms.ReceiveMessages();
-            foreach (var item in messages)
-            {
-                var appts = MatchPatient(model, item.phone);
-                foreach (var appt in appts)
-                {
-                    if (ActionForMessage(item.message) == "arrived")
-                    {
-                        await ArriveAppointment(appt);
-                        appt.ExternalData.LastPatientMessage = item.message;
-                    }
-                }
-                if (!appts.Any())
-                {
-                    item.date = DateTimeOffset.Now.ToString();
-                    model.UnprocessableMessages.Add(item);
-                }
-            }
-        }
-
-        public string ActionForMessage(string message)
-        {
-            string cleansedMessage = message?.ToLower()?.Trim();
-            if (cleansedMessage == "arrived")
-                return "arrived";
-            return "unknown";
-        }
-
-        public IEnumerable<PmsAppointment> MatchPatient(ArrivalsModel model, string mobile)
-        {
-            if (String.IsNullOrEmpty(StandardiseMobileNumber(mobile)))
-                return null;
-            return model.Expecting.Where(a => StandardiseMobileNumber(a.PatientMobilePhone) == StandardiseMobileNumber(mobile))
-                .Union(model.Waiting.Where(a => StandardiseMobileNumber(a.PatientMobilePhone) == StandardiseMobileNumber(mobile)));
+            return results;
         }
 
         private static async System.Threading.Tasks.Task<PmsAppointment> ToPmsAppointment(Appointment entry, Func<ResourceReference, System.Threading.Tasks.Task<Resource>> resolveReference)
@@ -239,31 +166,5 @@ namespace ClinicArrivals.Models
 
             return appt;
         }
-
-        // Check for incoming messages
-
-        // Handle arrived message
-        public async static System.Threading.Tasks.Task ArriveAppointment(PmsAppointment appt)
-        {
-            var server = GetServerConnection();
-            if (server == null)
-                return;
-
-            Appointment appointment = await server.ReadAsync<Appointment>($"{server}/Appointment/{appt.AppointmentFhirID}");
-            if (appointment.Status != Appointment.AppointmentStatus.Arrived)
-            {
-                appointment.Status = Appointment.AppointmentStatus.Arrived; // this means they've arrived (happy that they stay out there)
-                server.Update(appointment);
-            }
-
-            //appointment.Status = Appointment.AppointmentStatus.Booked; // not turned up yet
-            //appointment.Status = Appointment.AppointmentStatus.Arrived; // this means they've arrived (happy that they stay out there)
-            //appointment.Status = Appointment.AppointmentStatus.Fulfilled; // seeing the practitioner
-            //appointment.Status = Appointment.AppointmentStatus.Cancelled; // duh
-        }
-
-        // Handle 
     }
-
-
 }
