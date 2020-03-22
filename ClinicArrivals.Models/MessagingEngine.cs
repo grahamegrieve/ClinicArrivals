@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hl7.Fhir.Model;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -16,7 +17,9 @@ namespace ClinicArrivals.Models
     ///     * every 5 minutes, processing the appointments for the next 3 days 
     ///     * every X seconds, processing incoming SMS messages
     ///     
-    ///     
+    ///   Note: this class coordinates 3 different storages: twilio, the PMS, and it's own internal local storage 
+    ///         actions are often a commit to 2 or 3 of those storages. There's no way to do a transction, so 
+    ///         we assume that the likelihood of failure is twilio > PMS > local storage - so we do changes in that order
     /// </summary>
     public class MessagingEngine
     {
@@ -37,7 +40,7 @@ namespace ClinicArrivals.Models
         /// <summary>
         /// Provides the services to update the state of the Appointment on the PMS
         /// </summary>
-        public IFhirAppointmentUpdater AppointmentUpdateer { get; set; }
+        public IFhirAppointmentUpdater AppointmentUpdater { get; set; }
 
         /// <summary>
         /// Provides template processing services to turn a template + variables into ready to go text
@@ -203,11 +206,16 @@ namespace ClinicArrivals.Models
         {
             if (messageMatches(msg.message, "joined", "ok"))
             {
+                // twilio:
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_THX, appt, null));
                 SmsSender.SendMessage(rmsg);
+                // PMS:
+                Appointment ap = AppointmentUpdater.fetch(appt.AppointmentFhirID);
+                ap.Status = AppointmentStatus.Arrived;
+                AppointmentUpdater.PutStatusArrived(ap);
+                // local storage:
                 appt.ArrivalStatus = AppointmentStatus.Arrived;
                 Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
-                // TODO: we also have to get the FHIR update to happen... how? 
             }
             else
             {
@@ -222,12 +230,23 @@ namespace ClinicArrivals.Models
             // of course they might respond with anything else that we can't understand, so we'll explain apologetically if they do
             if (messageMatches(msg.message, "yes"))
             {
+                // twilio: 
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_YES, appt, null));
                 SmsSender.SendMessage(rmsg);
+
+                // PMS:
+                Appointment ap = AppointmentUpdater.fetch(appt.AppointmentFhirID);
+                ap.AppointmentType = new CodeableConcept("http://hl7.org/au/fhir/CodeSystem/AppointmentType", "teleconsultation");
+                ap.Comment = String.IsNullOrEmpty(ap.Comment) ? 
+                    "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID) 
+                    : ap.Comment + 
+                    Environment.NewLine + Environment.NewLine + 
+                    "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID);
+                AppointmentUpdater.PutAsVideoMeeting(ap);
+                // local storage
                 appt.ScreeningMessageResponse = true;
                 appt.IsVideoConsultation = true;
                 Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
-                // TODO: we also have to get the FHIR update to happen... how? 
             }
             else if (messageMatches(msg.message, "no"))
             {
@@ -253,12 +272,17 @@ namespace ClinicArrivals.Models
         {
             if (messageMatches(msg.message, "arrived", "here"))
             {
+                // twilio:
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_ARRIVED_THX, appt, null));
                 SmsSender.SendMessage(rmsg);
+                // PMS:
+                Appointment ap = AppointmentUpdater.fetch(appt.AppointmentFhirID);
+                ap.Status = AppointmentStatus.Arrived;
+                AppointmentUpdater.PutStatusArrived(ap);
+                // local storage
                 appt.ScreeningMessageResponse = true;
                 appt.ArrivalStatus = AppointmentStatus.Arrived;
                 Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
-                // TODO: we also have to get the FHIR update to happen... how? 
             }
             else
             {

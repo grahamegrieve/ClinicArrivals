@@ -102,7 +102,7 @@ namespace ClinicArrivals
             Templates.Add(new MessageTemplate(MessageTemplate.MSG_REGISTRATION, "Thank you making an appointment to see Dr X. [X] hours before the appointment, we will send you an SMS asking with you meet the criteria documented at http://www.rcpa.org.au/xxx, to decide whether you will talk to the doctor by telephone video, or physically come to the clinic. Please respond to this message to confirm you have seen it (or your appointment will be canceled"));
             Templates.Add(new MessageTemplate(MessageTemplate.MSG_CANCELLATION)); // no message means no sending
             Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING, "Please consult the web page http://www.rcpa.org.au/xxx to determine whether you are eligable to meet with the doctor by phone/video. If you are, respond to this message with YES otherwise respond with NO")); // no message means no sending
-            Templates.Add(new MessageTemplate(MessageTemplate.MSG_PREAPP, "Due to the COVID-19 Pandemic, this clinic has closed it's waiting room. Please wait in your car, and SMS \"arrived\" to [phone number]"));
+            Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING_NO, "Due to the COVID-19 Pandemic, this clinic has closed it's waiting room. Please wait in your car, and SMS \"arrived\" to [phone number]"));
             Templates.Add(new MessageTemplate(MessageTemplate.MSG_UNKNOWN_PH, "Your mobile phone number is not registered with the clinic, please call reception to confirm your details"));
             Templates.Add(new MessageTemplate(MessageTemplate.MSG_APPT_READY, "The doctor is ready for you now. [Room Mapping Notes]"));
 #endif
