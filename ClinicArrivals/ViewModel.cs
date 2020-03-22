@@ -108,7 +108,7 @@ namespace ClinicArrivals
                 // (called every settings.interval)
                 var engine = PrepareMessagingEngine();
                 List<PmsAppointment> appts = await MessageProcessing.SearchAppointments(this.DisplayingDate, RoomMappings, Storage);
-                engine.ProcessTodaysAppointments(appts, appts);
+                engine.ProcessTodaysAppointments(appts);
 
                 // Now update the UI once we've processed it all
                 Expecting.Clear();

@@ -71,7 +71,7 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="stored">The view of the appointments we already had (important, because it remembers what messages we already sent)</param>
         /// <param name="incoming">The current information from the PMS</param>
-        public void ProcessTodaysAppointments(List<PmsAppointment> stored, List<PmsAppointment> incoming)
+        public void ProcessTodaysAppointments(List<PmsAppointment> appointments)
         {
             // pseudo code
             // for each incoming appointment
@@ -79,18 +79,11 @@ namespace ClinicArrivals.Models
             //   has the status changed from arrived to fulfilled? - send the invite message if it's not a TeleHealth consultation
             //   if the appointment is within 3 hours, and the screening message hasn't been sent, send it 
             //   if the appointment is within 10 minutes a TeleHealth consultation, and the setup message hasn't been sent, send it 
-            foreach (var appt in incoming.Where(n => n.PatientMobilePhone != null && IsToday(n.AppointmentStartTime)))
+            foreach (var appt in appointments.Where(n => n.PatientMobilePhone != null && IsToday(n.AppointmentStartTime)))
             {
                 try
                 {
-                    var oldAppt = findApp(stored, appt.AppointmentFhirID);
-                    if (oldAppt == null)
-                    {
-                        // we don't do anything new with this; we haven't seen it before but that doesn't really make any difference. We add it to the list, and store it 
-                        Storage.SaveAppointmentStatus(TimeNow, appt);
-                        oldAppt = appt;
-                    }
-                    if (oldAppt.ExternalData.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
+                    if (appt.ExternalData.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
                     {
                         Dictionary<string, string> vars = new Dictionary<string, string>();
                         vars.Add("room", findRoomNote(appt.PractitionerFhirID));
@@ -100,7 +93,7 @@ namespace ClinicArrivals.Models
                         appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
                         Storage.SaveAppointmentStatus(TimeNow, appt);
                     }
-                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !oldAppt.ExternalData.ScreeningMessageSent)
+                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !appt.ExternalData.ScreeningMessageSent)
                     {
                         SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
                         SmsSender.SendMessage(msg);
@@ -108,7 +101,7 @@ namespace ClinicArrivals.Models
                         appt.ExternalData.ScreeningMessageSent = true;
                         Storage.SaveAppointmentStatus(TimeNow, appt);
                     }
-                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, 10) && !oldAppt.ExternalData.VideoInviteSent)
+                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, 10) && !appt.ExternalData.VideoInviteSent)
                     {
                         Dictionary<string, string> vars = new Dictionary<string, string>();
                         vars.Add("url", VideoManager.getConferenceUrl(appt.AppointmentFhirID));
@@ -143,16 +136,16 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="stored">The view of the appointments we already had (important, because it remembers what messages we already sent)</param>
         /// <param name="incoming">The current information from the PMS</param>
-        public void ProcessUpcomingAppointments(List<PmsAppointment> stored, List<PmsAppointment> incoming)
+        public void ProcessUpcomingAppointments(List<PmsAppointment> appointments)
         {
             // pseudo code
             // for each incoming appointment
             //   is it new - send the pre-registration message, and add it to stored
-            foreach (var appt in incoming.Where(n => n.PatientMobilePhone != null && IsNearFuture(n.AppointmentStartTime))) // we only send these messages 2-3 days in the future
+            foreach (var appt in appointments.Where(n => n.PatientMobilePhone != null && IsNearFuture(n.AppointmentStartTime))) // we only send these messages 2-3 days in the future
             {
                 try
                 {
-                    if (findApp(stored, appt.AppointmentFhirID) == null)
+                    if (!appt.ExternalData.PostRegistrationMessageSent)
                     {
                         SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_REGISTRATION, appt, null));
                         SmsSender.SendMessage(msg);

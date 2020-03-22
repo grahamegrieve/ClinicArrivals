@@ -26,11 +26,11 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 9, 0, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
             // set it up:
-            nl.Add(tomorrowsAppointment());
+            appts.Add(tomorrowsAppointment());
             // run it
-            engine.ProcessUpcomingAppointments(new List<PmsAppointment>(), nl);
+            engine.ProcessUpcomingAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(1, OutputMsgs.Count);
             Assert.AreEqual("+0411012345", OutputMsgs[0].phone);
@@ -47,12 +47,10 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 9, 0, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
-            List<PmsAppointment> sl = new List<PmsAppointment>();
-            nl.Add(tomorrowsAppointment());
-            sl.Add(tomorrowsAppointment());
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            appts.Add(tomorrowsAppointment());
             // run it
-            engine.ProcessUpcomingAppointments(sl, nl);
+            engine.ProcessUpcomingAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(0, OutputMsgs.Count);
             Assert.AreEqual(0, StorageOps.Count);
@@ -64,11 +62,11 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 9, 0, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
             // set it up:
-            nl.Add(appt10am());
+            appts.Add(appt10am());
             // run it
-            engine.ProcessUpcomingAppointments(new List<PmsAppointment>(), nl);
+            engine.ProcessUpcomingAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(0, OutputMsgs.Count);
             Assert.AreEqual(0, StorageOps.Count);
@@ -80,15 +78,12 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 10, 55, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
-            List<PmsAppointment> sl = new List<PmsAppointment>();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
             // set it up:
-            nl.Add(appt10am());
-            nl.Add(appt2pm());
-            sl.Add(appt10am());
-            sl.Add(appt2pm());
+            appts.Add(appt10am());
+            appts.Add(appt2pm());
             // run it
-            engine.ProcessTodaysAppointments(sl, nl);
+            engine.ProcessTodaysAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(0, OutputMsgs.Count);
             Assert.AreEqual(0, StorageOps.Count);
@@ -100,15 +95,12 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 10, 55, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
-            List<PmsAppointment> sl = new List<PmsAppointment>();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
             // set it up:
-            nl.Add(appt10am());
-            nl.Add(appt1pm());
-            sl.Add(appt10am());
-            sl.Add(appt1pm());
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
             // run it
-            engine.ProcessTodaysAppointments(sl, nl);
+            engine.ProcessTodaysAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(1, OutputMsgs.Count);
             Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
@@ -124,16 +116,13 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 10, 56, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
-            List<PmsAppointment> sl = new List<PmsAppointment>();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
             // set it up:
-            nl.Add(appt10am());
-            nl.Add(appt1pm());
-            sl.Add(appt10am());
-            sl.Add(appt1pm());
-            sl[1].ExternalData.ScreeningMessageSent = true;
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ExternalData.ScreeningMessageSent = true;
             // run it
-            engine.ProcessTodaysAppointments(sl, nl);
+            engine.ProcessTodaysAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(0, OutputMsgs.Count);
             Assert.AreEqual(0, StorageOps.Count);
@@ -145,18 +134,15 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 12, 45, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
-            List<PmsAppointment> sl = new List<PmsAppointment>();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
             // set it up:
-            nl.Add(appt10am());
-            nl.Add(appt1pm());
-            sl.Add(appt10am());
-            sl.Add(appt1pm());
-            sl[1].ExternalData.ScreeningMessageSent = true;
-            sl[1].IsVideoConsultation = true;
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].IsVideoConsultation = true;
 
             // run it
-            engine.ProcessTodaysAppointments(sl, nl);
+            engine.ProcessTodaysAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(0, OutputMsgs.Count);
             Assert.AreEqual(0, StorageOps.Count);
@@ -168,18 +154,15 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 12, 51, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
-            List<PmsAppointment> sl = new List<PmsAppointment>();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
             // set it up:
-            nl.Add(appt10am());
-            nl.Add(appt1pm());
-            sl.Add(appt10am());
-            sl.Add(appt1pm());
-            sl[1].ExternalData.ScreeningMessageSent = true;
-            nl[1].IsVideoConsultation = true;
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].IsVideoConsultation = true;
 
             // run it
-            engine.ProcessTodaysAppointments(sl, nl);
+            engine.ProcessTodaysAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(1, OutputMsgs.Count);
             Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
@@ -195,19 +178,16 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 12, 51, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
-            List<PmsAppointment> sl = new List<PmsAppointment>();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
             // set it up:
-            nl.Add(appt10am());
-            nl.Add(appt1pm());
-            sl.Add(appt10am());
-            sl.Add(appt1pm());
-            sl[1].ExternalData.ScreeningMessageSent = true;
-            sl[1].ExternalData.VideoInviteSent = true;
-            nl[1].IsVideoConsultation = true;
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].ExternalData.VideoInviteSent = true;
+            appts[1].IsVideoConsultation = true;
 
             // run it
-            engine.ProcessTodaysAppointments(sl, nl);
+            engine.ProcessTodaysAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(0, OutputMsgs.Count);
             Assert.AreEqual(0, StorageOps.Count);
@@ -220,21 +200,18 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 13, 1, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
-            List<PmsAppointment> sl = new List<PmsAppointment>();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
             // set it up:
-            nl.Add(appt10am());
-            nl.Add(appt1pm());
-            sl.Add(appt10am());
-            sl.Add(appt1pm());
-            sl[1].ExternalData.ScreeningMessageSent = true;
-            sl[1].ArrivalStatus = AppointmentStatus.Arrived;
-            sl[1].ExternalData.ArrivalStatus = AppointmentStatus.Arrived;
-            nl[1].ArrivalStatus = AppointmentStatus.Fulfilled;
-            nl[1].ExternalData.ArrivalStatus = AppointmentStatus.Arrived;
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].ArrivalStatus = AppointmentStatus.Arrived;
+            appts[1].ExternalData.ArrivalStatus = AppointmentStatus.Arrived;
+            appts[1].ArrivalStatus = AppointmentStatus.Fulfilled;
+            appts[1].ExternalData.ArrivalStatus = AppointmentStatus.Arrived;
 
             // run it
-            engine.ProcessTodaysAppointments(sl, nl);
+            engine.ProcessTodaysAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(1, OutputMsgs.Count);
             Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
@@ -251,20 +228,17 @@ namespace Test.Models
             MessagingEngine engine = makeEngine();
             engine.TimeNow = new DateTime(2021, 1, 1, 13, 2, 0);
             reset();
-            List<PmsAppointment> nl = new List<PmsAppointment>();
-            List<PmsAppointment> sl = new List<PmsAppointment>();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
             // set it up:
-            nl.Add(appt10am());
-            nl.Add(appt1pm());
-            sl.Add(appt10am());
-            sl.Add(appt1pm());
-            sl[1].ExternalData.ScreeningMessageSent = true;
-            sl[1].ExternalData.ScreeningMessageSent = true;
-            sl[1].ArrivalStatus = AppointmentStatus.Fulfilled;
-            nl[1].ArrivalStatus = AppointmentStatus.Fulfilled;
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].ArrivalStatus = AppointmentStatus.Fulfilled;
+            appts[1].ArrivalStatus = AppointmentStatus.Fulfilled;
 
             // run it
-            engine.ProcessTodaysAppointments(sl, nl);
+            engine.ProcessTodaysAppointments(appts);
             // inspect outputs:
             Assert.AreEqual(0, OutputMsgs.Count);
             Assert.AreEqual(0, StorageOps.Count);
