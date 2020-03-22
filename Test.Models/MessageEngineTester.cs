@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -596,6 +597,7 @@ namespace Test.Models
             engine.TemplateProcessor.Initialise(testSettings());
             engine.VideoManager = new MessageLogicTesterVideoHandler(this);
             engine.RoomMappings = new System.Collections.ObjectModel.ObservableCollection<DoctorRoomLabelMapping>();
+            engine.Logger = new MessageLogicTesterLogger();
             loadRoomMappings(engine.RoomMappings);
             loadTestTemplates(engine.TemplateProcessor);
             return engine;
@@ -628,6 +630,15 @@ namespace Test.Models
         {
             OutputMsgs.Clear();
             StorageOps.Clear();
+        }
+
+
+        private class MessageLogicTesterLogger : ILoggingService
+        {
+            public void Log(int level, string msg)
+            {
+                Debug.WriteLine(msg);
+            }
         }
 
         private class MessageLogicTesterVideoHandler : IVideoConferenceManager

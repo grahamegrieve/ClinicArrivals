@@ -16,7 +16,7 @@
 * these are configured to be sent to https://clinics.healthintersections.com.au/twilio. The web hook includes the AccountSid - messages are filed under the account
 * clients also query https://clinics.healthintersections.com.au/twilio and pass their account id as a parameter. the server returns all messages with a matching account id 
 * most messages passing through the sms proxy will consist of one word answers: yes | no | joined | arrived (or variants) 
-* the server itself is open source (see git.com/GrahameGrieve/FhirServer). It doesn't log messages or retain them more than a day after they have been processed.
+* the server itself is open source (see https://github.com/GrahameGrieve/FhirServer). It doesn't log messages or retain them more than a day after they have been processed.
 * it's possible to run the server elsewhere, or replace it with another server that has the same interface 
 
 ## Video Calls
