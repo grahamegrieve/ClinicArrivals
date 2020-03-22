@@ -1,6 +1,7 @@
 ﻿using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using System;
+using System.Linq;
 
 namespace ClinicArrivals.Models
 {
@@ -22,12 +23,19 @@ namespace ClinicArrivals.Models
         {
             // Get the Appointment based on the appointment having an ID
             var fhirServer = GetFhirClient();
-            Hl7.Fhir.Model.Appointment fhirAppt = fhirServer.Read<Appointment>(appt.AppointmentFhirID);
-            fhirAppt.AppointmentType = new CodeableConcept("http://hl7.org/au/fhir/CodeSystem/AppointmentType", "teleconsultation");
-            fhirAppt.Comment = String.IsNullOrEmpty(fhirAppt.Comment) ?
-               videoLinkComment
-               : fhirAppt.Comment + Environment.NewLine + Environment.NewLine + videoLinkComment;
-            fhirServer.Update(fhirAppt);
+            Hl7.Fhir.Model.Appointment fhirAppt = fhirServer.Read<Appointment>($"{fhirServer.Endpoint}Appointment/{appt.AppointmentFhirID}");
+
+            CodeableConcept teleHealth = new CodeableConcept("http://hl7.org/au/fhir/CodeSystem/AppointmentType", "teleconsultation");
+            if (fhirAppt.AppointmentType.Coding.FirstOrDefault()?.System != teleHealth.Coding[0].System
+                || fhirAppt.AppointmentType.Coding.FirstOrDefault()?.Code != teleHealth.Coding[0].Code
+                || !fhirAppt.Comment.Contains(videoLinkComment))
+            {
+                fhirAppt.AppointmentType = teleHealth;
+                fhirAppt.Comment = String.IsNullOrEmpty(fhirAppt.Comment) ?
+                   videoLinkComment
+                   : fhirAppt.Comment + Environment.NewLine + Environment.NewLine + videoLinkComment;
+                fhirServer.Update(fhirAppt);
+            }
         }
 
         /// <summary>
@@ -40,9 +48,13 @@ namespace ClinicArrivals.Models
             // Get the Appointment based on the appointment having an ID 
             // and update the status value
             var fhirServer = GetFhirClient();
-            Hl7.Fhir.Model.Appointment fhirAppt = fhirServer.Read<Appointment>(appt.AppointmentFhirID);
-            fhirAppt.Status = appt.ArrivalStatus;
-            fhirServer.Update(fhirAppt);
+            Hl7.Fhir.Model.Appointment fhirAppt = fhirServer.Read<Appointment>($"{fhirServer.Endpoint}Appointment/{appt.AppointmentFhirID}");
+            if (fhirAppt.Status != appt.ArrivalStatus)
+            {
+                // Don't save it if hasn't changed
+                fhirAppt.Status = appt.ArrivalStatus;
+                fhirServer.Update(fhirAppt);
+            }
         }
     }
 }
