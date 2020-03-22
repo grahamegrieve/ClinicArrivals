@@ -38,6 +38,8 @@ namespace ClinicArrivals.Models
 
         public ObservableCollection<PmsAppointment> Expecting { get; private set; } = new ObservableCollection<PmsAppointment>();
 
+        public ObservableCollection<PmsAppointment> Appointments { get; private set; } = new ObservableCollection<PmsAppointment>();
+
         /// <summary>
         /// Incoming SMS messages that couldn't be processed
         /// </summary>

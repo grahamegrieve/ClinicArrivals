@@ -12,7 +12,7 @@ namespace ClinicArrivals
 {
     public class ViewModel : ArrivalsModel
     {
-        public string Text { get { return System.IO.File.ReadAllText("about.md"); }  }
+        public string Text { get { return System.IO.File.ReadAllText("about.md"); } }
 
         public BackgroundProcess ReadSmsMessage;
         public BackgroundProcess ScanAppointments;
@@ -36,6 +36,26 @@ namespace ClinicArrivals
             // Simulator for the SMS message processor
             smsProcessor.ClearMessages = new SimulateProcessorCommand(smsProcessor);
             smsProcessor.QueueIncomingMessage = new SimulateProcessorCommand(smsProcessor);
+        }
+
+        private MessagingEngine PrepareMessagingEngine()
+        {
+            MessagingEngine engine = new MessagingEngine();
+            engine.Initialise(Settings);
+            engine.Logger = logger;
+            engine.Storage = Storage;
+            engine.RoomMappings = RoomMappings;
+            engine.TemplateProcessor = new TemplateProcessor();
+            engine.TemplateProcessor.Initialise(Settings);
+            engine.TemplateProcessor.Templates = Templates;
+            engine.AppointmentUpdater = new FhirAppointmentUpdater(MessageProcessing.GetServerConnection);
+            engine.VideoManager = new VideoConferenceManager();
+            engine.VideoManager.Initialize(Settings);
+            // if (!string.IsNullOrEmpty(Settings.DeveloperPhoneNumber))
+            engine.SmsSender = smsProcessor;
+            // engine.SmsSender = new TwilioSmsProcessor();
+            engine.TimeNow = DateTime.Now;
+            return engine;
         }
 
         public async Task Initialize(Dispatcher dispatcher)
@@ -67,18 +87,36 @@ namespace ClinicArrivals
                 // Logic to run on this process
                 // (called every settings.interval)
                 StatusBarMessage = $"Last read SMS messages at {DateTime.Now.ToLongTimeString()}";
-                var processor = new MessageProcessing();
-                await processor.CheckForInboundSmsMessages(this);
-                // return System.Threading.Tasks.Task.CompletedTask;
+                var engine = PrepareMessagingEngine();
+                List<PmsAppointment> appts = new List<PmsAppointment>();
+                appts.AddRange(Appointments);
+                var messagesReceived = await engine.SmsSender.ReceiveMessages();
+                engine.ProcessIncomingMessages(appts, messagesReceived);
             });
 
             ScanAppointments = new BackgroundProcess(Settings, serverStatuses.AppointmentScanner, dispatcher, async () =>
             {
                 // Logic to run on this process
                 // (called every settings.interval)
-                await MessageProcessing.CheckAppointments(this);
-                // return System.Threading.Tasks.Task.CompletedTask;
+                var engine = PrepareMessagingEngine();
+                List<PmsAppointment> appts = await MessageProcessing.SearchAppointments(this.DisplayingDate, RoomMappings, Storage);
+                engine.ProcessTodaysAppointments(appts, appts);
+
+                // Now update the UI once we've processed it all
+                Expecting.Clear();
+                Waiting.Clear();
+                Appointments.Clear();
+                foreach (var appt in appts)
+                {
+                    Appointments.Add(appt);
+                    if (appt.ArrivalStatus == Hl7.Fhir.Model.Appointment.AppointmentStatus.Booked)
+                        Expecting.Add(appt);
+                    else if (appt.ArrivalStatus == Hl7.Fhir.Model.Appointment.AppointmentStatus.Arrived)
+                        Waiting.Add(appt);
+                }
             });
+
+            // TODO: Include the Upcoming Appointments handling
         }
 
         private void CreateTestDataForDebug()
