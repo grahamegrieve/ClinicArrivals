@@ -11,10 +11,20 @@ namespace ClinicArrivals.Models
         public const string MSG_REGISTRATION = "Registration";
         public const string MSG_CANCELLATION = "Cancellation";
         public const string MSG_SCREENING = "ConsiderTeleHealth";
+        public const string MSG_SCREENING_YES = "ScreeningYesToVideo";
+        public const string MSG_SCREENING_NO = "ScreeningNoToVideo";
+        public const string MSG_DONT_UNDERSTAND_SCREENING = "ScreeningDontUnderstand";
+        public const string MSG_ARRIVED_THX = "ArrivedThanks";
+        public const string MSG_DONT_UNDERSTAND_ARRIVING = "ArrivingDontUnderstand";
         public const string MSG_PREAPP = "PreApppointment";
-        public const string MSG_UNKNOWN_PAT = "UnknownPatient";
+        public const string MSG_UNKNOWN_PH = "UnknownPhone";
         public const string MSG_APPT_READY = "DoctorReady";
         public const string MSG_VIDEO_INVITE = "VideoInvite";
+        public const string MSG_UNEXPECTED = "Unexpected";
+        public const string MSG_VIDEO_THX = "VideoThanks";
+        public const string MSG_DONT_UNDERSTAND_VIDEO = "VideoDontUnderstand";
+        public const string MSG_TOO_MANY_APPOINTMENTS = "TooManyAppointments";
+
 
         public MessageTemplate(string type, string template = null)
         {

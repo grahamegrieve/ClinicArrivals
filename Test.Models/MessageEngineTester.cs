@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -108,7 +109,7 @@ namespace Test.Models
             engine.ProcessTodaysAppointments(sl, nl);
             // inspect outputs:
             Assert.AreEqual(1, OutputMsgs.Count);
-            Assert.AreEqual("+0411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
             Assert.AreEqual("Please consult the web page http://www.rcpa.org.au/xxx to determine whether you are eligible to meet with the doctor by phone/video. If you are, respond to this message with YES otherwise respond with NO", OutputMsgs[0].message);
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
@@ -179,14 +180,331 @@ namespace Test.Models
             engine.ProcessTodaysAppointments(sl, nl);
             // inspect outputs:
             Assert.AreEqual(1, OutputMsgs.Count);
-            Assert.AreEqual("+0411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
             Assert.AreEqual("Please start your video call at https://meet.jit.si/:guid:-1002. When you have started it, reply to this message with the word \"joined\"", OutputMsgs[0].message);
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
             Assert.IsTrue(StorageOps[0].Appointment.VideoInviteSent);
         }
 
-        // test case generation
+        [TestMethod]
+        public void testVideoInviteDone()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 12, 51, 0);
+            reset();
+            List<PmsAppointment> nl = new List<PmsAppointment>();
+            List<PmsAppointment> sl = new List<PmsAppointment>();
+            // set it up:
+            nl.Add(appt10am());
+            nl.Add(appt1pm());
+            sl.Add(appt10am());
+            sl.Add(appt1pm());
+            sl[1].ScreeningMessageSent = true;
+            sl[1].VideoInviteSent = true;
+            nl[1].IsVideoConsultation = true;
+
+            // run it
+            engine.ProcessTodaysAppointments(sl, nl);
+            // inspect outputs:
+            Assert.AreEqual(0, OutputMsgs.Count);
+            Assert.AreEqual(0, StorageOps.Count);
+        }
+
+
+        [TestMethod]
+        public void testVideoApptReady()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 13, 1, 0);
+            reset();
+            List<PmsAppointment> nl = new List<PmsAppointment>();
+            List<PmsAppointment> sl = new List<PmsAppointment>();
+            // set it up:
+            nl.Add(appt10am());
+            nl.Add(appt1pm());
+            sl.Add(appt10am());
+            sl.Add(appt1pm());
+            sl[1].ScreeningMessageSent = true;
+            sl[1].ArrivalStatus = AppointmentStatus.Arrived;
+            nl[1].ArrivalStatus = AppointmentStatus.Fulfilled;
+
+            // run it
+            engine.ProcessTodaysAppointments(sl, nl);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("The doctor is ready to see you now. Please go to room 7.", OutputMsgs[0].message);
+            Assert.AreEqual(1, StorageOps.Count);
+            Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
+            Assert.IsTrue(StorageOps[0].Appointment.ArrivalStatus == AppointmentStatus.Fulfilled);
+        }
+
+        [TestMethod]
+        public void testVideoApptReadyDone()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 13, 2, 0);
+            reset();
+            List<PmsAppointment> nl = new List<PmsAppointment>();
+            List<PmsAppointment> sl = new List<PmsAppointment>();
+            // set it up:
+            nl.Add(appt10am());
+            nl.Add(appt1pm());
+            sl.Add(appt10am());
+            sl.Add(appt1pm());
+            sl[1].ScreeningMessageSent = true;
+            sl[1].ScreeningMessageSent = true;
+            sl[1].ArrivalStatus = AppointmentStatus.Fulfilled;
+            nl[1].ArrivalStatus = AppointmentStatus.Fulfilled;
+
+            // run it
+            engine.ProcessTodaysAppointments(sl, nl);
+            // inspect outputs:
+            Assert.AreEqual(0, OutputMsgs.Count);
+            Assert.AreEqual(0, StorageOps.Count);
+        }
+
+        [TestMethod]
+        public void testIncomingUnkPhone()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 13, 0, 0);
+            reset();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            List<SmsMessage> msgs = new List<SmsMessage>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+
+            msgs.Add(new SmsMessage("+61411012346", "Arrived"));
+
+            // run it
+            engine.ProcessIncomingMessages(appts, msgs);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012346", OutputMsgs[0].phone);
+            Assert.AreEqual("This phone number is not associated with an appointment to see the doctor today. Please phone {num} for help", OutputMsgs[0].message);
+            Assert.AreEqual(0, StorageOps.Count);
+        }
+
+        [TestMethod]
+        public void testScreeningResponseYes()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 13, 0, 0);
+            reset();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            List<SmsMessage> msgs = new List<SmsMessage>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ScreeningMessageSent = true;
+
+            msgs.Add(new SmsMessage("+61411012345", "Yes"));
+
+            // run it
+            engine.ProcessIncomingMessages(appts, msgs);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("Thank you. Do not come to the doctor's clinic. You will get an SMS message containing the URL for your video meeting a few minutes before your appointment. You can join from any computer or smartphone", OutputMsgs[0].message);
+            Assert.AreEqual(1, StorageOps.Count);
+            Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
+            Assert.IsTrue(StorageOps[0].Appointment.ScreeningMessageSent == true);
+            Assert.IsTrue(StorageOps[0].Appointment.ScreeningMessageResponse == true);
+            Assert.IsTrue(StorageOps[0].Appointment.IsVideoConsultation == true);
+        }
+
+        [TestMethod]
+        public void testScreeningResponseNo()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 13, 0, 0);
+            reset();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            List<SmsMessage> msgs = new List<SmsMessage>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ScreeningMessageSent = true;
+
+            msgs.Add(new SmsMessage("+61411012345", "NO!"));
+
+            // run it
+            engine.ProcessIncomingMessages(appts, msgs);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("Thank you. When you arrive at the clinic, stay in your car (or outside) and reply \"arrived\" to this message", OutputMsgs[0].message);
+            Assert.AreEqual(1, StorageOps.Count);
+            Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
+            Assert.IsTrue(StorageOps[0].Appointment.ScreeningMessageSent == true);
+            Assert.IsTrue(StorageOps[0].Appointment.ScreeningMessageResponse == true);
+            Assert.IsTrue(StorageOps[0].Appointment.IsVideoConsultation == false);
+        }
+
+        [TestMethod]
+        public void testScreeningResponseDuh()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 13, 0, 0);
+            reset();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            List<SmsMessage> msgs = new List<SmsMessage>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ScreeningMessageSent = true;
+
+            msgs.Add(new SmsMessage("+61411012345", "what?!"));
+
+            // run it
+            engine.ProcessIncomingMessages(appts, msgs);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("The robot processing this message is stupid, and didn't understand your response. Please answer yes or no, or phone {num} for help", OutputMsgs[0].message);
+            Assert.AreEqual(0, StorageOps.Count);
+        }
+
+        [TestMethod]
+        public void testArrived()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 12, 58, 0);
+            reset();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            List<SmsMessage> msgs = new List<SmsMessage>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ScreeningMessageSent = true;
+            appts[1].ScreeningMessageResponse = true;
+
+            msgs.Add(new SmsMessage("+61411012345", "ARRIVED"));
+
+            // run it
+            engine.ProcessIncomingMessages(appts, msgs);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("Thanks for letting us know that you're here. We'll let you know as soon as the doctor is ready for you", OutputMsgs[0].message);
+            Assert.AreEqual(1, StorageOps.Count);
+            Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
+            Assert.IsTrue(StorageOps[0].Appointment.ArrivalStatus == AppointmentStatus.Arrived);
+        }
+
+        [TestMethod]
+        public void testArrivedDuh()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 12, 58, 0);
+            reset();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            List<SmsMessage> msgs = new List<SmsMessage>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ScreeningMessageSent = true;
+            appts[1].ScreeningMessageResponse = true;
+
+            msgs.Add(new SmsMessage("+61411012345", "I'm here"));
+
+            // run it
+            engine.ProcessIncomingMessages(appts, msgs);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("The robot processing this message is stupid, and didn't understand your response. Please just say \"arrived\", or phone {num} for help", OutputMsgs[0].message);
+            Assert.AreEqual(0, StorageOps.Count);
+        }
+
+
+        [TestMethod]
+        public void testUnexpected()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 12, 58, 0);
+            reset();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            List<SmsMessage> msgs = new List<SmsMessage>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ScreeningMessageSent = true;
+            appts[1].ScreeningMessageResponse = true;
+            appts[1].ArrivalStatus = AppointmentStatus.Fulfilled;
+
+            msgs.Add(new SmsMessage("+61411012345", "Arrived"));
+
+            // run it
+            engine.ProcessIncomingMessages(appts, msgs);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("Patient Test Patient #2 has an appointment with Dr Adam Ant at 01:00 PM on 1-Jan, but this robot is not expecting a message right now", OutputMsgs[0].message);
+            Assert.AreEqual(0, StorageOps.Count);
+        }
+
+        [TestMethod]
+        public void testVideoJoined()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 12, 58, 0);
+            reset();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            List<SmsMessage> msgs = new List<SmsMessage>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ScreeningMessageSent = true;
+            appts[1].ScreeningMessageResponse = true;
+            appts[1].IsVideoConsultation = true;
+            appts[1].VideoInviteSent = true;
+
+            msgs.Add(new SmsMessage("+61411012345", "Joined"));
+
+            // run it
+            engine.ProcessIncomingMessages(appts, msgs);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("Thank you. The Doctor will join you as soon as possible", OutputMsgs[0].message);
+            Assert.AreEqual(1, StorageOps.Count);
+            Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
+            Assert.IsTrue(StorageOps[0].Appointment.ArrivalStatus == AppointmentStatus.Arrived);
+        }
+
+        [TestMethod]
+        public void testVideoJoinedDuh()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 12, 58, 0);
+            reset();
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            List<SmsMessage> msgs = new List<SmsMessage>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            appts[1].ScreeningMessageSent = true;
+            appts[1].ScreeningMessageResponse = true;
+            appts[1].IsVideoConsultation = true;
+            appts[1].VideoInviteSent = true;
+
+            msgs.Add(new SmsMessage("+61411012345", "ok ready"));
+
+            // run it
+            engine.ProcessIncomingMessages(appts, msgs);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("The robot processing this message is stupid, and didn't understand your response. Please just say \"joined\" when you have joined the video call", OutputMsgs[0].message);
+            Assert.AreEqual(0, StorageOps.Count);
+        }
+
+        // test case generation ----------------------------------------------------------
+
         private PmsAppointment tomorrowsAppointment()
         {
             PmsAppointment app = new PmsAppointment();
@@ -206,7 +524,7 @@ namespace Test.Models
             PmsAppointment app = new PmsAppointment();
             app.PatientFhirID = Guid.NewGuid().ToString();
             app.PatientName = "Test Patient #1";
-            app.PatientMobilePhone = "+0411012345";
+            app.PatientMobilePhone = "+0411012346";
             app.PractitionerName = "Dr Adam Ant";
             app.PractitionerFhirID = "p123";
             app.AppointmentFhirID = "1000";
@@ -220,7 +538,7 @@ namespace Test.Models
             PmsAppointment app = new PmsAppointment();
             app.PatientFhirID = Guid.NewGuid().ToString();
             app.PatientName = "Test Patient #2";
-            app.PatientMobilePhone = "+0411012345";
+            app.PatientMobilePhone = "0411012345";
             app.PractitionerName = "Dr Adam Ant";
             app.PractitionerFhirID = "p123";
             app.AppointmentFhirID = "1002";
@@ -258,8 +576,15 @@ namespace Test.Models
             engine.TemplateProcessor = new TemplateProcessor();
             engine.TemplateProcessor.Initialise(testSettings());
             engine.VideoManager = new MessageLogicTesterVideoHandler(this);
+            engine.RoomMappings = new System.Collections.ObjectModel.ObservableCollection<DoctorRoomLabelMapping>();
+            loadRoomMappings(engine.RoomMappings);
             loadTestTemplates(engine.TemplateProcessor);
             return engine;
+        }
+
+        private void loadRoomMappings(ObservableCollection<DoctorRoomLabelMapping> roomMappings)
+        {
+            roomMappings.Add(new DoctorRoomLabelMapping("p123", "Please go to room 7."));
         }
 
         private void loadTestTemplates(TemplateProcessor tp)
@@ -267,7 +592,17 @@ namespace Test.Models
             tp.Templates = new System.Collections.ObjectModel.ObservableCollection<MessageTemplate>();
             tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_REGISTRATION, "Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. 3 hours prior to the appointment, you will be sent a COVID-19 screening check to decide whether you should do a video consultation rather than seeing the doctor in person"));
             tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING, "Please consult the web page http://www.rcpa.org.au/xxx to determine whether you are eligible to meet with the doctor by phone/video. If you are, respond to this message with YES otherwise respond with NO"));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING_YES, "Thank you. Do not come to the doctor's clinic. You will get an SMS message containing the URL for your video meeting a few minutes before your appointment. You can join from any computer or smartphone"));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING_NO, "Thank you. When you arrive at the clinic, stay in your car (or outside) and reply \"arrived\" to this message"));
             tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_VIDEO_INVITE, "Please start your video call at {{url}}. When you have started it, reply to this message with the word \"joined\""));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_APPT_READY, "The doctor is ready to see you now. {{room}}"));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_UNKNOWN_PH, "This phone number is not associated with an appointment to see the doctor today. Please phone {num} for help"));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_SCREENING, "The robot processing this message is stupid, and didn't understand your response. Please answer yes or no, or phone {num} for help"));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_ARRIVED_THX, "Thanks for letting us know that you're here. We'll let you know as soon as the doctor is ready for you"));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_ARRIVING, "The robot processing this message is stupid, and didn't understand your response. Please just say \"arrived\", or phone {num} for help"));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_UNEXPECTED, "Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}, but this robot is not expecting a message right now"));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_VIDEO_THX, "Thank you. The Doctor will join you as soon as possible"));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_VIDEO, "The robot processing this message is stupid, and didn't understand your response. Please just say \"joined\" when you have joined the video call"));
         }
 
         private void reset()

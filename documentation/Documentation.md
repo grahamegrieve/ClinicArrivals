@@ -1,6 +1,6 @@
 # ClinicArrivals Documentation
  
-This program is writtent to fit into an exsiting GP clinic workflow
+This program is written to fit into an existing GP clinic workflow
 to help a GP manage their workflow during the COVID-19 crisis. 
 
 There are 2 main purposes of the application: 
@@ -17,5 +17,6 @@ Documentation:
 * [Setting up the SMS phone # using Twilio](Twilio.md)
 * [Program Settings](Settings.md)
 * [Managing SMS templates](Templates.md)
+* [Security Notes](Security.md)
 * [Jitsi Integration details]{Jitsi.md}
 * [Technical Specifications for the PMS integration](FHIRDocumentation.md)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,6 +54,8 @@ namespace ClinicArrivals.Models
         /// </summary>
         public ILoggingService Logger { get; set; }
 
+        public ObservableCollection<DoctorRoomLabelMapping> RoomMappings { get; set; }
+
         // Call this before using the 
         public void Initialise(Settings settings)
         {
@@ -83,12 +86,15 @@ namespace ClinicArrivals.Models
                 }
                 if (oldAppt.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
                 {
-                    // this is the trigger for sending a please come in message
-                    throw new NotImplementedException("Not implemented yet - come in");
+                    Dictionary<string, string> vars = new Dictionary<string, string>();
+                    vars.Add("room", findRoomNote(appt.PractitionerFhirID));
+                    SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_APPT_READY, appt, vars));
+                    SmsSender.SendMessage(msg);
+                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
                 }
                 else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !oldAppt.ScreeningMessageSent)
                 {
-                    SmsMessage msg = new SmsMessage(appt.PatientMobilePhone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
+                    SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
                     SmsSender.SendMessage(msg);
                     appt.ScreeningMessageSent = true;
                     Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
@@ -97,7 +103,7 @@ namespace ClinicArrivals.Models
                 {
                     Dictionary<string, string> vars = new Dictionary<string, string>();
                     vars.Add("url", VideoManager.getConferenceUrl(appt.AppointmentFhirID));
-                    SmsMessage msg = new SmsMessage(appt.PatientMobilePhone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_INVITE, appt, vars));
+                    SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_INVITE, appt, vars));
                     SmsSender.SendMessage(msg);
                     appt.VideoInviteSent = true;
                     Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
@@ -121,7 +127,7 @@ namespace ClinicArrivals.Models
             {
                 if (findApp(stored, appt.AppointmentFhirID) == null) 
                 { 
-                    SmsMessage msg = new SmsMessage(appt.PatientMobilePhone, TemplateProcessor.processTemplate(MessageTemplate.MSG_REGISTRATION, appt, null));
+                    SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_REGISTRATION, appt, null));
                     SmsSender.SendMessage(msg);
                     appt.PostRegistrationMessageSent = true;
                     Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
@@ -134,21 +140,248 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="stored">The view of the appointments we already had (important, because it remembers what messages we already sent)</param>
         /// <param name="incoming">Sms Messages received since last poll</param>
-        public void ProcessIncomingMessages(List<PmsAppointment> stored, List<SmsMessage> incoming)
+        public void ProcessIncomingMessages(List<PmsAppointment> appts, List<SmsMessage> incoming)
         {
-            // pseudo code 
-            // find the candidate appointments for this mobile phone 
-            // if there aren't any - return the 'please call reception message', and drop this message
-            // if there's more than one, pick one
-            // ok, now we have appointment and message
-            // if we sent an invitation for a video conference 
-            //   process as a response to the invitation
-            // else if we are expecting them to arrive 
-            //   process as an arrival messages
-            // else if we are expecting a response to the screening
-            //   process as a response to the screening
-            // else
-            //   we are not expecting a response - send message explaining that 
+            foreach (var msg in incoming)
+            {
+                // pseudo code 
+                // find the candidate appointments for this mobile phone 
+                // if there aren't any - return the 'please call reception message', and drop this message
+                // if there's more than one, pick one
+                // ok, now we have appointment and message
+                // if we sent an invitation for a video conference 
+                //   process as a response to the invitation
+                // else if we are expecting a response to the screening
+                //   process as a response to the screening
+                // else if we are expecting them to arrive 
+                //   process as an arrival messages
+                // else
+                //   we are not expecting a response - send message explaining that 
+                List<PmsAppointment> candidates = findCandidateAppointments(appts, msg.phone);
+                if (candidates.Count == 0)
+                {
+                    handleUnknownMessage(msg);
+                }
+                else
+                {
+                    PmsAppointment appt = candidates.Count == 1 ? candidates[0] : chooseRelevantAppointment(candidates, msg);
+                    if (appt == null)
+                    {
+                        processUnexpectedResponse(candidates[0], msg);
+                    }
+                    else if (appt.VideoInviteSent)
+                    {
+                        processVideoInviteResponse(appt, msg);
+                    }
+                    else if (appt.ScreeningMessageSent && !appt.ScreeningMessageResponse)
+                    {
+                        processScreeningResponse(appt, msg);
+                    }
+                    else if (appt.ArrivalStatus == AppointmentStatus.Booked)
+                    {
+                        processArrivalMessage(appt, msg);
+                    } 
+                    else
+                    {
+                        processUnexpectedResponse(appt, msg);
+                    }
+
+                }
+            }
+               
+        }
+
+        private void handleUnknownMessage(SmsMessage msg)
+        {
+            // a future possible enhancement is to ask the user which patient the appointment is for; this will smooth the work flow, but the response 
+            // processing might be complicated. can it be just a medicare number and date? 
+            SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_UNKNOWN_PH, null, null));
+            SmsSender.SendMessage(rmsg);
+        }
+
+        private void processVideoInviteResponse(PmsAppointment appt, SmsMessage msg)
+        {
+            if (messageMatches(msg.message, "joined", "ok"))
+            {
+                SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_THX, appt, null));
+                SmsSender.SendMessage(rmsg);
+                appt.ArrivalStatus = AppointmentStatus.Arrived;
+                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                // TODO: we also have to get the FHIR update to happen... how? 
+            }
+            else
+            {
+                // we haven't understood it 
+                SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_VIDEO, appt, null));
+                SmsSender.SendMessage(rmsg);
+            }
+        }
+        private void processScreeningResponse(PmsAppointment appt, SmsMessage msg)
+        {
+            // the patient should respond with "yes" or "no" but they may not bother and just respond with "arrived"
+            // of course they might respond with anything else that we can't understand, so we'll explain apologetically if they do
+            if (messageMatches(msg.message, "yes"))
+            {
+                SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_YES, appt, null));
+                SmsSender.SendMessage(rmsg);
+                appt.ScreeningMessageResponse = true;
+                appt.IsVideoConsultation = true;
+                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                // TODO: we also have to get the FHIR update to happen... how? 
+            }
+            else if (messageMatches(msg.message, "no"))
+            {
+                SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_NO, appt, null));
+                SmsSender.SendMessage(rmsg);
+                appt.ScreeningMessageResponse = true;
+                appt.IsVideoConsultation = false;
+                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+            }
+            else if (messageMatches(msg.message, "arrived", "here"))
+            {
+                processArrivalMessage(appt, msg);
+            }
+            else
+            {
+                // we haven't understood it 
+                SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_SCREENING, appt, null));
+                SmsSender.SendMessage(rmsg);
+            }
+        }
+
+        private void processArrivalMessage(PmsAppointment appt, SmsMessage msg)
+        {
+            if (messageMatches(msg.message, "arrived", "here"))
+            {
+                SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_ARRIVED_THX, appt, null));
+                SmsSender.SendMessage(rmsg);
+                appt.ScreeningMessageResponse = true;
+                appt.ArrivalStatus = AppointmentStatus.Arrived;
+                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                // TODO: we also have to get the FHIR update to happen... how? 
+            }
+            else
+            {
+                // we haven't understood it 
+                SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_ARRIVING, appt, null));
+                SmsSender.SendMessage(rmsg);
+            }
+        }
+
+        private void processUnexpectedResponse(PmsAppointment appt, SmsMessage msg)
+        {
+            SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_UNEXPECTED, appt, null));
+            SmsSender.SendMessage(rmsg);
+        }
+
+        private PmsAppointment chooseRelevantAppointment(List<PmsAppointment> candidates, SmsMessage msg)
+        {
+            if (candidates.Count > 2)
+            {
+                SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_TOO_MANY_APPOINTMENTS, candidates[0], null));
+                SmsSender.SendMessage(rmsg);
+            }
+            else
+            {
+                // pseudo code: 
+                // if the two appointments are at the same time, we only care about the first one
+                // otherwise, in principle we are interested in the first one, unless the message response belongs to an earlier cycle ("yes" / "no") and we're waiting for that
+                var appt1 = candidates[0].ArrivalTime < candidates[1].ArrivalTime ? candidates[0] : candidates[1];
+                var appt2 = candidates[0].ArrivalTime < candidates[1].ArrivalTime ? candidates[1] : candidates[0];
+                if (messageMatches(msg.message, "yes", "no"))
+                {
+                    foreach (var appt in candidates)
+                    {
+                        if (appt.ScreeningMessageSent && !appt.ScreeningMessageResponse)
+                        {
+                            return appt;
+                        }
+                    }
+                    return null;
+                }
+                else if (messageMatches(msg.message, "joined"))
+                {
+                    foreach (var appt in candidates)
+                    {
+                        if (appt.VideoInviteSent)
+                        {
+                            return appt;
+                        }
+                    }
+                    return null;
+                }
+                else if (messageMatches(msg.message, "arrived"))
+                {
+                    foreach (var appt in candidates)
+                    {
+                        if (appt.ArrivalStatus == AppointmentStatus.Booked)
+                        {
+                            return appt;
+                        }
+                    }
+                    return null;
+                }
+                else
+                {
+                    SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_TOO_MANY_APPOINTMENTS, candidates[0], null));
+                    SmsSender.SendMessage(rmsg);
+                }
+            }
+            return null;
+        }
+
+        private List<PmsAppointment> findCandidateAppointments(List<PmsAppointment> appts, string phone)
+        {
+            List<PmsAppointment> list = new List<PmsAppointment>();
+            foreach (var appt in appts)
+            {
+                if (isSamePhone(appt.PatientMobilePhone, phone))
+                {
+                    list.Add(appt);
+                }
+            }
+            return list;
+        }
+
+        private bool messageMatches(string msg, params string[] values)
+        {
+            foreach (string s in values) {
+                if (messageTextMatches(msg, s))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool messageTextMatches(string msg, string value)
+        {
+            msg = msg.ToLower();
+            StringBuilder m = new StringBuilder();
+            foreach (char ch in msg)
+            {
+                if (Char.IsLetterOrDigit(ch))
+                {
+                    m.Append(ch);
+                }
+            }
+            return m.ToString() == value;
+        }
+
+        private bool isSamePhone(string p1, string p2)
+        {
+            p1 = normalisePhoneNumber(p1);
+            p2 = normalisePhoneNumber(p2);
+            return p1 == p2;
+        }
+
+        private string normalisePhoneNumber(string p1)
+        {
+            p1 = p1.Replace(" ", "");
+            if (p1.StartsWith("04")) {
+                p1 = "+614" + p1.Substring(2);
+            }
+            return p1;
         }
 
         private Boolean IsInTimeWindow(DateTime start, int minutes)
@@ -156,13 +389,27 @@ namespace ClinicArrivals.Models
             DateTime endWindow = TimeNow.AddMinutes(minutes);
             return TimeNow <= start && endWindow > start;
         }
+
         private Boolean IsToday(DateTime start)
         {
             return TimeNow.Date == start.Date;
         }
+
         private Boolean IsNearFuture(DateTime start)
         {
             return TimeNow.Date < start.Date;
+        }
+
+        private String findRoomNote(string practId)
+        {
+            foreach (var rm in RoomMappings)
+            {
+                if (rm.PractitionerFhirID == practId)
+                {
+                    return rm.LocationName;
+                }
+            }
+            return "";
         }
 
         private PmsAppointment findApp(List<PmsAppointment> appointments, string id)
@@ -176,5 +423,6 @@ namespace ClinicArrivals.Models
             }
             return null;
         }
+
     }
 }

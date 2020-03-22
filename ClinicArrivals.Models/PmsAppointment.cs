@@ -30,6 +30,7 @@ namespace ClinicArrivals.Models
         // Record of actions we've taken with the Appointment
         public bool PostRegistrationMessageSent { get; set; }
         public bool ScreeningMessageSent { get; set; }
+        public bool ScreeningMessageResponse { get; set; }
         public bool VideoInviteSent { get; set; }
 
         // Other stuff - slated for removal? (or at least, review)
