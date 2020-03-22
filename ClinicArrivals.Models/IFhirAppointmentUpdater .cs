@@ -10,7 +10,7 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="appointment"></param>
         /// <param name="videoLinkComment"></param>
-        void SaveAsVideoMeeting(PmsAppointment appointment, string videoLinkComment);
+        void SaveAppointmentAsVideoMeeting(PmsAppointment appointment, string videoLinkComment);
 
         /// <summary>
         /// This will retrieve the FHIR appointment from the server, 

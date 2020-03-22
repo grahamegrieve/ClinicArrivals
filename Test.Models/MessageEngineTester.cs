@@ -668,7 +668,7 @@ namespace Test.Models
             }
 
 
-            public void SaveAsVideoMeeting(PmsAppointment appt, string videoLinkComment)
+            public void SaveAppointmentAsVideoMeeting(PmsAppointment appt, string videoLinkComment)
             {
                 // Get the Appointment based on the appointment having an ID
                 // Hl7.Fhir.Model.Appointment fhirAppt = server.Get(appt.FhirAppointmentID);
