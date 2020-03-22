@@ -16,6 +16,7 @@ namespace ClinicArrivals
 
         public BackgroundProcess ReadSmsMessage;
         public BackgroundProcess ScanAppointments;
+        public SimulationSmsProcessor smsProcessor { get; set; } = new SimulationSmsProcessor();
 
         public ViewModel()
         {
@@ -29,6 +30,10 @@ namespace ClinicArrivals
             ReloadRoomMappings = new ReloadRoomMappingsCommand(Storage);
             SaveTemplates = new SaveTemplatesCommand(Storage);
             ReloadTemplates = new ReloadTemplatesCommand(Storage);
+
+            // Simulator for the SMS message processor
+            smsProcessor.ClearMessages = new SimulateProcessorCommand(smsProcessor);
+            smsProcessor.QueueIncomingMessage = new SimulateProcessorCommand(smsProcessor);
         }
 
         public async Task Initialize(Dispatcher dispatcher)

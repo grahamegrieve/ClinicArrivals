@@ -72,19 +72,5 @@ namespace ClinicArrivals
                 // model.ReadSmsMessage.Start();
             });
         }
-
-        // Manually perform a single Scan over the current appointments
-        private async void buttonReadSms_Click(object sender, RoutedEventArgs e)
-        {
-            var model = DataContext as ViewModel;
-            var processor = new MessageProcessing();
-            await processor.CheckForInboundSmsMessages(model);
-        }
-
-        private async void buttonScanAppointments_Click(object sender, RoutedEventArgs e)
-        {
-            var model = DataContext as ViewModel;
-            await MessageProcessing.CheckAppointments(model);
-        }
     }
 }

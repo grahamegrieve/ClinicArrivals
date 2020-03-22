@@ -40,10 +40,6 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <StackPanel>
-                    <Button Content="Scan Appts" Click="buttonScanAppointments_Click"/>
-                    <Button Content="Read SMS" Click="buttonReadSms_Click"/>
-                </StackPanel>
 
                 <TextBlock Grid.Row="0" Text="Expecting" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Bold">
                     <TextBlock.RenderTransform>
@@ -213,6 +209,9 @@
         </TabItem>
         <TabItem Header="Settings">
             <local:SettingsControl DataContext="{Binding Settings, Mode=OneWay}"></local:SettingsControl>
+        </TabItem>
+        <TabItem Header="Sms Simulator">
+            <local:SimulateSmsMessagesControl DataContext="{Binding Path=smsProcessor, Mode=OneWay}"></local:SimulateSmsMessagesControl>
         </TabItem>
         <TabItem Header="About">
             <Grid>

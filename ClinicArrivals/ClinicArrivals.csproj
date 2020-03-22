@@ -126,6 +126,9 @@
     <Compile Include="SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SimulateSmsMessagesControl.xaml.cs">
+      <DependentUpon>SimulateSmsMessagesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StatusControl.xaml.cs">
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
@@ -144,6 +147,10 @@
     <Page Include="SettingsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SimulateSmsMessagesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="StatusControl.xaml">
       <SubType>Designer</SubType>
