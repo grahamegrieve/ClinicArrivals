@@ -5,16 +5,18 @@ namespace ClinicArrivals.Models
     public interface IFhirAppointmentUpdater
     {
         /// <summary>
-        ///   Fetch the appointment prior to using one of the put methods below
+        /// This will retrieve the FHIR resource, set the AppointmentType for teleconsultation, 
+        /// include a link for the video link in the comment and update the resource
         /// </summary>
-        /// <param name="id">the id of the resource </param>
-        /// <returns></returns>
-        Appointment fetch(string id);
+        /// <param name="appointment"></param>
+        /// <param name="videoLinkComment"></param>
+        void SaveAsVideoMeeting(PmsAppointment appointment, string videoLinkComment);
 
-        void PutAsVideoMeeting(Appointment appointment);
-
-        void PutStatusArrived(Appointment appointment);
-
-        void PutVideoUrl(Appointment appointment);
+        /// <summary>
+        /// This will retrieve the FHIR appointment from the server, 
+        /// set the status value and then update back to the server
+        /// </summary>
+        /// <param name="appointment"></param>
+        void SaveAppointmentStatusValue(PmsAppointment appointment);
     }
 }

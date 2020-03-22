@@ -16,7 +16,7 @@ namespace Test.Models
         public void SaveLoadSettings() 
         {
             // delete any pre-existing settings file
-            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage("ClinicArrivals.Test");
+            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage("ClinicArrivals.Test.SaveLoadSettings");
             string pathSettings = Path.Combine(storage.GetFolder(), "appSettings.json");
             if (File.Exists(pathSettings))
                 File.Delete(pathSettings);
@@ -59,7 +59,7 @@ namespace Test.Models
         public async Task SaveLoadTemplates()
         {
             // delete any pre-existing settings file
-            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage("ClinicArrivals.Test");
+            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage("ClinicArrivals.Test.SaveLoadTemplates");
             string pathSettings = Path.Combine(storage.GetFolder(), "message-templates.json");
             if (File.Exists(pathSettings))
                 File.Delete(pathSettings);
@@ -95,6 +95,39 @@ namespace Test.Models
 
             // Cleanup the test folder
             Directory.Delete(storage.GetFolder(), true);
+        }
+
+        [TestMethod, TestCategory("Storage")]
+        public async Task SaveAppointmentExtendedData()
+        {
+            // delete any pre-existing test content
+            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage("ClinicArrivals.Test.SaveAppointmentExtendedData");
+            if (File.Exists(storage.GetFolder()))
+                File.Delete(storage.GetFolder());
+
+            DateTime testDataToday = new DateTime(2020, 3, 20);
+
+            // read a non extended data
+            PmsAppointment appt = new PmsAppointment() { AppointmentFhirID = Guid.NewGuid().ToString("D") };
+            Assert.IsNotNull(appt.ExternalData);
+            await storage.LoadAppointmentStatus(testDataToday, appt);
+            Assert.IsNotNull(appt.ExternalData);
+
+            // Put some content in there and ensure that a load will clear it out
+            appt.ExternalData.LastPatientMessage = "last-message";
+            Assert.IsNotNull(appt.ExternalData.LastPatientMessage);
+            await storage.LoadAppointmentStatus(testDataToday, appt);
+            Assert.IsNull(appt.ExternalData.LastPatientMessage);
+
+            // Add some content, then save it
+            appt.ExternalData.LastPatientMessage = "last-message";
+            await storage.SaveAppointmentStatus(testDataToday, appt);
+            Assert.IsNotNull(appt.ExternalData.LastPatientMessage);
+            Assert.AreEqual("last-message", appt.ExternalData.LastPatientMessage);
+
+            // Cleanup the test folder
+            if (File.Exists(storage.GetFolder()))
+                Directory.Delete(storage.GetFolder(), true);
         }
     }
 }

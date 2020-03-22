@@ -117,14 +117,15 @@ namespace ClinicArrivals.Models
 
         // TODO: Not sure if we actually need to store anything in here, maybe the actual message content that was received.
         // Could this go into a note in the Appointment itself as a write-back instead?
-        public Task SaveAppointmentStatus(string date, PmsAppointment appt)
+        public Task SaveAppointmentStatus(DateTime date, PmsAppointment appt)
         {
-            throw new NotImplementedException();
+            return SaveFile(date.ToString("yyyy-MM-dd"), $"{appt.AppointmentFhirID}.json", appt.ExternalData);
         }
 
-        public Task LoadAppointmentStatus(string date, PmsAppointment appt)
+        public async Task LoadAppointmentStatus(DateTime date, PmsAppointment appt)
         {
-            throw new NotImplementedException();
+            PmsAppointmentExtendedData content = await LoadFile(date.ToString("yyyy-MM-dd"), $"{appt.AppointmentFhirID}.json", new PmsAppointmentExtendedData());
+            appt.ExternalData = content;
         }
 
         #region << Settings >>

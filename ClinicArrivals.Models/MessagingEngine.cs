@@ -33,7 +33,7 @@ namespace ClinicArrivals.Models
         public ISmsProcessor SmsSender { get; set; }
 
         /// <summary>
-        ///  Used to update the stored state of a single appointment, after a message has been sent, or to store Sms messages that cannot be understood 
+        ///  Used to update the stored state of a single appointment, after a message has been sent, or to store SMS messages that cannot be understood 
         /// </summary>
         public IArrivalsLocalStorage Storage { get; set; }
 
@@ -48,7 +48,7 @@ namespace ClinicArrivals.Models
         public TemplateProcessor TemplateProcessor { get; set; }
 
         /// <summary>
-        /// Cconnects to the VideoConferencing engine
+        /// Connects to the VideoConferencing engine
         /// </summary>
         public IVideoConferenceManager VideoManager { get; set; }
 
@@ -75,41 +75,42 @@ namespace ClinicArrivals.Models
             // pseudo code
             // for each incoming appointment
             //   is it new?- add it to the stored list
-            //   has the status changed from arrived to fulfilled? - send the invite message if it's not a telehealth consultation
+            //   has the status changed from arrived to fulfilled? - send the invite message if it's not a TeleHealth consultation
             //   if the appointment is within 3 hours, and the screening message hasn't been sent, send it 
-            //   if the appointment is within 10 minutes a telehelth consultation, and the setup message hasn't been sent, send it 
+            //   if the appointment is within 10 minutes a TeleHealth consultation, and the setup message hasn't been sent, send it 
             foreach (var appt in incoming.Where(n => n.PatientMobilePhone != null && IsToday(n.AppointmentStartTime)))
             {
                 var oldAppt = findApp(stored, appt.AppointmentFhirID);
                 if (oldAppt == null)
                 {
                     // we don't do anything new with this; we haven't seen it before but that doesn't really make any difference. We add it to the list, and store it 
-                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    Storage.SaveAppointmentStatus(TimeNow, appt);
                     oldAppt = appt;
                 }
-                if (oldAppt.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
+                if (oldAppt.ExternalData.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
                 {
                     Dictionary<string, string> vars = new Dictionary<string, string>();
                     vars.Add("room", findRoomNote(appt.PractitionerFhirID));
                     SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_APPT_READY, appt, vars));
                     SmsSender.SendMessage(msg);
-                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
+                    Storage.SaveAppointmentStatus(TimeNow, appt);
                 }
-                else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !oldAppt.ScreeningMessageSent)
+                else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !oldAppt.ExternalData.ScreeningMessageSent)
                 {
                     SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
                     SmsSender.SendMessage(msg);
-                    appt.ScreeningMessageSent = true;
-                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    appt.ExternalData.ScreeningMessageSent = true;
+                    Storage.SaveAppointmentStatus(TimeNow, appt);
                 }
-                else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, 10) && !oldAppt.VideoInviteSent)
+                else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, 10) && !oldAppt.ExternalData.VideoInviteSent)
                 {
                     Dictionary<string, string> vars = new Dictionary<string, string>();
                     vars.Add("url", VideoManager.getConferenceUrl(appt.AppointmentFhirID));
                     SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_INVITE, appt, vars));
                     SmsSender.SendMessage(msg);
-                    appt.VideoInviteSent = true;
-                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    appt.ExternalData.VideoInviteSent = true;
+                    Storage.SaveAppointmentStatus(TimeNow, appt);
                 }
             }
         }
@@ -132,8 +133,8 @@ namespace ClinicArrivals.Models
                 { 
                     SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_REGISTRATION, appt, null));
                     SmsSender.SendMessage(msg);
-                    appt.PostRegistrationMessageSent = true;
-                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    appt.ExternalData.PostRegistrationMessageSent = true;
+                    Storage.SaveAppointmentStatus(TimeNow, appt);
                 }
             }
         }
@@ -172,11 +173,11 @@ namespace ClinicArrivals.Models
                     {
                         processUnexpectedResponse(candidates[0], msg);
                     }
-                    else if (appt.VideoInviteSent)
+                    else if (appt.ExternalData.VideoInviteSent)
                     {
                         processVideoInviteResponse(appt, msg);
                     }
-                    else if (appt.ScreeningMessageSent && !appt.ScreeningMessageResponse)
+                    else if (appt.ExternalData.ScreeningMessageSent && !appt.ExternalData.ScreeningMessageResponse)
                     {
                         processScreeningResponse(appt, msg);
                     }
@@ -197,7 +198,7 @@ namespace ClinicArrivals.Models
         private void handleUnknownMessage(SmsMessage msg)
         {
             // a future possible enhancement is to ask the user which patient the appointment is for; this will smooth the work flow, but the response 
-            // processing might be complicated. can it be just a medicare number and date? 
+            // processing might be complicated. can it be just a Medicare number and date? 
             SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_UNKNOWN_PH, null, null));
             SmsSender.SendMessage(rmsg);
         }
@@ -209,13 +210,13 @@ namespace ClinicArrivals.Models
                 // twilio:
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_THX, appt, null));
                 SmsSender.SendMessage(rmsg);
-                // PMS:
-                Appointment ap = AppointmentUpdater.fetch(appt.AppointmentFhirID);
-                ap.Status = AppointmentStatus.Arrived;
-                AppointmentUpdater.PutStatusArrived(ap);
-                // local storage:
                 appt.ArrivalStatus = AppointmentStatus.Arrived;
-                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+
+                // PMS:
+                AppointmentUpdater.SaveAppointmentStatusValue(appt);
+                // local storage:
+                appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
+                Storage.SaveAppointmentStatus(TimeNow, appt);
             }
             else
             {
@@ -235,26 +236,20 @@ namespace ClinicArrivals.Models
                 SmsSender.SendMessage(rmsg);
 
                 // PMS:
-                Appointment ap = AppointmentUpdater.fetch(appt.AppointmentFhirID);
-                ap.AppointmentType = new CodeableConcept("http://hl7.org/au/fhir/CodeSystem/AppointmentType", "teleconsultation");
-                ap.Comment = String.IsNullOrEmpty(ap.Comment) ? 
-                    "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID) 
-                    : ap.Comment + 
-                    Environment.NewLine + Environment.NewLine + 
-                    "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID);
-                AppointmentUpdater.PutAsVideoMeeting(ap);
+                AppointmentUpdater.SaveAsVideoMeeting(appt, "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID));
+
                 // local storage
-                appt.ScreeningMessageResponse = true;
+                appt.ExternalData.ScreeningMessageResponse = true;
                 appt.IsVideoConsultation = true;
-                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                Storage.SaveAppointmentStatus(TimeNow, appt);
             }
             else if (messageMatches(msg.message, "no"))
             {
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_NO, appt, null));
                 SmsSender.SendMessage(rmsg);
-                appt.ScreeningMessageResponse = true;
+                appt.ExternalData.ScreeningMessageResponse = true;
                 appt.IsVideoConsultation = false;
-                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                Storage.SaveAppointmentStatus(TimeNow, appt);
             }
             else if (messageMatches(msg.message, "arrived", "here"))
             {
@@ -275,14 +270,13 @@ namespace ClinicArrivals.Models
                 // twilio:
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_ARRIVED_THX, appt, null));
                 SmsSender.SendMessage(rmsg);
-                // PMS:
-                Appointment ap = AppointmentUpdater.fetch(appt.AppointmentFhirID);
-                ap.Status = AppointmentStatus.Arrived;
-                AppointmentUpdater.PutStatusArrived(ap);
-                // local storage
-                appt.ScreeningMessageResponse = true;
                 appt.ArrivalStatus = AppointmentStatus.Arrived;
-                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                // PMS:
+                AppointmentUpdater.SaveAppointmentStatusValue(appt);
+                // local storage
+                appt.ExternalData.ScreeningMessageResponse = true;
+                appt.ExternalData.ArrivalStatus = AppointmentStatus.Arrived;
+                Storage.SaveAppointmentStatus(TimeNow, appt);
             }
             else
             {
@@ -316,7 +310,7 @@ namespace ClinicArrivals.Models
                 {
                     foreach (var appt in candidates)
                     {
-                        if (appt.ScreeningMessageSent && !appt.ScreeningMessageResponse)
+                        if (appt.ExternalData.ScreeningMessageSent && !appt.ExternalData.ScreeningMessageResponse)
                         {
                             return appt;
                         }
@@ -327,7 +321,7 @@ namespace ClinicArrivals.Models
                 {
                     foreach (var appt in candidates)
                     {
-                        if (appt.VideoInviteSent)
+                        if (appt.ExternalData.VideoInviteSent)
                         {
                             return appt;
                         }
