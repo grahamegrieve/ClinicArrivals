@@ -18,5 +18,5 @@ Documentation:
 * [Program Settings](Settings.md)
 * [Managing SMS templates](Templates.md)
 * [Security Notes](Security.md)
-* [Jitsi Integration details]{Jitsi.md}
+* [Jitsi Integration details](Jitsi.md)
 * [Technical Specifications for the PMS integration](FHIRDocumentation.md)
