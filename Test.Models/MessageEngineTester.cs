@@ -200,8 +200,8 @@ namespace Test.Models
             nl.Add(appt1pm());
             sl.Add(appt10am());
             sl.Add(appt1pm());
-            sl[1].ScreeningMessageSent = true;
-            sl[1].VideoInviteSent = true;
+            sl[1].ExternalData.ScreeningMessageSent = true;
+            sl[1].ExternalData.VideoInviteSent = true;
             nl[1].IsVideoConsultation = true;
 
             // run it
@@ -225,7 +225,7 @@ namespace Test.Models
             nl.Add(appt1pm());
             sl.Add(appt10am());
             sl.Add(appt1pm());
-            sl[1].ScreeningMessageSent = true;
+            sl[1].ExternalData.ScreeningMessageSent = true;
             sl[1].ArrivalStatus = AppointmentStatus.Arrived;
             nl[1].ArrivalStatus = AppointmentStatus.Fulfilled;
 
@@ -253,8 +253,8 @@ namespace Test.Models
             nl.Add(appt1pm());
             sl.Add(appt10am());
             sl.Add(appt1pm());
-            sl[1].ScreeningMessageSent = true;
-            sl[1].ScreeningMessageSent = true;
+            sl[1].ExternalData.ScreeningMessageSent = true;
+            sl[1].ExternalData.ScreeningMessageSent = true;
             sl[1].ArrivalStatus = AppointmentStatus.Fulfilled;
             nl[1].ArrivalStatus = AppointmentStatus.Fulfilled;
 
@@ -299,7 +299,7 @@ namespace Test.Models
             // set it up:
             appts.Add(appt10am());
             appts.Add(appt1pm());
-            appts[1].ScreeningMessageSent = true;
+            appts[1].ExternalData.ScreeningMessageSent = true;
 
             msgs.Add(new SmsMessage("+61411012345", "Yes"));
 
@@ -311,8 +311,8 @@ namespace Test.Models
             Assert.AreEqual("Thank you. Do not come to the doctor's clinic. You will get an SMS message containing the URL for your video meeting a few minutes before your appointment. You can join from any computer or smartphone", OutputMsgs[0].message);
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
-            Assert.IsTrue(StorageOps[0].Appointment.ScreeningMessageSent == true);
-            Assert.IsTrue(StorageOps[0].Appointment.ScreeningMessageResponse == true);
+            Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ScreeningMessageSent == true);
+            Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ScreeningMessageResponse == true);
             Assert.IsTrue(StorageOps[0].Appointment.IsVideoConsultation == true);
         }
 
@@ -327,7 +327,7 @@ namespace Test.Models
             // set it up:
             appts.Add(appt10am());
             appts.Add(appt1pm());
-            appts[1].ScreeningMessageSent = true;
+            appts[1].ExternalData.ScreeningMessageSent = true;
 
             msgs.Add(new SmsMessage("+61411012345", "NO!"));
 
@@ -339,8 +339,8 @@ namespace Test.Models
             Assert.AreEqual("Thank you. When you arrive at the clinic, stay in your car (or outside) and reply \"arrived\" to this message", OutputMsgs[0].message);
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
-            Assert.IsTrue(StorageOps[0].Appointment.ScreeningMessageSent == true);
-            Assert.IsTrue(StorageOps[0].Appointment.ScreeningMessageResponse == true);
+            Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ScreeningMessageSent == true);
+            Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ScreeningMessageResponse == true);
             Assert.IsTrue(StorageOps[0].Appointment.IsVideoConsultation == false);
         }
 
@@ -355,7 +355,7 @@ namespace Test.Models
             // set it up:
             appts.Add(appt10am());
             appts.Add(appt1pm());
-            appts[1].ScreeningMessageSent = true;
+            appts[1].ExternalData.ScreeningMessageSent = true;
 
             msgs.Add(new SmsMessage("+61411012345", "what?!"));
 
@@ -379,8 +379,8 @@ namespace Test.Models
             // set it up:
             appts.Add(appt10am());
             appts.Add(appt1pm());
-            appts[1].ScreeningMessageSent = true;
-            appts[1].ScreeningMessageResponse = true;
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].ExternalData.ScreeningMessageResponse = true;
 
             msgs.Add(new SmsMessage("+61411012345", "ARRIVED"));
 
@@ -406,8 +406,8 @@ namespace Test.Models
             // set it up:
             appts.Add(appt10am());
             appts.Add(appt1pm());
-            appts[1].ScreeningMessageSent = true;
-            appts[1].ScreeningMessageResponse = true;
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].ExternalData.ScreeningMessageResponse = true;
 
             msgs.Add(new SmsMessage("+61411012345", "I'm here"));
 
@@ -432,8 +432,8 @@ namespace Test.Models
             // set it up:
             appts.Add(appt10am());
             appts.Add(appt1pm());
-            appts[1].ScreeningMessageSent = true;
-            appts[1].ScreeningMessageResponse = true;
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].ExternalData.ScreeningMessageResponse = true;
             appts[1].ArrivalStatus = AppointmentStatus.Fulfilled;
 
             msgs.Add(new SmsMessage("+61411012345", "Arrived"));
@@ -458,10 +458,10 @@ namespace Test.Models
             // set it up:
             appts.Add(appt10am());
             appts.Add(appt1pm());
-            appts[1].ScreeningMessageSent = true;
-            appts[1].ScreeningMessageResponse = true;
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].ExternalData.ScreeningMessageResponse = true;
             appts[1].IsVideoConsultation = true;
-            appts[1].VideoInviteSent = true;
+            appts[1].ExternalData.VideoInviteSent = true;
 
             msgs.Add(new SmsMessage("+61411012345", "Joined"));
 
@@ -487,10 +487,10 @@ namespace Test.Models
             // set it up:
             appts.Add(appt10am());
             appts.Add(appt1pm());
-            appts[1].ScreeningMessageSent = true;
-            appts[1].ScreeningMessageResponse = true;
+            appts[1].ExternalData.ScreeningMessageSent = true;
+            appts[1].ExternalData.ScreeningMessageResponse = true;
             appts[1].IsVideoConsultation = true;
-            appts[1].VideoInviteSent = true;
+            appts[1].ExternalData.VideoInviteSent = true;
 
             msgs.Add(new SmsMessage("+61411012345", "ok ready"));
 

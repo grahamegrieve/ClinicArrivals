@@ -93,7 +93,7 @@ namespace ClinicArrivals.Models
                     vars.Add("room", findRoomNote(appt.PractitionerFhirID));
                     SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_APPT_READY, appt, vars));
                     SmsSender.SendMessage(msg);
-                    Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                    Storage.SaveAppointmentStatus(TimeNow, appt);
                 }
                 else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !oldAppt.ExternalData.ScreeningMessageSent)
                 {
@@ -172,11 +172,11 @@ namespace ClinicArrivals.Models
                     {
                         processUnexpectedResponse(candidates[0], msg);
                     }
-                    else if (appt.VideoInviteSent)
+                    else if (appt.ExternalData.VideoInviteSent)
                     {
                         processVideoInviteResponse(appt, msg);
                     }
-                    else if (appt.ScreeningMessageSent && !appt.ScreeningMessageResponse)
+                    else if (appt.ExternalData.ScreeningMessageSent && !appt.ExternalData.ScreeningMessageResponse)
                     {
                         processScreeningResponse(appt, msg);
                     }
@@ -197,7 +197,7 @@ namespace ClinicArrivals.Models
         private void handleUnknownMessage(SmsMessage msg)
         {
             // a future possible enhancement is to ask the user which patient the appointment is for; this will smooth the work flow, but the response 
-            // processing might be complicated. can it be just a medicare number and date? 
+            // processing might be complicated. can it be just a Medicare number and date? 
             SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_UNKNOWN_PH, null, null));
             SmsSender.SendMessage(rmsg);
         }
@@ -215,7 +215,7 @@ namespace ClinicArrivals.Models
                 AppointmentUpdater.PutStatusArrived(ap);
                 // local storage:
                 appt.ArrivalStatus = AppointmentStatus.Arrived;
-                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                Storage.SaveAppointmentStatus(TimeNow, appt);
             }
             else
             {
@@ -244,17 +244,17 @@ namespace ClinicArrivals.Models
                     "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID);
                 AppointmentUpdater.PutAsVideoMeeting(ap);
                 // local storage
-                appt.ScreeningMessageResponse = true;
+                appt.ExternalData.ScreeningMessageResponse = true;
                 appt.IsVideoConsultation = true;
-                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                Storage.SaveAppointmentStatus(TimeNow, appt);
             }
             else if (messageMatches(msg.message, "no"))
             {
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_NO, appt, null));
                 SmsSender.SendMessage(rmsg);
-                appt.ScreeningMessageResponse = true;
+                appt.ExternalData.ScreeningMessageResponse = true;
                 appt.IsVideoConsultation = false;
-                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                Storage.SaveAppointmentStatus(TimeNow, appt);
             }
             else if (messageMatches(msg.message, "arrived", "here"))
             {
@@ -280,9 +280,9 @@ namespace ClinicArrivals.Models
                 ap.Status = AppointmentStatus.Arrived;
                 AppointmentUpdater.PutStatusArrived(ap);
                 // local storage
-                appt.ScreeningMessageResponse = true;
+                appt.ExternalData.ScreeningMessageResponse = true;
                 appt.ArrivalStatus = AppointmentStatus.Arrived;
-                Storage.SaveAppointmentStatus(DateTime.Now.ToString(), appt);
+                Storage.SaveAppointmentStatus(TimeNow, appt);
             }
             else
             {
@@ -316,7 +316,7 @@ namespace ClinicArrivals.Models
                 {
                     foreach (var appt in candidates)
                     {
-                        if (appt.ScreeningMessageSent && !appt.ScreeningMessageResponse)
+                        if (appt.ExternalData.ScreeningMessageSent && !appt.ExternalData.ScreeningMessageResponse)
                         {
                             return appt;
                         }
@@ -327,7 +327,7 @@ namespace ClinicArrivals.Models
                 {
                     foreach (var appt in candidates)
                     {
-                        if (appt.VideoInviteSent)
+                        if (appt.ExternalData.VideoInviteSent)
                         {
                             return appt;
                         }
