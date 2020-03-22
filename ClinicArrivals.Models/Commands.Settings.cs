@@ -35,7 +35,7 @@ namespace ClinicArrivals.Models
                 }
                 catch (Exception ex)
                 {
-                    // _model.ErrorMessage = ex.Message;
+                    new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception Saving Settings: " + ex.Message);
                 }
                 finally
                 {
@@ -75,7 +75,7 @@ namespace ClinicArrivals.Models
                 }
                 catch (Exception ex)
                 {
-                    // _model.ErrorMessage = ex.Message;
+                    new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception Loading Settings: " + ex.Message);
                 }
                 finally
                 {

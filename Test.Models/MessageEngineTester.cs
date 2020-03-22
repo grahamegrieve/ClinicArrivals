@@ -741,6 +741,11 @@ namespace Test.Models
                 throw new NotImplementedException();
             }
 
+            public Task ClearUnprocessableMessages()
+            {
+                throw new NotImplementedException();
+            }
+
             public Task LoadAppointmentStatus(DateTime date, PmsAppointment appt)
             {
                 throw new NotImplementedException();

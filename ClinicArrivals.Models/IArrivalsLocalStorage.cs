@@ -42,6 +42,13 @@ namespace ClinicArrivals.Models
         Task SaveUnprocessableMessage(DateTime date, SmsMessage message);
 
         /// <summary>
+        /// Clear out all unprocessed messages
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        Task ClearUnprocessableMessages();
+
+        /// <summary>
         /// In the event of a system shutdown, re-reading the unprocessed messages
         /// </summary>
         /// <returns></returns>

@@ -8,9 +8,11 @@ namespace ClinicArrivals.Models
 {
     public class VideoConferenceManager : IVideoConferenceManager
     {
+        private Guid systemId;
+
         public void Initialize(Settings settings)
         {
-
+            systemId = settings.SystemIdentifier;
         }
 
         /// <summary>
@@ -19,7 +21,7 @@ namespace ClinicArrivals.Models
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
         public String getConferenceUrl(String appointmentId)
         {
-            throw new NotImplementedException();
+            return "https://meet.jit.si/"+systemId.ToString()+"-"+appointmentId;
         }
 
         /// <summary>
@@ -28,7 +30,7 @@ namespace ClinicArrivals.Models
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
         public Boolean canKnowIfJoined()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace ClinicArrivals.Models
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
         public Boolean hasSomeoneJoined(String appointmentId)
         {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }

@@ -36,7 +36,7 @@ namespace ClinicArrivals.Models
                 }
                 catch (Exception ex)
                 {
-                    // _model.ErrorMessage = ex.Message;
+                    new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception Saving room mappings: " + ex.Message);
                 }
                 finally
                 {
@@ -78,7 +78,7 @@ namespace ClinicArrivals.Models
                 }
                 catch (Exception ex)
                 {
-                    // _model.ErrorMessage = ex.Message;
+                    new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception Loading Room Mappings: " + ex.Message);
                 }
                 finally
                 {

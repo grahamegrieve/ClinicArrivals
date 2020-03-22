@@ -48,7 +48,7 @@ This message is sent when an appointment is due in 1-2 days (but not today)
 
 A typical example:
 
-    Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. 3 hours prior to the appointment, you will be sent a COVID-19 screening check to decide whether you should do a video consultation rather than seeing the doctor in person
+    Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. 3 hours prior to the appointment, you will be sent an SMS referring to a COVID-19 screening check to decide whether you should do a video consultation rather than seeing the doctor in person. Please do not respond to this message
 
 ### Cancellation
 
@@ -56,7 +56,7 @@ This message is sent when the appointment is cancelled. Note: you can't cancel v
 
 A typical example:
 
-    Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. 3 hours prior to the appointment, you will be sent a COVID-19 screening check to decide whether you should do a video consultation rather than seeing the doctor in person
+    The appointment for Patient {{Patient.name}} with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}} has been cancelled
 
 ### UnknownPhone
 
@@ -66,7 +66,7 @@ should be the reception desk, and they should enter the mobile phone number agai
 
 A typical example:
 
-    The phone number you sent the message from is not associated with an appointment to see the doctor today. Please phone {num} for help
+    The phone number you sent the message from is not associated with an appointment to see the doctor today. Please phone [clinic number] for help
 
 ### TooManyAppointments
 
@@ -75,7 +75,7 @@ or sometimes if there's 2 appointments in the day but the engine can't work out 
 
 A typical example:
 
-    The robot processing this message is stupid, and didn't understand your response. Please just say \"joined\" when you have joined the video call
+    The robot processing this message is stupid, and couldn't figure out which appointment of multiples that this was about. Please phone [clinic number] for help
 
 ### Unexpected
 
@@ -118,7 +118,7 @@ This message is sent to the patient if they reply something other than "yes" or 
 
 A typical example:
 
-    The robot processing this message is stupid, and didn't understand your response. Please answer yes or no, or phone {num} for help
+    The robot processing this message is stupid, and didn't understand your response. Please answer yes or no, or phone [clinic number] for help
 
 ### VideoInvite
 
@@ -181,5 +181,5 @@ This is sent in response when we expected "arrived" but got something else.
 
 A typical example:
 
-    The robot processing this message is stupid, and didn't understand your response. Please just say \"arrived\", or phone {num} for help
+    The robot processing this message is stupid, and didn't understand your response. Please just say \"arrived\", or phone [clinic number] for help
 

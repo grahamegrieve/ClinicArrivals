@@ -58,6 +58,7 @@ namespace ClinicArrivals.Models
         public ILoggingService Logger { get; set; }
 
         public ObservableCollection<DoctorRoomLabelMapping> RoomMappings { get; set; }
+        public ObservableCollection<SmsMessage> UnprocessableMessages { get; set; } 
 
         // Call this before using the 
         public void Initialise(Settings settings)
@@ -237,11 +238,12 @@ namespace ClinicArrivals.Models
             SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_UNKNOWN_PH, null, null));
             SmsSender.SendMessage(rmsg);
             LogMsg(OUT, rmsg, "handle unknown message", null);
+            UnprocessableMessages.Add(msg);
         }
 
         private void processVideoInviteResponse(PmsAppointment appt, SmsMessage msg)
         {
-            if (messageMatches(msg.message, "joined", "ok"))
+            if (messageMatches(msg.message, "joined", "ok", "j"))
             {
                 // twilio:
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_THX, appt, null));
@@ -261,13 +263,14 @@ namespace ClinicArrivals.Models
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_VIDEO, appt, null));
                 SmsSender.SendMessage(rmsg);
                 LogMsg(OUT, rmsg, "fail to process video response", appt);
+                UnprocessableMessages.Add(msg);
             }
         }
         private void processScreeningResponse(PmsAppointment appt, SmsMessage msg)
         {
             // the patient should respond with "yes" or "no" but they may not bother and just respond with "arrived"
             // of course they might respond with anything else that we can't understand, so we'll explain apologetically if they do
-            if (messageMatches(msg.message, "yes"))
+            if (messageMatches(msg.message, "yes", "y"))
             {
                 // twilio: 
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_YES, appt, null));
@@ -282,7 +285,7 @@ namespace ClinicArrivals.Models
                 appt.IsVideoConsultation = true;
                 Storage.SaveAppointmentStatus(TimeNow, appt);
             }
-            else if (messageMatches(msg.message, "no"))
+            else if (messageMatches(msg.message, "no", "n"))
             {
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_NO, appt, null));
                 SmsSender.SendMessage(rmsg);
@@ -291,7 +294,7 @@ namespace ClinicArrivals.Models
                 appt.IsVideoConsultation = false;
                 Storage.SaveAppointmentStatus(TimeNow, appt);
             }
-            else if (messageMatches(msg.message, "arrived", "here"))
+            else if (messageMatches(msg.message, "arrived", "here", "a"))
             {
                 processArrivalMessage(appt, msg);
             }
@@ -301,12 +304,13 @@ namespace ClinicArrivals.Models
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_SCREENING, appt, null));
                 SmsSender.SendMessage(rmsg);
                 LogMsg(OUT, rmsg, "fail to process screening response", appt);
+                UnprocessableMessages.Add(msg);
             }
         }
 
         private void processArrivalMessage(PmsAppointment appt, SmsMessage msg)
         {
-            if (messageMatches(msg.message, "arrived", "here"))
+            if (messageMatches(msg.message, "arrived", "here", "a"))
             {
                 // twilio:
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_ARRIVED_THX, appt, null));
@@ -326,6 +330,7 @@ namespace ClinicArrivals.Models
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_ARRIVING, appt, null));
                 SmsSender.SendMessage(rmsg);
                 LogMsg(OUT, rmsg, "fail to process arrival message", appt);
+                UnprocessableMessages.Add(msg);
             }
         }
 
@@ -334,6 +339,7 @@ namespace ClinicArrivals.Models
             SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_UNEXPECTED, appt, null));
             SmsSender.SendMessage(rmsg);
             LogMsg(OUT, rmsg, "unexpected message", appt);
+            UnprocessableMessages.Add(msg);
         }
 
         private PmsAppointment chooseRelevantAppointment(List<PmsAppointment> candidates, SmsMessage msg)
@@ -343,6 +349,7 @@ namespace ClinicArrivals.Models
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_TOO_MANY_APPOINTMENTS, candidates[0], null));
                 SmsSender.SendMessage(rmsg);
                 LogMsg(OUT, rmsg, "too many candidates", candidates[0]);
+                UnprocessableMessages.Add(msg);
             }
             else
             {
@@ -389,6 +396,7 @@ namespace ClinicArrivals.Models
                     SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_TOO_MANY_APPOINTMENTS, candidates[0], null));
                     SmsSender.SendMessage(rmsg);
                     LogMsg(OUT, rmsg, "can't choose appointment", appt1);
+                    UnprocessableMessages.Add(msg);
                 }
             }
             return null;

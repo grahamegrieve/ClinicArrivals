@@ -18,7 +18,7 @@ namespace ClinicArrivals
         public BackgroundProcess ScanAppointments;
         public SimulationSmsProcessor smsProcessor { get; set; } = new SimulationSmsProcessor();
 
-        private NLogAdapter logger = new NLogAdapter();
+        private readonly NLogAdapter logger = new NLogAdapter();
 
         public ViewModel()
         {
@@ -32,6 +32,8 @@ namespace ClinicArrivals
             ReloadRoomMappings = new ReloadRoomMappingsCommand(Storage);
             SaveTemplates = new SaveTemplatesCommand(Storage);
             ReloadTemplates = new ReloadTemplatesCommand(Storage);
+            SeeTemplateDocumentation = new SeeTemplateDocumentationCommand();
+            ClearUnproccessedMessages = new ClearUnproccessedMessagesCommand(Storage);
 
             // Simulator for the SMS message processor
             smsProcessor.ClearMessages = new SimulateProcessorCommand(smsProcessor);
@@ -51,6 +53,7 @@ namespace ClinicArrivals
             engine.AppointmentUpdater = new FhirAppointmentUpdater(MessageProcessing.GetServerConnection);
             engine.VideoManager = new VideoConferenceManager();
             engine.VideoManager.Initialize(Settings);
+            engine.UnprocessableMessages = UnprocessableMessages;
             // if (!string.IsNullOrEmpty(Settings.DeveloperPhoneNumber))
             engine.SmsSender = smsProcessor;
             // engine.SmsSender = new TwilioSmsProcessor();
@@ -75,6 +78,11 @@ namespace ClinicArrivals
             RoomMappings.Clear();
             foreach (var map in await Storage.LoadRoomMappings())
                 RoomMappings.Add(map);
+
+            Templates.Clear();
+            foreach (var template in await Storage.LoadTemplates())
+                Templates.Add(template);
+            AddMissingTemplates();
 
             // reload any unmatched messages
             var messages = await Storage.LoadUnprocessableMessages(DisplayingDate);
@@ -119,6 +127,37 @@ namespace ClinicArrivals
             // TODO: Include the Upcoming Appointments handling
         }
 
+        private void AddMissingTemplates()
+        {
+            DefineDefaultTemplate(MessageTemplate.MSG_REGISTRATION, MessageTemplate.DEF_MSG_REGISTRATION);
+            DefineDefaultTemplate(MessageTemplate.MSG_CANCELLATION, MessageTemplate.DEF_MSG_CANCELLATION);
+            DefineDefaultTemplate(MessageTemplate.MSG_UNKNOWN_PH, MessageTemplate.DEF_MSG_UNKNOWN_PH);
+            DefineDefaultTemplate(MessageTemplate.MSG_TOO_MANY_APPOINTMENTS, MessageTemplate.DEF_MSG_TOO_MANY_APPOINTMENTS);
+            DefineDefaultTemplate(MessageTemplate.MSG_UNEXPECTED, MessageTemplate.DEF_MSG_UNEXPECTED);
+            DefineDefaultTemplate(MessageTemplate.MSG_SCREENING, MessageTemplate.DEF_MSG_SCREENING);
+            DefineDefaultTemplate(MessageTemplate.MSG_SCREENING_YES, MessageTemplate.DEF_MSG_SCREENING_YES);
+            DefineDefaultTemplate(MessageTemplate.MSG_SCREENING_NO, MessageTemplate.DEF_MSG_SCREENING_NO);
+            DefineDefaultTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_SCREENING, MessageTemplate.DEF_MSG_DONT_UNDERSTAND_SCREENING);
+            DefineDefaultTemplate(MessageTemplate.MSG_VIDEO_INVITE, MessageTemplate.DEF_MSG_VIDEO_INVITE);
+            DefineDefaultTemplate(MessageTemplate.MSG_VIDEO_THX, MessageTemplate.DEF_MSG_VIDEO_THX);
+            DefineDefaultTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_VIDEO, MessageTemplate.DEF_MSG_DONT_UNDERSTAND_VIDEO);
+            DefineDefaultTemplate(MessageTemplate.MSG_ARRIVED_THX, MessageTemplate.DEF_MSG_ARRIVED_THX);
+            DefineDefaultTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_ARRIVING, MessageTemplate.DEF_MSG_DONT_UNDERSTAND_ARRIVING);
+            DefineDefaultTemplate(MessageTemplate.MSG_APPT_READY, MessageTemplate.DEF_MSG_APPT_READY);
+        }
+
+        private void DefineDefaultTemplate(string id, string value)
+        {
+            foreach (var template in Templates)
+            {
+                if (template.MessageType == id)
+                {
+                    return;
+                }
+            }
+            Templates.Add(new MessageTemplate(id, value));
+        }
+
         private void CreateTestDataForDebug()
         {
 #if DEBUG
@@ -140,16 +179,7 @@ namespace ClinicArrivals
                 LocationName = "Room 2",
                 LocationDescription = "Proceed through the main lobby and its the 2nd door on the right"
             });
-            UnprocessableMessages.Add(new SmsMessage("+61 432 857505", "test") { date = "21-3-2020 12:40pm" });
-            UnprocessableMessages.Add(new SmsMessage("+61 432 857505", "test 2") { date = "21-3-2020 1:15pm" });
-            UnprocessableMessages.Add(new SmsMessage("+61 432 857505", "test 3") { date = "21-3-2020 1:23pm" });
-
-            Templates.Add(new MessageTemplate(MessageTemplate.MSG_REGISTRATION, "Thank you making an appointment to see Dr X. [X] hours before the appointment, we will send you an SMS asking with you meet the criteria documented at http://www.rcpa.org.au/xxx, to decide whether you will talk to the doctor by telephone video, or physically come to the clinic. Please respond to this message to confirm you have seen it (or your appointment will be canceled"));
-            Templates.Add(new MessageTemplate(MessageTemplate.MSG_CANCELLATION)); // no message means no sending
-            Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING, "Please consult the web page http://www.rcpa.org.au/xxx to determine whether you are eligable to meet with the doctor by phone/video. If you are, respond to this message with YES otherwise respond with NO")); // no message means no sending
-            Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING_NO, "Due to the COVID-19 Pandemic, this clinic has closed it's waiting room. Please wait in your car, and SMS \"arrived\" to [phone number]"));
-            Templates.Add(new MessageTemplate(MessageTemplate.MSG_UNKNOWN_PH, "Your mobile phone number is not registered with the clinic, please call reception to confirm your details"));
-            Templates.Add(new MessageTemplate(MessageTemplate.MSG_APPT_READY, "The doctor is ready for you now. [Room Mapping Notes]"));
+            
 #endif
         }
     }

@@ -66,7 +66,7 @@ namespace ClinicArrivals.Models
             }
             catch (Exception ex)
             {
-                // _model.ErrorMessage = ex.Message;
+                new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception Simulating SMS Processor: " + ex.Message);
             }
             finally
             {

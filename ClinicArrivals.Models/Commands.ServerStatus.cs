@@ -49,7 +49,7 @@ namespace ClinicArrivals.Models
             }
             catch (Exception ex)
             {
-                // _model.ErrorMessage = ex.Message;
+                new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception executing server command: " + ex.Message);
             }
             finally
             {

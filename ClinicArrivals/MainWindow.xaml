@@ -119,17 +119,26 @@
             </Grid>
         </TabItem>
         <TabItem Header="Unknown Incoming Messages">
-            <ListView Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Path=UnprocessableMessages, Mode=OneWay}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=date, Mode=OneTime}" TextWrapping="Wrap" FontSize="16" Padding="6"/>
-                            <TextBlock Text="{Binding Path=phone, Mode=OneTime}" TextWrapping="Wrap" FontSize="16" Padding="6" FontWeight="Bold"/>
-                            <TextBlock Text="{Binding Path=message, Mode=OneTime}" TextWrapping="Wrap" FontSize="16" Padding="6"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" >
+                    <Button Content="Clear" Command="{Binding ClearUnproccessedMessages}" CommandParameter="{Binding RoomMappings}"/>
+                </StackPanel>
+                <ListView Grid.Row="1" ItemsSource="{Binding Path=UnprocessableMessages, Mode=OneWay}" Margin="0,0,0,369.667" Grid.RowSpan="2" HorizontalAlignment="Left" Width="785">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=date, Mode=OneTime}" TextWrapping="Wrap" FontSize="16" Padding="6"/>
+                                <TextBlock Text="{Binding Path=phone, Mode=OneTime}" TextWrapping="Wrap" FontSize="16" Padding="6" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding Path=message, Mode=OneTime}" TextWrapping="Wrap" FontSize="16" Padding="6"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
         </TabItem>
         <TabItem Header="Room Mappings">
             <Grid>
@@ -176,6 +185,7 @@
                 <StackPanel Orientation="Horizontal" >
                     <Button Content="Save" Command="{Binding SaveTemplates}" CommandParameter="{Binding Templates}"/>
                     <Button Content="Reload" Command="{Binding ReloadTemplates}" CommandParameter="{Binding Templates}"/>
+                    <Button Content="Documentation" Command="{Binding SeeTemplateDocumentation}" CommandParameter="{Binding Templates}"/>
                 </StackPanel>
                 <ListView Grid.Row="1" ItemsSource="{Binding Path=Templates, Mode=OneWay}"
                           VerticalAlignment="Stretch"

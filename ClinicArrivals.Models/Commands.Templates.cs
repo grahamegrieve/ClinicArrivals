@@ -78,7 +78,7 @@ namespace ClinicArrivals.Models
                 }
                 catch (Exception ex)
                 {
-                    // _model.ErrorMessage = ex.Message;
+                    new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception Loading Templates: " + ex.Message);
                 }
                 finally
                 {
@@ -88,4 +88,62 @@ namespace ClinicArrivals.Models
             }
         }
     }
+
+    public class SeeTemplateDocumentationCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            System.Diagnostics.Process.Start("https://github.com/grahamegrieve/ClinicArrivals/blob/master/documentation/Templates.md");
+        }
+    }
+
+    public class ClearUnproccessedMessagesCommand : ICommand
+    {
+        IArrivalsLocalStorage _storage;
+        bool processing;
+        public ClearUnproccessedMessagesCommand(IArrivalsLocalStorage storage)
+        {
+            _storage = storage;
+        }
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            if (processing)
+                return false;
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            if (parameter is ObservableCollection<SmsMessage> messages)
+            {
+                processing = true;
+                try
+                {
+                    messages.Clear();
+                    _storage.ClearUnprocessableMessages();
+                }
+                catch (Exception ex)
+                {
+                    new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception Clearing Messages: " + ex.Message);
+                }
+                finally
+                {
+                    processing = false;
+                    CanExecuteChanged?.Invoke(parameter, new EventArgs());
+                }
+            }
+        }
+    }
+
+    
 }
+

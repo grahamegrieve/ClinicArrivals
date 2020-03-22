@@ -152,6 +152,12 @@ namespace ClinicArrivals.Models
             }
             return Task.CompletedTask;
         }
+
+        public Task ClearUnprocessableMessages()
+        {
+            // doesn't do anything yet
+            return Task.CompletedTask;
+        }
         #endregion
     }
 }

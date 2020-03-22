@@ -27,6 +27,8 @@ namespace ClinicArrivals.Models
         public ICommand ReloadRoomMappings { get; set; }
         public ICommand SaveTemplates { get; set; }
         public ICommand ReloadTemplates { get; set; }
+        public ICommand SeeTemplateDocumentation { get; set; }
+        public ICommand ClearUnproccessedMessages { get; set; }
 
         public Settings Settings { get; set; } = new Settings();
 
