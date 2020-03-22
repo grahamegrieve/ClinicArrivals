@@ -5,7 +5,7 @@ namespace ClinicArrivals.Models
 {
     public class TemplateProcessor
     {
-        public ObservableCollection<MessageTemplate> Templates { get; set; }
+        public IList<MessageTemplate> Templates { get; set; }
 
         public void Initialise(Settings settings)
         {

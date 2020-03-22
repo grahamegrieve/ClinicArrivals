@@ -172,7 +172,7 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="stored">The view of the appointments we already had (important, because it remembers what messages we already sent)</param>
         /// <param name="incoming">Sms Messages received since last poll</param>
-        public void ProcessIncomingMessages(List<PmsAppointment> appts, List<SmsMessage> incoming)
+        public void ProcessIncomingMessages(List<PmsAppointment> appts, IEnumerable<SmsMessage> incoming)
         {
             foreach (var msg in incoming)
             {
@@ -442,8 +442,8 @@ namespace ClinicArrivals.Models
 
         private string normalisePhoneNumber(string p1)
         {
-            p1 = p1.Replace(" ", "");
-            if (p1.StartsWith("04"))
+            p1 = p1?.Replace(" ", "");
+            if (p1?.StartsWith("04") == true)
             {
                 p1 = "+614" + p1.Substring(2);
             }
