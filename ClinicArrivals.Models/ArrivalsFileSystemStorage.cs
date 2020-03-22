@@ -100,9 +100,9 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public Task SaveUnprocessableMessage(string date, SmsMessage message)
+        public Task SaveUnprocessableMessage(DateTime date, SmsMessage message)
         {
-            return SaveFile(date, "unprocessable-messages.json", message);
+            return SaveFile(date.ToString("yyyy-MM-dd"), "unprocessable-messages.json", message);
         }
 
 
@@ -110,9 +110,9 @@ namespace ClinicArrivals.Models
         /// In the event of a system shutdown, re-reading the unprocessed messages
         /// </summary>
         /// <returns></returns>
-        public Task<IEnumerable<SmsMessage>> LoadUnprocessableMessages(string date)
+        public Task<IEnumerable<SmsMessage>> LoadUnprocessableMessages(DateTime date)
         {
-            return LoadFile<IEnumerable<SmsMessage>>(date, "unprocessable-messages.json", new List<SmsMessage>());
+            return LoadFile<IEnumerable<SmsMessage>>(date.ToString("yyyy-MM-dd"), "unprocessable-messages.json", new List<SmsMessage>());
         }
 
         // TODO: Not sure if we actually need to store anything in here, maybe the actual message content that was received.

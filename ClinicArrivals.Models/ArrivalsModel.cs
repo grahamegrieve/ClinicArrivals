@@ -13,7 +13,7 @@ namespace ClinicArrivals.Models
     {
         public ArrivalsModel()
         {
-            DisplayingDate = DateTime.Now.Date.ToString("yyyy-MM-dd");
+            DisplayingDate = DateTime.Now.Date;
         }
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace ClinicArrivals.Models
         /// </summary>
         public ServerStatuses serverStatuses { get; set; } = new ServerStatuses();
 
-        public string DisplayingDate { get; set; }
+        public DateTime DisplayingDate { get; set; }
 
         public ICommand SaveRoomMappings { get; set; }
         public ICommand ReloadRoomMappings { get; set; }

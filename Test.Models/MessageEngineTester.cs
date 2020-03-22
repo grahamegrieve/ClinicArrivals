@@ -761,7 +761,7 @@ namespace Test.Models
                 throw new NotImplementedException();
             }
 
-            public Task<IEnumerable<SmsMessage>> LoadUnprocessableMessages(string date)
+            public Task<IEnumerable<SmsMessage>> LoadUnprocessableMessages(DateTime date)
             {
                 throw new NotImplementedException();
             }
@@ -787,7 +787,7 @@ namespace Test.Models
                 throw new NotImplementedException();
             }
 
-            public Task SaveUnprocessableMessage(string date, SmsMessage message)
+            public Task SaveUnprocessableMessage(DateTime date, SmsMessage message)
             {
                 throw new NotImplementedException();
             }
