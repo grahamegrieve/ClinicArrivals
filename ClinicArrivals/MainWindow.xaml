@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:ClinicArrivals"
         x:Class="ClinicArrivals.MainWindow"
         mc:Ignorable="d"
-        Title="Clinic Arrivals - Virtual Waiting room" Height="450" Width="800" Icon="ClinicArrivals.ico">
+        Title="Clinic Arrivals - Virtual Waiting room" Height="556" Width="991" Icon="ClinicArrivals.ico">
     <Window.Resources>
         <markdown:Markdown x:Key="Markdown"
                         DocumentStyle="{StaticResource DocumentStyle}"
@@ -69,7 +69,7 @@
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="6" Background="#FFD0D8FF" ToolTip="{Binding LastPatientMessage}">
+                            <Grid Margin="6" Background="#FFD0D8FF" ToolTip="{Binding ExternalData.LastPatientMessage}">
                                 <Grid Margin="12" >
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto"/>
@@ -96,7 +96,7 @@
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="6" Background="#FFFFFA87" ToolTip="{Binding LastPatientMessage}">
+                            <Grid Margin="6" Background="#FFFFFA87" ToolTip="{Binding ExternalData.LastPatientMessage}">
                                 <Grid Margin="12" >
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto"/>
@@ -217,6 +217,9 @@
         </TabItem>
         <TabItem Header="Sms Simulator">
             <local:SimulateSmsMessagesControl DataContext="{Binding Path=smsProcessor, Mode=OneWay}"></local:SimulateSmsMessagesControl>
+        </TabItem>
+        <TabItem Header="Pms Simulator">
+            <local:SimulatePmsControl DataContext="{Binding Path=pmsSimulator, Mode=OneWay}"></local:SimulatePmsControl>
         </TabItem>
         <TabItem Header="About">
             <Grid>
