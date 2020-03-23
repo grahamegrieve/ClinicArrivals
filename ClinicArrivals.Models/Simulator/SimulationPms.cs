@@ -108,7 +108,7 @@ namespace ClinicArrivals.Models
                     });
                 }
                 // And read in the extended content from storage
-                await storage.LoadAppointmentStatus(date, appt);
+                await storage.LoadAppointmentStatus(appt);
             }
 
             return result;

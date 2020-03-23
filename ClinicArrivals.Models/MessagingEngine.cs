@@ -91,7 +91,7 @@ namespace ClinicArrivals.Models
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "invite patient to come in", appt);
                         appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
-                        Storage.SaveAppointmentStatus(TimeNow, appt);
+                        Storage.SaveAppointmentStatus(appt);
                     }
                     else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !appt.ExternalData.ScreeningMessageSent)
                     {
@@ -99,7 +99,7 @@ namespace ClinicArrivals.Models
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "send out screening message", appt);
                         appt.ExternalData.ScreeningMessageSent = true;
-                        Storage.SaveAppointmentStatus(TimeNow, appt);
+                        Storage.SaveAppointmentStatus(appt);
                     }
                     else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, 10) && !appt.ExternalData.VideoInviteSent)
                     {
@@ -109,7 +109,7 @@ namespace ClinicArrivals.Models
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "invite to video", appt);
                         appt.ExternalData.VideoInviteSent = true;
-                        Storage.SaveAppointmentStatus(TimeNow, appt);
+                        Storage.SaveAppointmentStatus(appt);
                     }
                 }
                 catch (Exception e)
@@ -151,7 +151,7 @@ namespace ClinicArrivals.Models
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "send registration message", appt);
                         appt.ExternalData.PostRegistrationMessageSent = true;
-                        Storage.SaveAppointmentStatus(TimeNow, appt);
+                        Storage.SaveAppointmentStatus(appt);
                     }
                 }
                 catch (Exception e)
@@ -248,7 +248,7 @@ namespace ClinicArrivals.Models
                 AppointmentUpdater.SaveAppointmentStatusValue(appt);
                 // local storage:
                 appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
-                Storage.SaveAppointmentStatus(TimeNow, appt);
+                Storage.SaveAppointmentStatus(appt);
             }
             else
             {
@@ -276,7 +276,7 @@ namespace ClinicArrivals.Models
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;
                 appt.IsVideoConsultation = true;
-                Storage.SaveAppointmentStatus(TimeNow, appt);
+                Storage.SaveAppointmentStatus(appt);
             }
             else if (MessageMatches(msg.message, "no", "n"))
             {
@@ -285,7 +285,7 @@ namespace ClinicArrivals.Models
                 LogMsg(OUT, rmsg, "process screening response 'no'", appt);
                 appt.ExternalData.ScreeningMessageResponse = true;
                 appt.IsVideoConsultation = false;
-                Storage.SaveAppointmentStatus(TimeNow, appt);
+                Storage.SaveAppointmentStatus(appt);
             }
             else if (MessageMatches(msg.message, "arrived", "here", "a"))
             {
@@ -315,7 +315,7 @@ namespace ClinicArrivals.Models
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;
                 appt.ExternalData.ArrivalStatus = AppointmentStatus.Arrived;
-                Storage.SaveAppointmentStatus(TimeNow, appt);
+                Storage.SaveAppointmentStatus(appt);
             }
             else
             {

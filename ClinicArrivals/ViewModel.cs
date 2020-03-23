@@ -137,7 +137,8 @@ namespace ClinicArrivals
                 // Logic to run on this process
                 // (called every settings.intervalUpcoming)
                 var engine = PrepareMessagingEngine();
-                List<PmsAppointment> appts = await FhirApptReader.SearchAppointments(this.DisplayingDate.AddDays(1), RoomMappings, Storage);
+                List<PmsAppointment> appts = new List<PmsAppointment>();
+                appts.AddRange(await FhirApptReader.SearchAppointments(this.DisplayingDate.AddDays(1), RoomMappings, Storage));
                 appts.AddRange(await FhirApptReader.SearchAppointments(this.DisplayingDate.AddDays(2), RoomMappings, Storage));
                 engine.ProcessUpcomingAppointments(appts);
             }, true);

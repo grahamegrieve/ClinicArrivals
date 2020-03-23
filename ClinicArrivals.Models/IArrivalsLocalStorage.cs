@@ -56,8 +56,8 @@ namespace ClinicArrivals.Models
 
         // TODO: Not sure if we actually need to store anything in here, maybe the actual message content that was received.
         // Could this go into a note in the Appointment itself as a write-back instead?
-        Task SaveAppointmentStatus(DateTime date, PmsAppointment appt);
-        Task LoadAppointmentStatus(DateTime date, PmsAppointment appt);
+        Task SaveAppointmentStatus(PmsAppointment appt);
+        Task LoadAppointmentStatus(PmsAppointment appt);
 
         #region << Settings >>
         Task<Settings> LoadSettings();
