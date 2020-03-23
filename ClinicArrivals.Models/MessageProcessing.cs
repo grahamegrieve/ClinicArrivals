@@ -73,9 +73,8 @@ namespace ClinicArrivals.Models
         }
 
         /// <summary>
-        /// Check for outgoing messages
-        /// If new appts are found, they will be added, missing ones will be removed
-        /// (not a flush and add in again - as this will lose data)
+        /// Retrieve the set of appointments that have mobile numbers with a status of booked, arrived, or fulfilled
+        /// And attach the processing status data from local storage too
         /// </summary>
         /// <param name="model"></param>
         public static async System.Threading.Tasks.Task<List<PmsAppointment>> SearchAppointments(DateTime date, IList<DoctorRoomLabelMapping> roomMappings, IArrivalsLocalStorage storage)
@@ -119,21 +118,24 @@ namespace ClinicArrivals.Models
                     appt = await ToPmsAppointment(entry, resolveReference);
                     if (appt != null)
                     {
-                        results.Add(appt);
-
-                        // Check if the practitioner has a mapping already
-                        if (!roomMappings.Any(m => m.PractitionerFhirID == appt.PractitionerFhirID))
+                        if (!string.IsNullOrEmpty(appt.PatientMobilePhone))
                         {
-                            // Add in an empty room mapping
-                            roomMappings.Add(new DoctorRoomLabelMapping()
-                            {
-                                PractitionerFhirID = appt.PractitionerFhirID,
-                                PractitionerName = appt.PractitionerName
-                            });
-                        }
+                            results.Add(appt);
 
-                        // And read in the extended content from storage
-                        await storage.LoadAppointmentStatus(date, appt);
+                            // Check if the practitioner has a mapping already
+                            if (!roomMappings.Any(m => m.PractitionerFhirID == appt.PractitionerFhirID))
+                            {
+                                // Add in an empty room mapping
+                                roomMappings.Add(new DoctorRoomLabelMapping()
+                                {
+                                    PractitionerFhirID = appt.PractitionerFhirID,
+                                    PractitionerName = appt.PractitionerName
+                                });
+                            }
+
+                            // And read in the extended content from storage
+                            await storage.LoadAppointmentStatus(date, appt);
+                        }
                     }
                 }
             }
