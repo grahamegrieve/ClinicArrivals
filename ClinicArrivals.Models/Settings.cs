@@ -21,6 +21,7 @@ namespace ClinicArrivals.Models
         public string ACCOUNT_SID { get; set; }
         public string AUTH_TOKEN { get; set; }
         public int PollIntervalSeconds { get; set; }
+        public int RegistrationPollIntervalSeconds { get; set; }
         public bool ExamplesServer { get; set; }
         public Guid SystemIdentifier { get; private set; }
 
@@ -34,6 +35,7 @@ namespace ClinicArrivals.Models
             ACCOUNT_SID = other.ACCOUNT_SID;
             AUTH_TOKEN = other.AUTH_TOKEN;
             PollIntervalSeconds = other.PollIntervalSeconds;
+            RegistrationPollIntervalSeconds = other.RegistrationPollIntervalSeconds;
             ExamplesServer = other.ExamplesServer;
             SystemIdentifier = other.SystemIdentifier;
             DeveloperPhoneNumber = other.DeveloperPhoneNumber;
