@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace ClinicArrivals.Models
@@ -29,10 +30,24 @@ namespace ClinicArrivals.Models
         {
             if (parameter is IEnumerable<MessageTemplate> templates)
             {
+                Boolean ok = true;
+                foreach (var template in templates)
+                {
+                    string error;
+                    if (!MessageTemplate.IsValid(template.MessageType, template.Template, out error))
+                    {
+                        ok = false;
+                        MessageBoxButtons buttons = MessageBoxButtons.OK;
+                        MessageBox.Show("Template for " + template.MessageType + " is invalid: " + error, "Template Error", buttons, MessageBoxIcon.Error);
+                    }
+                }
                 processing = true;
                 try
                 {
-                    _storage.SaveTemplates(templates);
+                    if (ok)
+                    {
+                        _storage.SaveTemplates(templates);
+                    }
                 }
                 catch (Exception ex)
                 {

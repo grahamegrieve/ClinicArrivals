@@ -55,5 +55,46 @@ namespace ClinicArrivals.Models
         /// The actual template of the message (Razor or simple string replace)
         /// </summary>
         public string Template { get; set; }
+
+        static public bool IsValid(string type, string msg, out string error)
+        {
+            error = null;
+            while (msg.Contains("{{"))
+            {
+                int b = msg.IndexOf("{{");
+                msg = msg.Substring(0, b) + "[[" + msg.Substring(b + 2);
+                int e = msg.IndexOf("}}");
+                if (e == -1)
+                {
+                    error = "No matching end }} for the {{ at index " + b + 1;
+                    return false;
+                } 
+                else 
+                {
+                    msg = msg.Substring(0, e) + "]]" + msg.Substring(e + 2);
+                    String n = msg.Substring(b + 2, e - b - 2);
+                    if (!(isInList(n, "Patient.name", "Practitioner.name", "Appointment.start", "Appointment.start.date", "Appointment.start.time", "Patient.telecom.mobile", "Appointment.status", "Practitioner.id", "Patient.id", "Appointment.id")
+                        || (type == MSG_VIDEO_INVITE && n == "url") || (type == MSG_APPT_READY && n == "room")))
+                    {
+                        error = "The name '"+n+"' is not valid as a token name";
+                        return false;
+
+                    }
+                }
+            }
+            return true;
+        }
+
+        private static bool isInList(string n, params string[] vl)
+        {
+            foreach (var v in vl)
+            {
+                if (v == n)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
