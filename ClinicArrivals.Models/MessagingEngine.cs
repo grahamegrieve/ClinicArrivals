@@ -349,8 +349,8 @@ namespace ClinicArrivals.Models
                 // pseudo code: 
                 // if the two appointments are at the same time, we only care about the first one
                 // otherwise, in principle we are interested in the first one, unless the message response belongs to an earlier cycle ("yes" / "no") and we're waiting for that
-                var appt1 = candidates[0].ArrivalTime < candidates[1].ArrivalTime ? candidates[0] : candidates[1];
-                var appt2 = candidates[0].ArrivalTime < candidates[1].ArrivalTime ? candidates[1] : candidates[0];
+                var appt1 = candidates[0].AppointmentStartTime < candidates[1].AppointmentStartTime ? candidates[0] : candidates[1];
+                var appt2 = candidates[0].AppointmentStartTime < candidates[1].AppointmentStartTime ? candidates[1] : candidates[0];
                 if (messageMatches(msg.message, "yes", "no"))
                 {
                     foreach (var appt in candidates)
