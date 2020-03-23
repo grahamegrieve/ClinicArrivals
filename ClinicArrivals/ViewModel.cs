@@ -16,6 +16,7 @@ namespace ClinicArrivals
 
         public BackgroundProcess ReadSmsMessage;
         public BackgroundProcess ScanAppointments;
+        public BackgroundProcess ProcessUpcomingAppointments;
         public SimulationSmsProcessor smsProcessor { get; set; } = new SimulationSmsProcessor();
 
         private readonly NLogAdapter logger = new NLogAdapter();
@@ -124,7 +125,15 @@ namespace ClinicArrivals
                 }
             });
 
-            // TODO: Include the Upcoming Appointments handling
+            ProcessUpcomingAppointments = new BackgroundProcess(Settings, serverStatuses.UpcomingAppointmentProcessor, dispatcher, async () =>
+            {
+                // Logic to run on this process
+                // (called every settings.intervalUpcoming)
+                var engine = PrepareMessagingEngine();
+                List<PmsAppointment> appts = await MessageProcessing.SearchAppointments(this.DisplayingDate.AddDays(1), RoomMappings, Storage);
+                appts.AddRange(await MessageProcessing.SearchAppointments(this.DisplayingDate.AddDays(2), RoomMappings, Storage));
+                engine.ProcessUpcomingAppointments(appts);
+            });
         }
 
         private void AddMissingTemplates()
