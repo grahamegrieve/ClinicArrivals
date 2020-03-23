@@ -35,7 +35,6 @@ namespace ClinicArrivals.Models
                 source = source.Replace("{{Appointment.start}}", appt.AppointmentStartTime.ToString());
                 source = source.Replace("{{Appointment.start.date}}", appt.AppointmentStartTime.ToString("d-MMM"));
                 source = source.Replace("{{Appointment.start.time}}", appt.AppointmentStartTime.ToString("hh:mm tt"));
-                source = source.Replace("{{Appointment.arrival}}", appt.ArrivalTime == null ? "??" : appt.ArrivalTime.ToString());
                 source = source.Replace("{{Appointment.id}}", appt.AppointmentFhirID);
             }
             if (vars != null)

@@ -32,7 +32,6 @@ The following variable names are supported by the application:
 Included for internal debugging purposes, not so useful for patient messages
 
 * ```Patient.telecom.mobile```: The phone number for the patient 
-* ```Appointment.arrival```: The arrival time of the patient
 * ```Appointment.status```: The status of the appointment
 * ```Practitioner.id```: 
 * ```Patient.id```: 

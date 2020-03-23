@@ -86,8 +86,8 @@ namespace ClinicArrivals.Models
                     if (appt.ExternalData.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
                     {
                         Dictionary<string, string> vars = new Dictionary<string, string>();
-                        vars.Add("room", findRoomNote(appt.PractitionerFhirID));
-                        SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_APPT_READY, appt, vars));
+                        vars.Add("room", FindRoomNote(appt.PractitionerFhirID));
+                        SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_APPT_READY, appt, vars));
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "invite patient to come in", appt);
                         appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
@@ -95,7 +95,7 @@ namespace ClinicArrivals.Models
                     }
                     else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !appt.ExternalData.ScreeningMessageSent)
                     {
-                        SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
+                        SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "send out screening message", appt);
                         appt.ExternalData.ScreeningMessageSent = true;
@@ -105,7 +105,7 @@ namespace ClinicArrivals.Models
                     {
                         Dictionary<string, string> vars = new Dictionary<string, string>();
                         vars.Add("url", VideoManager.getConferenceUrl(appt.AppointmentFhirID));
-                        SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_INVITE, appt, vars));
+                        SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_INVITE, appt, vars));
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "invite to video", appt);
                         appt.ExternalData.VideoInviteSent = true;
@@ -147,7 +147,7 @@ namespace ClinicArrivals.Models
                 {
                     if (!appt.ExternalData.PostRegistrationMessageSent)
                     {
-                        SmsMessage msg = new SmsMessage(normalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_REGISTRATION, appt, null));
+                        SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_REGISTRATION, appt, null));
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "send registration message", appt);
                         appt.ExternalData.PostRegistrationMessageSent = true;
@@ -186,33 +186,33 @@ namespace ClinicArrivals.Models
                     //   process as an arrival messages
                     // else
                     //   we are not expecting a response - send message explaining that 
-                    List<PmsAppointment> candidates = findCandidateAppointments(appts, msg.phone);
+                    List<PmsAppointment> candidates = FindCandidateAppointments(appts, msg.phone);
                     if (candidates.Count == 0)
                     {
-                        handleUnknownMessage(msg);
+                        HandleUnknownMessage(msg);
                     }
                     else
                     {
-                        PmsAppointment appt = candidates.Count == 1 ? candidates[0] : chooseRelevantAppointment(candidates, msg);
+                        PmsAppointment appt = candidates.Count == 1 ? candidates[0] : ChooseRelevantAppointment(candidates, msg);
                         if (appt == null)
                         {
-                            processUnexpectedResponse(candidates[0], msg);
+                            ProcessUnexpectedResponse(candidates[0], msg);
                         }
                         else if (appt.ExternalData.VideoInviteSent)
                         {
-                            processVideoInviteResponse(appt, msg);
+                            ProcessVideoInviteResponse(appt, msg);
                         }
                         else if (appt.ExternalData.ScreeningMessageSent && !appt.ExternalData.ScreeningMessageResponse)
                         {
-                            processScreeningResponse(appt, msg);
+                            ProcessScreeningResponse(appt, msg);
                         }
                         else if (appt.ArrivalStatus == AppointmentStatus.Booked)
                         {
-                            processArrivalMessage(appt, msg);
+                            ProcessArrivalMessage(appt, msg);
                         }
                         else
                         {
-                            processUnexpectedResponse(appt, msg);
+                            ProcessUnexpectedResponse(appt, msg);
                         }
                     }
                 }
@@ -224,7 +224,7 @@ namespace ClinicArrivals.Models
         }
 
 
-        private void handleUnknownMessage(SmsMessage msg)
+        private void HandleUnknownMessage(SmsMessage msg)
         {
             // a future possible enhancement is to ask the user which patient the appointment is for; this will smooth the work flow, but the response 
             // processing might be complicated. can it be just a Medicare number and date? 
@@ -234,9 +234,9 @@ namespace ClinicArrivals.Models
             UnprocessableMessages.Add(msg);
         }
 
-        private void processVideoInviteResponse(PmsAppointment appt, SmsMessage msg)
+        private void ProcessVideoInviteResponse(PmsAppointment appt, SmsMessage msg)
         {
-            if (messageMatches(msg.message, "joined", "ok", "j"))
+            if (MessageMatches(msg.message, "joined", "ok", "j"))
             {
                 // twilio:
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_THX, appt, null));
@@ -259,11 +259,11 @@ namespace ClinicArrivals.Models
                 UnprocessableMessages.Add(msg);
             }
         }
-        private void processScreeningResponse(PmsAppointment appt, SmsMessage msg)
+        private void ProcessScreeningResponse(PmsAppointment appt, SmsMessage msg)
         {
             // the patient should respond with "yes" or "no" but they may not bother and just respond with "arrived"
             // of course they might respond with anything else that we can't understand, so we'll explain apologetically if they do
-            if (messageMatches(msg.message, "yes", "y"))
+            if (MessageMatches(msg.message, "yes", "y"))
             {
                 // twilio: 
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_YES, appt, null));
@@ -278,7 +278,7 @@ namespace ClinicArrivals.Models
                 appt.IsVideoConsultation = true;
                 Storage.SaveAppointmentStatus(TimeNow, appt);
             }
-            else if (messageMatches(msg.message, "no", "n"))
+            else if (MessageMatches(msg.message, "no", "n"))
             {
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_NO, appt, null));
                 SmsSender.SendMessage(rmsg);
@@ -287,9 +287,9 @@ namespace ClinicArrivals.Models
                 appt.IsVideoConsultation = false;
                 Storage.SaveAppointmentStatus(TimeNow, appt);
             }
-            else if (messageMatches(msg.message, "arrived", "here", "a"))
+            else if (MessageMatches(msg.message, "arrived", "here", "a"))
             {
-                processArrivalMessage(appt, msg);
+                ProcessArrivalMessage(appt, msg);
             }
             else
             {
@@ -301,9 +301,9 @@ namespace ClinicArrivals.Models
             }
         }
 
-        private void processArrivalMessage(PmsAppointment appt, SmsMessage msg)
+        private void ProcessArrivalMessage(PmsAppointment appt, SmsMessage msg)
         {
-            if (messageMatches(msg.message, "arrived", "here", "a"))
+            if (MessageMatches(msg.message, "arrived", "here", "a"))
             {
                 // twilio:
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_ARRIVED_THX, appt, null));
@@ -327,7 +327,7 @@ namespace ClinicArrivals.Models
             }
         }
 
-        private void processUnexpectedResponse(PmsAppointment appt, SmsMessage msg)
+        private void ProcessUnexpectedResponse(PmsAppointment appt, SmsMessage msg)
         {
             SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_UNEXPECTED, appt, null));
             SmsSender.SendMessage(rmsg);
@@ -335,13 +335,13 @@ namespace ClinicArrivals.Models
             UnprocessableMessages.Add(msg);
         }
 
-        private PmsAppointment chooseRelevantAppointment(List<PmsAppointment> candidates, SmsMessage msg)
+        private PmsAppointment ChooseRelevantAppointment(List<PmsAppointment> candidates, SmsMessage msg)
         {
             if (candidates.Count > 2)
             {
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_TOO_MANY_APPOINTMENTS, candidates[0], null));
                 SmsSender.SendMessage(rmsg);
-                LogMsg(OUT, rmsg, "too many candidates", candidates[0]);
+                LogMsg(OUT, rmsg, "Too many candidates", candidates[0]);
                 UnprocessableMessages.Add(msg);
             }
             else
@@ -351,7 +351,7 @@ namespace ClinicArrivals.Models
                 // otherwise, in principle we are interested in the first one, unless the message response belongs to an earlier cycle ("yes" / "no") and we're waiting for that
                 var appt1 = candidates[0].AppointmentStartTime < candidates[1].AppointmentStartTime ? candidates[0] : candidates[1];
                 var appt2 = candidates[0].AppointmentStartTime < candidates[1].AppointmentStartTime ? candidates[1] : candidates[0];
-                if (messageMatches(msg.message, "yes", "no"))
+                if (MessageMatches(msg.message, "yes", "no"))
                 {
                     foreach (var appt in candidates)
                     {
@@ -362,7 +362,7 @@ namespace ClinicArrivals.Models
                     }
                     return null;
                 }
-                else if (messageMatches(msg.message, "joined"))
+                else if (MessageMatches(msg.message, "joined"))
                 {
                     foreach (var appt in candidates)
                     {
@@ -373,7 +373,7 @@ namespace ClinicArrivals.Models
                     }
                     return null;
                 }
-                else if (messageMatches(msg.message, "arrived"))
+                else if (MessageMatches(msg.message, "arrived"))
                 {
                     foreach (var appt in candidates)
                     {
@@ -395,12 +395,12 @@ namespace ClinicArrivals.Models
             return null;
         }
 
-        private List<PmsAppointment> findCandidateAppointments(List<PmsAppointment> appts, string phone)
+        private List<PmsAppointment> FindCandidateAppointments(List<PmsAppointment> appts, string phone)
         {
             List<PmsAppointment> list = new List<PmsAppointment>();
             foreach (var appt in appts)
             {
-                if (isSamePhone(appt.PatientMobilePhone, phone))
+                if (IsSamePhone(appt.PatientMobilePhone, phone))
                 {
                     list.Add(appt);
                 }
@@ -408,11 +408,11 @@ namespace ClinicArrivals.Models
             return list;
         }
 
-        private bool messageMatches(string msg, params string[] values)
+        private bool MessageMatches(string msg, params string[] values)
         {
             foreach (string s in values)
             {
-                if (messageTextMatches(msg, s))
+                if (MessageTextMatches(msg, s))
                 {
                     return true;
                 }
@@ -420,7 +420,7 @@ namespace ClinicArrivals.Models
             return false;
         }
 
-        private bool messageTextMatches(string msg, string value)
+        private bool MessageTextMatches(string msg, string value)
         {
             msg = msg.ToLower();
             StringBuilder m = new StringBuilder();
@@ -434,14 +434,14 @@ namespace ClinicArrivals.Models
             return m.ToString() == value;
         }
 
-        private bool isSamePhone(string p1, string p2)
+        private bool IsSamePhone(string p1, string p2)
         {
-            p1 = normalisePhoneNumber(p1);
-            p2 = normalisePhoneNumber(p2);
+            p1 = NormalisePhoneNumber(p1);
+            p2 = NormalisePhoneNumber(p2);
             return p1 == p2;
         }
 
-        private string normalisePhoneNumber(string p1)
+        private string NormalisePhoneNumber(string p1)
         {
             p1 = p1?.Replace(" ", "");
             if (p1?.StartsWith("04") == true)
@@ -467,7 +467,7 @@ namespace ClinicArrivals.Models
             return TimeNow.Date < start.Date;
         }
 
-        private String findRoomNote(string practId)
+        private String FindRoomNote(string practId)
         {
             foreach (var rm in RoomMappings)
             {
@@ -477,18 +477,6 @@ namespace ClinicArrivals.Models
                 }
             }
             return "";
-        }
-
-        private PmsAppointment findApp(List<PmsAppointment> appointments, string id)
-        {
-            foreach (PmsAppointment t in appointments)
-            {
-                if (t.AppointmentFhirID == id)
-                {
-                    return t;
-                }
-            }
-            return null;
         }
 
     }

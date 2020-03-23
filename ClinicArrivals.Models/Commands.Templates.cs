@@ -36,7 +36,7 @@ namespace ClinicArrivals.Models
                 }
                 catch (Exception ex)
                 {
-                    // _model.ErrorMessage = ex.Message;
+                    new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception Saving Templates: " + ex.Message);
                 }
                 finally
                 {

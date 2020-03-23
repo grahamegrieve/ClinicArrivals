@@ -22,7 +22,6 @@ namespace ClinicArrivals.Models
         public string AppointmentFhirID { get; set; }
         public AppointmentStatus ArrivalStatus { get; set; }
         public DateTime AppointmentStartTime { get; set; }
-        public DateTime ArrivalTime { get; set; }
         public Boolean IsVideoConsultation { get; set; }
 
         /// <summary>

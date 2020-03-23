@@ -39,7 +39,6 @@ namespace ClinicArrivals
             FhirApptReader = new FhirAppointmentReader(FhirAppointmentReader.GetServerConnection);
 
             // Simulator for the SMS message processor
-            smsProcessor.ClearMessages = new SimulateProcessorCommand(smsProcessor);
             smsProcessor.QueueIncomingMessage = new SimulateProcessorCommand(smsProcessor);
         }
 
@@ -173,9 +172,9 @@ namespace ClinicArrivals
         {
 #if DEBUG
             // This is some test data to assist in the UI Designer
-            Expecting.Add(new PmsAppointment() { ArrivalTime = DateTime.Parse("10:35am"), PatientName = "Postlethwaite, Brian", PatientMobilePhone = "0423857505", ArrivalStatus = Hl7.Fhir.Model.Appointment.AppointmentStatus.Pending, AppointmentStartTime = DateTime.Parse("9:45am"), PractitionerName = "Dr Nathan Pinskier" });
-            Expecting.Add(new PmsAppointment() { ArrivalTime = DateTime.Parse("10:35am"), PatientName = "Esler, Brett", PatientMobilePhone = "0423083847", ArrivalStatus = Hl7.Fhir.Model.Appointment.AppointmentStatus.Pending, AppointmentStartTime = DateTime.Parse("10:00am"), PractitionerName = "Dr Nathan Pinskier" });
-            Waiting.Add(new PmsAppointment() { ArrivalTime = DateTime.Parse("10:35am"), PatientName = "Grieve, Grahame", PatientMobilePhone = "0423083847", ArrivalStatus = Hl7.Fhir.Model.Appointment.AppointmentStatus.Arrived, AppointmentStartTime = DateTime.Parse("10:00am"), PractitionerName = "Dr Nathan Pinskier" });
+            Expecting.Add(new PmsAppointment() { PatientName = "Postlethwaite, Brian", PatientMobilePhone = "0423857505", ArrivalStatus = Hl7.Fhir.Model.Appointment.AppointmentStatus.Pending, AppointmentStartTime = DateTime.Parse("9:45am"), PractitionerName = "Dr Nathan Pinskier" });
+            Expecting.Add(new PmsAppointment() { PatientName = "Esler, Brett", PatientMobilePhone = "0423083847", ArrivalStatus = Hl7.Fhir.Model.Appointment.AppointmentStatus.Pending, AppointmentStartTime = DateTime.Parse("10:00am"), PractitionerName = "Dr Nathan Pinskier" });
+            Waiting.Add(new PmsAppointment() {  PatientName = "Grieve, Grahame", PatientMobilePhone = "0423083847", ArrivalStatus = Hl7.Fhir.Model.Appointment.AppointmentStatus.Arrived, AppointmentStartTime = DateTime.Parse("10:00am"), PractitionerName = "Dr Nathan Pinskier" });
             RoomMappings.Add(new DoctorRoomLabelMapping()
             {
                 PractitionerFhirID = "1",
