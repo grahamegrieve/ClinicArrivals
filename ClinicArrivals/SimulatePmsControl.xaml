@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="ClinicArrivals.SimulatePmsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ClinicArrivals"
+             xmlns:models="clr-namespace:ClinicArrivals.Models;assembly=ClinicArrivals.Models"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <models:SimulationPms/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="6"/>
+            <Setter Property="Padding" Value="6"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="6"/>
+            <Setter Property="Padding" Value="6"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Content="Simulated Appointments" FontWeight="Bold" FontSize="14" />
+        <ListView Grid.RowSpan="2" Grid.Column="0"
+                  ItemsSource="{Binding Path=Appointments, Mode=OneWay}" 
+                  SelectedItem="{Binding Path=SelectedAppointment, Mode=TwoWay}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="6" Background="#FFD0D8FF" ToolTip="{Binding Path=ExternalData.LastPatientMessage}">
+                        <Grid Margin="12" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="{Binding Path=AppointmentStartTime}" TextWrapping="Wrap" FontSize="14"/>
+                            <TextBlock Grid.Row="1" Text="{Binding Path=PatientName}" TextWrapping="Wrap" FontSize="14"/>
+                            <TextBox Grid.Row="2" Text="{Binding Path=PatientMobilePhone}" TextWrapping="Wrap" FontWeight="Bold" FontSize="14" IsReadOnly="True" BorderThickness="0" Padding="4"/>
+                            <TextBlock Grid.Row="3" Text="{Binding Path=PractitionerName}" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Row="4" Text="{Binding Path=ArrivalStatus}" TextWrapping="Wrap" FontSize="14"/>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <StackPanel Grid.Row="1" Grid.Column="1" DataContext="{Binding}">
+            <Border BorderThickness="2" BorderBrush="{DynamicResource {x:Static SystemColors.DesktopBrushKey}}">
+
+                <Grid Margin="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Simulated Appointment Details" FontWeight="Bold" FontSize="14" />
+                    <Label Grid.Row="1" Grid.Column="0" Content="Patient Name"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=EditingAppointment.PatientName, Mode=TwoWay}"/>
+                    <Label Grid.Row="2" Grid.Column="0" Content="Mobile Phone"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=EditingAppointment.PatientMobilePhone, Mode=TwoWay}"/>
+                    <Label Grid.Row="3" Grid.Column="0" Content="Practitioner Name"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Path=EditingAppointment.PractitionerName, Mode=TwoWay}"/>
+                    <Label Grid.Row="4" Grid.Column="0" Content="Appointment Time"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Path=EditingAppointment.AppointmentStartTime, Mode=TwoWay}"/>
+                    <Label Grid.Row="5" Grid.Column="0" Content="Arrival Status"/>
+                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Path=EditingAppointment.ArrivalStatus, Mode=TwoWay}"/>
+
+                    <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="Add New" Command="{Binding Path=CreateNewAppointment}" CommandParameter="CreateNewAppointment"/>
+                        <Button Content="Update" Command="{Binding Path=UpdateAppointment}" CommandParameter="UpdateAppointment"/>
+                        <Button Content="Delete" Command="{Binding Path=DeleteAppointment}" CommandParameter="DeleteAppointment"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

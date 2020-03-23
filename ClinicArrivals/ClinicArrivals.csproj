@@ -129,6 +129,9 @@
     <Compile Include="SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SimulatePmsControl.xaml.cs">
+      <DependentUpon>SimulatePmsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SimulateSmsMessagesControl.xaml.cs">
       <DependentUpon>SimulateSmsMessagesControl.xaml</DependentUpon>
     </Compile>
@@ -150,6 +153,10 @@
     <Page Include="SettingsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SimulatePmsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SimulateSmsMessagesControl.xaml">
       <SubType>Designer</SubType>
