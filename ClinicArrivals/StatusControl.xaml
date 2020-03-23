@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ClinicArrivals"
              xmlns:model="clr-namespace:ClinicArrivals.Models;assembly=ClinicArrivals.Models"
              mc:Ignorable="d" 
-             d:DesignHeight="139.761" d:DesignWidth="380.717">
+             d:DesignHeight="95.761" d:DesignWidth="661.717">
     <UserControl.DataContext>
         <model:ServerStatuses/>
     </UserControl.DataContext>
@@ -25,26 +25,38 @@
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
+            
+            <ColumnDefinition Width="12"/>
+
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Content="{Binding Path=IncomingSmsReader.Name}"/>
-        <Label Grid.Row="1" Content="{Binding Path=AppointmentScanner.Name}"/>
-        <Label Grid.Row="2" Content="{Binding Path=Oridashi.Name}"/>
 
-        <Label Grid.Row="0" Grid.Column="3" Content="{Binding Path=IncomingSmsReader.CurrentStatus}"/>
-        <Label Grid.Row="1" Grid.Column="3" Content="{Binding Path=AppointmentScanner.CurrentStatus}"/>
-        <Label Grid.Row="2" Grid.Column="3" Content="{Binding Path=Oridashi.CurrentStatus}"/>
+        <Label Grid.Row="0" Grid.Column="0" Content="{Binding Path=Oridashi.Name}"/>
+        <Button Grid.Row="0" Grid.Column="1" Content="Start" Command="{Binding Path=Oridashi.Start}" CommandParameter="{Binding Oridashi.CurrentStatus, Mode=OneWay}"/>
+        <Button Grid.Row="0" Grid.Column="2" Content="Stop" Command="{Binding Path=Oridashi.Stop}"/>
+        <Label Grid.Row="0" Grid.Column="3" Content="{Binding Path=Oridashi.CurrentStatus}"/>
 
-        <Button Grid.Row="0" Grid.Column="1" Content="Start" Command="{Binding Path=IncomingSmsReader.Start}" CommandParameter="{Binding IncomingSmsReader.CurrentStatus, Mode=OneWay}"/>
-        <Button Grid.Row="1" Grid.Column="1" Content="Start" Command="{Binding Path=AppointmentScanner.Start}" CommandParameter="{Binding AppointmentScanner.CurrentStatus, Mode=OneWay}"/>
-        <Button Grid.Row="2" Grid.Column="1" Content="Start" Command="{Binding Path=Oridashi.Start}" CommandParameter="{Binding Oridashi.CurrentStatus, Mode=OneWay}"/>
+        <Label Grid.Row="1" Grid.Column="0" Content="{Binding Path=IncomingSmsReader.Name}"/>
+        <Button Grid.Row="1" Grid.Column="1" Content="Start" Command="{Binding Path=IncomingSmsReader.Start}" CommandParameter="{Binding IncomingSmsReader.CurrentStatus, Mode=OneWay}"/>
+        <Button Grid.Row="1" Grid.Column="2" Content="Stop" Command="{Binding Path=IncomingSmsReader.Stop}"/>
+        <Label Grid.Row="1" Grid.Column="3" Content="{Binding Path=IncomingSmsReader.CurrentStatus}"/>
 
-        <Button Grid.Row="0" Grid.Column="2" Content="Stop" Command="{Binding Path=IncomingSmsReader.Stop}"/>
-        <Button Grid.Row="1" Grid.Column="2" Content="Stop" Command="{Binding Path=AppointmentScanner.Stop}"/>
-        <Button Grid.Row="2" Grid.Column="2" Content="Stop" Command="{Binding Path=Oridashi.Stop}"/>
+        <Label Grid.Row="0" Grid.Column="5" Content="{Binding Path=AppointmentScanner.Name}"/>
+        <Button Grid.Row="0" Grid.Column="6" Content="Start" Command="{Binding Path=AppointmentScanner.Start}" CommandParameter="{Binding AppointmentScanner.CurrentStatus, Mode=OneWay}"/>
+        <Button Grid.Row="0" Grid.Column="7" Content="Stop" Command="{Binding Path=AppointmentScanner.Stop}"/>
+        <Label Grid.Row="0" Grid.Column="8" Content="{Binding Path=AppointmentScanner.CurrentStatus}"/>
+
+        <Label Grid.Row="1" Grid.Column="5" Content="{Binding Path=UpcomingAppointmentProcessor.Name}"/>
+        <Button Grid.Row="1" Grid.Column="6" Content="Start" Command="{Binding Path=UpcomingAppointmentProcessor.Start}" CommandParameter="{Binding UpcomingAppointmentProcessor.CurrentStatus, Mode=OneWay}"/>
+        <Button Grid.Row="1" Grid.Column="7" Content="Stop" Command="{Binding Path=UpcomingAppointmentProcessor.Stop}"/>
+        <Label Grid.Row="1" Grid.Column="8" Content="{Binding Path=UpcomingAppointmentProcessor.CurrentStatus}"/>
     </Grid>
 </UserControl>

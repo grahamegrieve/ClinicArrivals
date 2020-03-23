@@ -27,21 +27,21 @@ namespace ClinicArrivals
                 await model.Initialize(Dispatcher);
 
                 // Start the FHIR server
-                MessageProcessing.OnStarted += MessageProcessing_OnStarted;
-                MessageProcessing.OnStopped += MessageProcessing_OnStopped;
-                MessageProcessing.OnVisitStarted += MessageProcessing_OnVisitStarted;
-                MessageProcessing.StartServer(model.Settings.ExamplesServer);
+                FhirAppointmentReader.OnStarted += MessageProcessing_OnStarted;
+                FhirAppointmentReader.OnStopped += MessageProcessing_OnStopped;
+                FhirAppointmentReader.OnVisitStarted += MessageProcessing_OnVisitStarted;
+                FhirAppointmentReader.StartServer(model.Settings.ExamplesServer);
 
                 model.serverStatuses.Oridashi.CurrentStatus = "starting...";
                 model.serverStatuses.Oridashi.Start = new ServerStatusCommand(model.serverStatuses.Oridashi, "stopped", () =>
                 {
                     model.serverStatuses.Oridashi.CurrentStatus = "starting...";
-                    MessageProcessing.StartServer(model.Settings.ExamplesServer);
+                    FhirAppointmentReader.StartServer(model.Settings.ExamplesServer);
                 });
                 model.serverStatuses.Oridashi.Stop = new ServerStatusCommand(model.serverStatuses.Oridashi, "running", async () =>
                 {
                     model.serverStatuses.Oridashi.CurrentStatus = "stopping...";
-                    await MessageProcessing.StopServer();
+                    await FhirAppointmentReader.StopServer();
                 });
             });
         }

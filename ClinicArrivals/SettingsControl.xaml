@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ClinicArrivals"
              xmlns:models="clr-namespace:ClinicArrivals.Models;assembly=ClinicArrivals.Models"
              mc:Ignorable="d" 
-             d:DesignHeight="350" d:DesignWidth="400" ScrollViewer.VerticalScrollBarVisibility="Auto">
+             d:DesignHeight="422" d:DesignWidth="400" ScrollViewer.VerticalScrollBarVisibility="Auto">
     <UserControl.DataContext>
         <models:Settings/>
     </UserControl.DataContext>
@@ -50,8 +50,10 @@
         <Label Grid.Row="4" Grid.ColumnSpan="2" Content="Other" FontWeight="Bold" FontSize="14" />
         <Label Grid.Row="5" Grid.Column="0" Content="Poll Interval (seconds)"/>
         <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Path=PollIntervalSeconds, Mode=TwoWay}" Width="65" HorizontalAlignment="Left"/>
-        <Label Grid.Row="6" Grid.Column="0" Content="Use Samples Server"/>
-        <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding Path=ExamplesServer, Mode=TwoWay}" Margin="6"/>
+        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Width="150">Registration Poll Interval (seconds)</TextBlock>
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Path=RegistrationPollIntervalSeconds, Mode=TwoWay}" Width="65" HorizontalAlignment="Left"/>
+        <Label Grid.Row="7" Grid.Column="0" Content="Use Samples Server"/>
+        <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding Path=ExamplesServer, Mode=TwoWay}" Margin="6"/>
 
         <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal">
             <Button Content="Save" Command="{Binding Save}" CommandParameter="{Binding Mode=OneWay}"/>

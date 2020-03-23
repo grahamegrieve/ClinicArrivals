@@ -14,6 +14,7 @@ namespace ClinicArrivals.Models
         public ServerStatus Oridashi { get; set; } = new ServerStatus() { Name = "Oridashi FHIR Server", CurrentStatus="?" };
         public ServerStatus IncomingSmsReader { get; set; } = new ServerStatus() { Name = "Incoming SMS Reader", CurrentStatus = "?" };
         public ServerStatus AppointmentScanner { get; set; } = new ServerStatus() { Name = "Appointment Scanner", CurrentStatus = "?" };
+        public ServerStatus UpcomingAppointmentProcessor { get; set; } = new ServerStatus() { Name = "Registration Sender", CurrentStatus = "?" };
     }
 
     [AddINotifyPropertyChangedInterface]
