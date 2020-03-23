@@ -147,10 +147,10 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" >
-                    <Button Content="Save" Command="{Binding SaveRoomMappings}" CommandParameter="{Binding RoomMappings}"/>
-                    <Button Content="Reload" Command="{Binding ReloadRoomMappings}" CommandParameter="{Binding RoomMappings}"/>
+                    <Button Content="Save" Command="{Binding SaveRoomMappings}"/>
+                    <Button Content="Reload" Command="{Binding ReloadRoomMappings}"/>
                 </StackPanel>
-                <ListView Grid.Row="1" ItemsSource="{Binding Path=RoomMappings, Mode=OneWay}"
+                <ListView Grid.Row="1" ItemsSource="{Binding Path=EditRoomMappings, Mode=OneWay}"
                           VerticalAlignment="Stretch"
                           ScrollViewer.VerticalScrollBarVisibility="Auto"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled">

@@ -582,7 +582,7 @@ namespace Test.Models
             return engine;
         }
 
-        private void loadRoomMappings(ObservableCollection<DoctorRoomLabelMapping> roomMappings)
+        private void loadRoomMappings(IList<DoctorRoomLabelMapping> roomMappings)
         {
             roomMappings.Add(new DoctorRoomLabelMapping("p123", "Please go to room 7."));
         }

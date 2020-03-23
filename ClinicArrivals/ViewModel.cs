@@ -41,8 +41,8 @@ namespace ClinicArrivals
             Storage = new ArrivalsFileSystemStorage(IsSimulation);
             Settings.Save = new SaveSettingsCommand(Storage);
             Settings.Reload = new ReloadSettingsCommand(Storage);
-            SaveRoomMappings = new SaveRoomMappingsCommand(Storage);
-            ReloadRoomMappings = new ReloadRoomMappingsCommand(Storage);
+            SaveRoomMappings = new SaveRoomMappingsCommand(this);
+            ReloadRoomMappings = new ReloadRoomMappingsCommand(this);
             SaveTemplates = new SaveTemplatesCommand(Storage);
             ReloadTemplates = new ReloadTemplatesCommand(Storage);
             SeeTemplateDocumentation = new SeeTemplateDocumentationCommand();

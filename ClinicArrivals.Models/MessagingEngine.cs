@@ -57,8 +57,8 @@ namespace ClinicArrivals.Models
         /// </summary>
         public ILoggingService Logger { get; set; }
 
-        public ObservableCollection<DoctorRoomLabelMapping> RoomMappings { get; set; }
-        public ObservableCollection<SmsMessage> UnprocessableMessages { get; set; } 
+        public IList<DoctorRoomLabelMapping> RoomMappings { get; set; }
+        public IList<SmsMessage> UnprocessableMessages { get; set; } 
 
         // Call this before using the 
         public void Initialise(Settings settings)

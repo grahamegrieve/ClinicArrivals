@@ -10,11 +10,11 @@ namespace ClinicArrivals.Models
 {
     public class SaveRoomMappingsCommand : ICommand
     {
-        IArrivalsLocalStorage _storage;
+        ArrivalsModel _model;
         bool processing;
-        public SaveRoomMappingsCommand(IArrivalsLocalStorage storage)
+        public SaveRoomMappingsCommand(ArrivalsModel model)
         {
-            _storage = storage;
+            _model = model;
         }
         public event EventHandler CanExecuteChanged;
 
@@ -32,7 +32,9 @@ namespace ClinicArrivals.Models
                 processing = true;
                 try
                 {
-                    _storage.SaveRoomMappings(mappings);
+                    _model.Storage.SaveRoomMappings(_model.EditRoomMappings);
+                    _model.RoomMappings.Clear();
+                    _model.RoomMappings.AddRange(_model.Storage.LoadRoomMappings().GetAwaiter().GetResult());
                 }
                 catch (Exception ex)
                 {
@@ -49,11 +51,11 @@ namespace ClinicArrivals.Models
 
     public class ReloadRoomMappingsCommand : ICommand
     {
-        IArrivalsLocalStorage _storage;
+        ArrivalsModel _model;
         bool processing;
-        public ReloadRoomMappingsCommand(IArrivalsLocalStorage storage)
+        public ReloadRoomMappingsCommand(ArrivalsModel model)
         {
-            _storage = storage;
+            _model = model;
         }
         public event EventHandler CanExecuteChanged;
 
@@ -66,25 +68,24 @@ namespace ClinicArrivals.Models
 
         public void Execute(object parameter)
         {
-            if (parameter is ObservableCollection<DoctorRoomLabelMapping> mappings)
+            processing = true;
+            try
             {
-                processing = true;
-                try
-                {
-                    var loadedMappings = _storage.LoadRoomMappings().GetAwaiter().GetResult();
-                    mappings.Clear();
-                    foreach (var room in loadedMappings)
-                        mappings.Add(room);
-                }
-                catch (Exception ex)
-                {
-                    new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception Loading Room Mappings: " + ex.Message);
-                }
-                finally
-                {
-                    processing = false;
-                    CanExecuteChanged?.Invoke(parameter, new EventArgs());
-                }
+                var loadedMappings = _model.Storage.LoadRoomMappings().GetAwaiter().GetResult();
+                _model.RoomMappings.Clear();
+                _model.RoomMappings.AddRange(loadedMappings);
+                _model.EditRoomMappings.Clear();
+                foreach (var room in loadedMappings)
+                    _model.EditRoomMappings.Add(room);
+            }
+            catch (Exception ex)
+            {
+                new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception Loading Room Mappings: " + ex.Message);
+            }
+            finally
+            {
+                processing = false;
+                CanExecuteChanged?.Invoke(parameter, new EventArgs());
             }
         }
     }
