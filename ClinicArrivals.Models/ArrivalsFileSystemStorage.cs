@@ -149,6 +149,7 @@ namespace ClinicArrivals.Models
         /// <returns></returns>
         public Task CleanupHistoricCont()
         {
+            // TODO: Only cleanup folders with old dates ? (and maybe some of the logs)
             foreach (var folder in Directory.EnumerateDirectories(GetFolder()))
             {
                 Directory.Delete(folder);
