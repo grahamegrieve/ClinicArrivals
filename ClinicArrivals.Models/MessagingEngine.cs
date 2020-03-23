@@ -271,11 +271,11 @@ namespace ClinicArrivals.Models
                 LogMsg(OUT, rmsg, "process screening response 'yes'", appt);
 
                 // PMS:
+                appt.IsVideoConsultation = true;
                 AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID));
 
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;
-                appt.IsVideoConsultation = true;
                 Storage.SaveAppointmentStatus(appt);
             }
             else if (MessageMatches(msg.message, "no", "n"))

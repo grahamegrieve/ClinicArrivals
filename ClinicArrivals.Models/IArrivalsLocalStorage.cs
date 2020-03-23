@@ -24,6 +24,10 @@ namespace ClinicArrivals.Models
         Task<IEnumerable<PmsAppointment>> LoadSimulationAppointments();
         Task SaveSimulationAppointments(IEnumerable<PmsAppointment> appointments);
 
+        Task<IEnumerable<PractitionerId>> LoadSimulationIds();
+        Task SaveSimulationIds(IEnumerable<PractitionerId> appointments);
+
+
         /// <summary>
         /// Save the templates to storage
         /// </summary>

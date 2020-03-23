@@ -13,22 +13,32 @@ namespace ClinicArrivals
     public class ViewModel : ArrivalsModel
     {
         public string Text { get { return System.IO.File.ReadAllText("about.md"); } }
+        private readonly NLogAdapter logger = new NLogAdapter();
 
         public BackgroundProcess ReadSmsMessage;
         public BackgroundProcess ScanAppointments;
         public BackgroundProcess ProcessUpcomingAppointments;
-        public SimulationSmsProcessor smsProcessor { get; set; } = new SimulationSmsProcessor();
-        public SimulationPms PmsSimulator { get; set; } = new SimulationPms();
-        private IFhirAppointmentReader FhirApptReader;
 
-        private readonly NLogAdapter logger = new NLogAdapter();
+        // the simulation processors are always defined, but they are only hooked up in Simulation Mode
+        public SimulationSmsProcessor SimulationSmsProcessor { get; set; } = new SimulationSmsProcessor();
+        public SimulationPms PmsSimulator { get; set; } = new SimulationPms();
+
+        public bool IsSimulation { get; private set; }
+
+        // actual in-use implementations
+        private IFhirAppointmentReader FhirApptReader;
+        private IFhirAppointmentUpdater FhirApptUpdater;
+        private ISmsProcessor SmsProcessor;
+
 
         public ViewModel()
         {
             CreateTestDataForDebug();
 
+            IsSimulation = Environment.GetCommandLineArgs().Any(n => n == "-simulator");
+
             // Assign all of the implementations for the interfaces
-            Storage = new ArrivalsFileSystemStorage();
+            Storage = new ArrivalsFileSystemStorage(IsSimulation);
             Settings.Save = new SaveSettingsCommand(Storage);
             Settings.Reload = new ReloadSettingsCommand(Storage);
             SaveRoomMappings = new SaveRoomMappingsCommand(Storage);
@@ -37,16 +47,29 @@ namespace ClinicArrivals
             ReloadTemplates = new ReloadTemplatesCommand(Storage);
             SeeTemplateDocumentation = new SeeTemplateDocumentationCommand();
             ClearUnproccessedMessages = new ClearUnproccessedMessagesCommand(Storage);
-            FhirApptReader = new FhirAppointmentReader(FhirAppointmentReader.GetServerConnection);
 
             // Simulator for the PMS
-            PmsSimulator.CreateNewAppointment = new SimulatePmsCommand(PmsSimulator);
-            PmsSimulator.UpdateAppointment = new SimulatePmsCommand(PmsSimulator);
-            PmsSimulator.DeleteAppointment = new SimulatePmsCommand(PmsSimulator);
+            PmsSimulator.CreateNewAppointment = new SimulatePmsCommand(PmsSimulator, IsSimulation);
+            PmsSimulator.UpdateAppointment = new SimulatePmsCommand(PmsSimulator, IsSimulation);
+            PmsSimulator.DeleteAppointment = new SimulatePmsCommand(PmsSimulator, IsSimulation);
 
             // Simulator for the SMS message processor
-            smsProcessor.QueueIncomingMessage = new SimulateProcessorCommand(smsProcessor);
+            SimulationSmsProcessor.QueueIncomingMessage = new SimulateProcessorCommand(SimulationSmsProcessor, IsSimulation);
+
+            if (IsSimulation)
+            {
+                SmsProcessor = SimulationSmsProcessor;
+                FhirApptReader = PmsSimulator;
+                FhirApptUpdater = PmsSimulator;
+            }
+            else
+            {
+                FhirApptReader = new FhirAppointmentReader(FhirAppointmentReader.GetServerConnection);
+                FhirApptUpdater = new FhirAppointmentUpdater(FhirAppointmentReader.GetServerConnection);
+                SmsProcessor = new TwilioSmsProcessor();
+            }
         }
+
 
         private MessagingEngine PrepareMessagingEngine()
         {
@@ -58,14 +81,18 @@ namespace ClinicArrivals
             engine.TemplateProcessor = new TemplateProcessor();
             engine.TemplateProcessor.Initialise(Settings);
             engine.TemplateProcessor.Templates = Templates;
-            engine.AppointmentUpdater = new FhirAppointmentUpdater(FhirAppointmentReader.GetServerConnection);
+            engine.AppointmentUpdater = FhirApptUpdater;
             engine.VideoManager = new VideoConferenceManager();
             engine.VideoManager.Initialize(Settings);
             engine.UnprocessableMessages = UnprocessableMessages;
             // if (!string.IsNullOrEmpty(Settings.DeveloperPhoneNumber))
-            engine.SmsSender = smsProcessor;
+            engine.SmsSender = SimulationSmsProcessor;
             // engine.SmsSender = new TwilioSmsProcessor();
             engine.TimeNow = DateTime.Now;
+
+           
+
+
             return engine;
         }
 
@@ -98,6 +125,11 @@ namespace ClinicArrivals
                 UnprocessableMessages.Add(item);
 
             PmsSimulator.Initialize(Storage);
+            if (!IsSimulation)
+            {
+                FhirApptReader = new FhirAppointmentReader(FhirAppointmentReader.GetServerConnection);
+                SmsProcessor.Initialize(Settings);
+            }
             // setup the background worker routines
             ReadSmsMessage = new BackgroundProcess(Settings, serverStatuses.IncomingSmsReader, dispatcher, async () =>
             {

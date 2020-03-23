@@ -16,7 +16,7 @@ namespace Test.Models
         public void SaveLoadSettings() 
         {
             // delete any pre-existing settings file
-            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage("ClinicArrivals.Test.SaveLoadSettings");
+            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage(false, "ClinicArrivals.Test.SaveLoadSettings");
             string pathSettings = Path.Combine(storage.GetFolder(), "appSettings.json");
             if (File.Exists(pathSettings))
                 File.Delete(pathSettings);
@@ -59,7 +59,7 @@ namespace Test.Models
         public async Task SaveLoadTemplates()
         {
             // delete any pre-existing settings file
-            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage("ClinicArrivals.Test.SaveLoadTemplates");
+            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage(false, "ClinicArrivals.Test.SaveLoadTemplates");
             string pathSettings = Path.Combine(storage.GetFolder(), "message-templates.json");
             if (File.Exists(pathSettings))
                 File.Delete(pathSettings);
@@ -101,7 +101,7 @@ namespace Test.Models
         public async Task SaveAppointmentExtendedData()
         {
             // delete any pre-existing test content
-            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage("ClinicArrivals.Test.SaveAppointmentExtendedData");
+            var storage = new ClinicArrivals.Models.ArrivalsFileSystemStorage(false, "ClinicArrivals.Test.SaveAppointmentExtendedData");
             if (File.Exists(storage.GetFolder()))
                 File.Delete(storage.GetFolder());
 

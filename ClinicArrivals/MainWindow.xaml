@@ -216,7 +216,7 @@
             <local:SettingsControl DataContext="{Binding Settings, Mode=OneWay}"></local:SettingsControl>
         </TabItem>
         <TabItem Header="Sms Simulator">
-            <local:SimulateSmsMessagesControl DataContext="{Binding Path=smsProcessor, Mode=OneWay}"></local:SimulateSmsMessagesControl>
+            <local:SimulateSmsMessagesControl DataContext="{Binding Path=SimulationSmsProcessor, Mode=OneWay}"></local:SimulateSmsMessagesControl>
         </TabItem>
         <TabItem Header="Pms Simulator">
             <local:SimulatePmsControl DataContext="{Binding Path=PmsSimulator, Mode=OneWay}"></local:SimulatePmsControl>

@@ -13,9 +13,12 @@ namespace ClinicArrivals.Models
     {
         SimulationSmsProcessor _model;
         bool processing;
-        public SimulateProcessorCommand(SimulationSmsProcessor model)
+        bool IsSimulation;
+
+        public SimulateProcessorCommand(SimulationSmsProcessor model, Boolean isSimulation)
         {
             _model = model;
+            IsSimulation = isSimulation;
             (model as INotifyPropertyChanged).PropertyChanged += Model_PropertyChanged;
         }
         private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -28,6 +31,10 @@ namespace ClinicArrivals.Models
 
         public bool CanExecute(object parameter)
         {
+            if (!IsSimulation)
+            {
+                return false;
+            }
             if (parameter is string str)
             {
                 if (str == "ClearMessages")

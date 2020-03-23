@@ -16,7 +16,7 @@ namespace ClinicArrivals.Models
         public IArrivalsLocalStorage Storage;
         public ObservableCollection<PmsAppointment> Appointments { get; set; } = new ObservableCollection<PmsAppointment>();
         // practitioner name to FhirID lookup (needed as is used to lookup the room template)
-        public Dictionary<string, string> PractitionerFhirIds = new Dictionary<string, string>();
+        public ObservableCollection<PractitionerId> PractitionerFhirIds = new ObservableCollection<PractitionerId>();
 
 
         public async void Initialize(IArrivalsLocalStorage storage)
@@ -25,6 +25,9 @@ namespace ClinicArrivals.Models
             Appointments.Clear();
             foreach (var map in await storage.LoadSimulationAppointments())
                 Appointments.Add(map);
+            PractitionerFhirIds.Clear();
+            foreach (var id in await storage.LoadSimulationIds())
+                PractitionerFhirIds.Add(id);
 
             DateTime dt = DateTime.Now;
             EditingAppointment.AppointmentStartTime = dt.AddTicks(-(dt.Ticks % TimeSpan.TicksPerSecond));
@@ -73,37 +76,51 @@ namespace ClinicArrivals.Models
             {
                 SelectedAppointment.PatientName = EditingAppointment.PatientName;
                 SelectedAppointment.PatientMobilePhone = EditingAppointment.PatientMobilePhone;
-                if (SelectedAppointment.PractitionerName != EditingAppointment.PractitionerName)
+                SelectedAppointment.PractitionerName = EditingAppointment.PractitionerName;
+                SelectedAppointment.PractitionerFhirID = null;
+                foreach (var pid in PractitionerFhirIds)
                 {
-                    SelectedAppointment.PractitionerName = EditingAppointment.PractitionerName;
-                    if (PractitionerFhirIds.ContainsKey(SelectedAppointment.PractitionerName))
-                        SelectedAppointment.PractitionerFhirID = PractitionerFhirIds[SelectedAppointment.PractitionerName];
-                    else
+                    if (pid.Name == SelectedAppointment.PractitionerName)
                     {
-                        SelectedAppointment.PractitionerFhirID = Guid.NewGuid().ToString("X");
-                        PractitionerFhirIds.Add(SelectedAppointment.PractitionerName, SelectedAppointment.PractitionerFhirID);
+                        SelectedAppointment.PractitionerFhirID = pid.Id;
                     }
+                }
+                if (SelectedAppointment.PractitionerFhirID == null)
+                {
+                    String id = Guid.NewGuid().ToString("X");
+                    PractitionerFhirIds.Add(new PractitionerId(SelectedAppointment.PractitionerName, id));
+                    SelectedAppointment.PractitionerFhirID = id;
                 }
                 SelectedAppointment.ArrivalStatus = EditingAppointment.ArrivalStatus;
                 SelectedAppointment.AppointmentStartTime = EditingAppointment.AppointmentStartTime;
                 SelectedAppointment.IsVideoConsultation = EditingAppointment.IsVideoConsultation;
                 Storage.SaveSimulationAppointments(Appointments);
+                Storage.SaveSimulationIds(PractitionerFhirIds);
             }
         }
 
         public void ExecuteCreateNewAppointment()
         {
             EditingAppointment.AppointmentFhirID = Guid.NewGuid().ToString("X");
-            if (PractitionerFhirIds.ContainsKey(EditingAppointment.PractitionerName))
-                EditingAppointment.PractitionerFhirID = PractitionerFhirIds[EditingAppointment.PractitionerName];
-            else
+
+            EditingAppointment.PractitionerFhirID = null;
+            foreach (var pid in PractitionerFhirIds)
             {
-                EditingAppointment.PractitionerFhirID = Guid.NewGuid().ToString("X");
-                PractitionerFhirIds.Add(EditingAppointment.PractitionerName, EditingAppointment.PractitionerFhirID);
+                if (pid.Name == EditingAppointment.PractitionerName)
+                {
+                    EditingAppointment.PractitionerFhirID = pid.Id;
+                }
+            }
+            if (EditingAppointment.PractitionerFhirID == null)
+            {
+                String id = Guid.NewGuid().ToString("X");
+                PractitionerFhirIds.Add(new PractitionerId(EditingAppointment.PractitionerName, id));
+                EditingAppointment.PractitionerFhirID = id;
             }
 
             Appointments.Add(EditingAppointment);
             Storage.SaveSimulationAppointments(Appointments);
+            Storage.SaveSimulationIds(PractitionerFhirIds);
             EditingAppointment = new PmsAppointment();
             DateTime dt = DateTime.Now;
             EditingAppointment.AppointmentStartTime = dt.AddTicks(-(dt.Ticks % TimeSpan.TicksPerSecond));
@@ -140,7 +157,11 @@ namespace ClinicArrivals.Models
         #region << IFhirAppointmentUpdater >>
         public void SaveAppointmentAsVideoMeeting(PmsAppointment appointment, string videoLinkComment)
         {
-            // this data doesn't come back, so nothing to actually simulate here
+            var appt = Appointments.FirstOrDefault(a => a.AppointmentFhirID == appointment.AppointmentFhirID);
+            if (appt != null)
+            {
+                appt.IsVideoConsultation = appointment.IsVideoConsultation;
+            }
         }
 
         public void SaveAppointmentStatusValue(PmsAppointment appointment)
@@ -152,5 +173,19 @@ namespace ClinicArrivals.Models
             }
         }
         #endregion
+    }
+
+
+    public class PractitionerId
+    {
+    
+        public PractitionerId(string name, string id)
+        {
+            Name = name;
+            Id = id;
+        }
+
+        public string Name { get; set; }
+        public string Id { get; set; }
     }
 }

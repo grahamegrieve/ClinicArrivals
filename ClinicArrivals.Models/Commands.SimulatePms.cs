@@ -12,10 +12,12 @@ namespace ClinicArrivals.Models
     public class SimulatePmsCommand : ICommand
     {
         SimulationPms _model;
-        bool processing;
-        public SimulatePmsCommand(SimulationPms model)
+        bool IsSimulation;
+
+        public SimulatePmsCommand(SimulationPms model, bool isSimulation)
         {
             _model = model;
+            IsSimulation = isSimulation;
             (model as INotifyPropertyChanged).PropertyChanged += Model_PropertyChanged;
         }
         private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -28,6 +30,10 @@ namespace ClinicArrivals.Models
 
         public bool CanExecute(object parameter)
         {
+            if (!IsSimulation)
+            {
+                return false;
+            }
             if (parameter is string str)
             {
                 if (str == "CreateNewAppointment")
@@ -50,7 +56,6 @@ namespace ClinicArrivals.Models
 
         public void Execute(object parameter)
         {
-            processing = true;
             try
             {
                 if (parameter is string str)
@@ -77,7 +82,6 @@ namespace ClinicArrivals.Models
             }
             finally
             {
-                processing = false;
                 CanExecuteChanged?.Invoke(parameter, new EventArgs());
             }
         }

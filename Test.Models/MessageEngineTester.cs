@@ -745,6 +745,11 @@ namespace Test.Models
                 throw new NotImplementedException();
             }
 
+            public Task<IEnumerable<PractitionerId>> LoadSimulationIds()
+            {
+                throw new NotImplementedException();
+            }
+
             public Task<IEnumerable<MessageTemplate>> LoadTemplates()
             {
                 throw new NotImplementedException();
@@ -772,6 +777,11 @@ namespace Test.Models
             }
 
             public Task SaveSimulationAppointments(IEnumerable<PmsAppointment> appointments)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task SaveSimulationIds(IEnumerable<PractitionerId> appointments)
             {
                 throw new NotImplementedException();
             }

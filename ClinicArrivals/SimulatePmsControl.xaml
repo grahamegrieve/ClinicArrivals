@@ -59,6 +59,7 @@
                             <TextBox Grid.Row="2" Text="{Binding Path=PatientMobilePhone}" TextWrapping="Wrap" FontWeight="Bold" FontSize="14" IsReadOnly="True" BorderThickness="0" Padding="4"/>
                             <TextBlock Grid.Row="3" Text="{Binding Path=PractitionerName}" TextWrapping="Wrap"/>
                             <TextBlock Grid.Row="4" Text="{Binding Path=ArrivalStatus}" TextWrapping="Wrap" FontSize="14"/>
+                            <CheckBox Grid.Row="5" IsChecked="{Binding Path=IsVideoConsultation}" FontSize="14"/>
                         </Grid>
                     </Grid>
                 </DataTemplate>

@@ -9,12 +9,15 @@ namespace ClinicArrivals.Models
 {
     public class ArrivalsFileSystemStorage : IArrivalsLocalStorage
     {
+        private bool IsSimulation;
+
         /// <summary>
         /// The optional path permits changing for testing purposes
         /// </summary>
         /// <param name="appDataFolder"></param>
-        public ArrivalsFileSystemStorage(string appDataFolder = "ClinicArrivals")
+        public ArrivalsFileSystemStorage(bool isSimulation, string appDataFolder = "ClinicArrivals")
         {
+            this.IsSimulation = isSimulation;
             _appDataFolder = appDataFolder;
         }
         string _appDataFolder;
@@ -63,7 +66,7 @@ namespace ClinicArrivals.Models
         /// <returns></returns>
         public Task SaveRoomMappings(IEnumerable<DoctorRoomLabelMapping> mappings)
         {
-            return SaveFile(null, "room-mappings.json", mappings);
+            return SaveFile(IsSimulation ? "simulation" : null, "room-mappings.json", mappings);
         }
 
         /// <summary>
@@ -72,7 +75,7 @@ namespace ClinicArrivals.Models
         /// <returns></returns>
         public Task<IEnumerable<DoctorRoomLabelMapping>> LoadRoomMappings()
         {
-            return LoadFile<IEnumerable<DoctorRoomLabelMapping>>(null, "room-mappings.json", new List<DoctorRoomLabelMapping>());
+            return LoadFile<IEnumerable<DoctorRoomLabelMapping>>(IsSimulation ? "simulation" : null, "room-mappings.json", new List<DoctorRoomLabelMapping>());
         }
 
         /// <summary>
@@ -167,6 +170,16 @@ namespace ClinicArrivals.Models
         public Task SaveSimulationAppointments(IEnumerable<PmsAppointment> appointments)
         {
             return SaveFile(null, "pms-simulation.json", appointments);
+        }
+
+        public Task<IEnumerable<PractitionerId>> LoadSimulationIds()
+        {
+            return LoadFile<IEnumerable<PractitionerId>>(null, "pms-simulation-ids.json", new List<PractitionerId>());
+        }
+
+        public Task SaveSimulationIds(IEnumerable<PractitionerId> ids)
+        {
+            return SaveFile(null, "pms-simulation-ids.json", ids);
         }
         #endregion
     }
