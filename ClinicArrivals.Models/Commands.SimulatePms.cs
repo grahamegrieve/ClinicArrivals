@@ -66,6 +66,7 @@ namespace ClinicArrivals.Models
                     if (str == "DeleteAppointment")
                     {
                         _model.Appointments.Remove(_model.SelectedAppointment);
+                        _model.Storage.SaveSimulationAppointments(_model.Appointments);
                         _model.SelectedAppointment = null;
                     }
                 }

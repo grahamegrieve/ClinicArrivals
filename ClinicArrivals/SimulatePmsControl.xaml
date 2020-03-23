@@ -90,10 +90,16 @@
                     <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=EditingAppointment.PatientMobilePhone, Mode=TwoWay}"/>
                     <Label Grid.Row="3" Grid.Column="0" Content="Practitioner Name"/>
                     <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Path=EditingAppointment.PractitionerName, Mode=TwoWay}"/>
-                    <Label Grid.Row="4" Grid.Column="0" Content="Appointment Time"/>
-                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Path=EditingAppointment.AppointmentStartTime, Mode=TwoWay}"/>
-                    <Label Grid.Row="5" Grid.Column="0" Content="Arrival Status"/>
-                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Path=EditingAppointment.ArrivalStatus, Mode=TwoWay}"/>
+                    <Label Grid.Row="4" Grid.Column="0" Content="Appointment Date"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Path=EditingAppointment.AppointmentStartDateUI, StringFormat='dd-MMM yyyy', Mode=TwoWay}"/>
+                    <Label Grid.Row="5" Grid.Column="0" Content="Appointment Time"/>
+                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Path=EditingAppointment.AppointmentStartTimeUI, StringFormat='HH:mm', Mode=TwoWay}"/>
+                    <Label Grid.Row="6" Grid.Column="0" Content="Arrival Status"/>
+                    <ComboBox Grid.Row="6" Grid.Column="1" Text="{Binding Path=EditingAppointment.ArrivalStatus, Mode=TwoWay}">
+                        <ComboBoxItem Name="cbi1">Booked</ComboBoxItem>
+                        <ComboBoxItem Name="cbi2">Arrived</ComboBoxItem>
+                        <ComboBoxItem Name="cbi3">Fulfilled</ComboBoxItem>
+                    </ComboBox>
 
                     <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal">
                         <Button Content="Add New" Command="{Binding Path=CreateNewAppointment}" CommandParameter="CreateNewAppointment"/>

@@ -21,6 +21,9 @@ namespace ClinicArrivals.Models
         /// <returns></returns>
         Task<IEnumerable<DoctorRoomLabelMapping>> LoadRoomMappings();
 
+        Task<IEnumerable<PmsAppointment>> LoadSimulationAppointments();
+        Task SaveSimulationAppointments(IEnumerable<PmsAppointment> appointments);
+
         /// <summary>
         /// Save the templates to storage
         /// </summary>

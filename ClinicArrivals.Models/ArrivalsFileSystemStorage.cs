@@ -158,6 +158,16 @@ namespace ClinicArrivals.Models
             // doesn't do anything yet
             return Task.CompletedTask;
         }
+
+        public Task<IEnumerable<PmsAppointment>> LoadSimulationAppointments()
+        {
+            return LoadFile<IEnumerable<PmsAppointment>>(null, "pms-simulation.json", new List<PmsAppointment>());
+        }
+
+        public Task SaveSimulationAppointments(IEnumerable<PmsAppointment> appointments)
+        {
+            return SaveFile(null, "pms-simulation.json", appointments);
+        }
         #endregion
     }
 }

@@ -6,15 +6,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static Hl7.Fhir.Model.Appointment;
 
 namespace ClinicArrivals.Models
 {
     [AddINotifyPropertyChangedInterface]
     public class SimulationPms : IFhirAppointmentReader, IFhirAppointmentUpdater
     {
+        public IArrivalsLocalStorage Storage;
         public ObservableCollection<PmsAppointment> Appointments { get; set; } = new ObservableCollection<PmsAppointment>();
         // practitioner name to FhirID lookup (needed as is used to lookup the room template)
         public Dictionary<string, string> PractitionerFhirIds = new Dictionary<string, string>();
+
+
+        public async void Initialize(IArrivalsLocalStorage storage)
+        {
+            this.Storage = storage;
+            Appointments.Clear();
+            foreach (var map in await storage.LoadSimulationAppointments())
+                Appointments.Add(map);
+
+            DateTime dt = DateTime.Now;
+            EditingAppointment.AppointmentStartTime = dt.AddTicks(-(dt.Ticks % TimeSpan.TicksPerSecond));
+            EditingAppointment.ArrivalStatus = AppointmentStatus.Booked;
+        }
+
 
         public PmsAppointment EditingAppointment { get; set; } = new PmsAppointment();
         // The changing of this will just copy the data into the NewA
@@ -71,6 +87,7 @@ namespace ClinicArrivals.Models
                 SelectedAppointment.ArrivalStatus = EditingAppointment.ArrivalStatus;
                 SelectedAppointment.AppointmentStartTime = EditingAppointment.AppointmentStartTime;
                 SelectedAppointment.IsVideoConsultation = EditingAppointment.IsVideoConsultation;
+                Storage.SaveSimulationAppointments(Appointments);
             }
         }
 
@@ -86,8 +103,13 @@ namespace ClinicArrivals.Models
             }
 
             Appointments.Add(EditingAppointment);
+            Storage.SaveSimulationAppointments(Appointments);
             EditingAppointment = new PmsAppointment();
+            DateTime dt = DateTime.Now;
+            EditingAppointment.AppointmentStartTime = dt.AddTicks(-(dt.Ticks % TimeSpan.TicksPerSecond));
+            EditingAppointment.ArrivalStatus = AppointmentStatus.Booked;
         }
+
 
         #region << IFhirAppointmentReader >>
         public async Task<List<PmsAppointment>> SearchAppointments(DateTime date, IList<DoctorRoomLabelMapping> roomMappings, IArrivalsLocalStorage storage)

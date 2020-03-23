@@ -18,7 +18,7 @@ namespace ClinicArrivals
         public BackgroundProcess ScanAppointments;
         public BackgroundProcess ProcessUpcomingAppointments;
         public SimulationSmsProcessor smsProcessor { get; set; } = new SimulationSmsProcessor();
-        public SimulationPms pmsSimulator { get; set; } = new SimulationPms();
+        public SimulationPms PmsSimulator { get; set; } = new SimulationPms();
         private IFhirAppointmentReader FhirApptReader;
 
         private readonly NLogAdapter logger = new NLogAdapter();
@@ -40,9 +40,9 @@ namespace ClinicArrivals
             FhirApptReader = new FhirAppointmentReader(FhirAppointmentReader.GetServerConnection);
 
             // Simulator for the PMS
-            pmsSimulator.CreateNewAppointment = new SimulatePmsCommand(pmsSimulator);
-            pmsSimulator.UpdateAppointment = new SimulatePmsCommand(pmsSimulator);
-            pmsSimulator.DeleteAppointment = new SimulatePmsCommand(pmsSimulator);
+            PmsSimulator.CreateNewAppointment = new SimulatePmsCommand(PmsSimulator);
+            PmsSimulator.UpdateAppointment = new SimulatePmsCommand(PmsSimulator);
+            PmsSimulator.DeleteAppointment = new SimulatePmsCommand(PmsSimulator);
 
             // Simulator for the SMS message processor
             smsProcessor.QueueIncomingMessage = new SimulateProcessorCommand(smsProcessor);
@@ -97,6 +97,7 @@ namespace ClinicArrivals
             foreach (var item in messages)
                 UnprocessableMessages.Add(item);
 
+            PmsSimulator.Initialize(Storage);
             // setup the background worker routines
             ReadSmsMessage = new BackgroundProcess(Settings, serverStatuses.IncomingSmsReader, dispatcher, async () =>
             {

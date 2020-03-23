@@ -22,6 +22,17 @@ namespace ClinicArrivals.Models
         public string AppointmentFhirID { get; set; }
         public AppointmentStatus ArrivalStatus { get; set; }
         public DateTime AppointmentStartTime { get; set; }
+
+        // for UI purposes:
+        public DateTime AppointmentStartDateUI { 
+            get { return AppointmentStartTime.Date; } 
+            set { AppointmentStartTime = value + AppointmentStartTime.TimeOfDay; } 
+        }
+        public DateTime AppointmentStartTimeUI {
+            get { return new DateTime(AppointmentStartTime.TimeOfDay.Ticks, AppointmentStartTime.Kind); } 
+            set { AppointmentStartTime = AppointmentStartDateUI + value.TimeOfDay; } 
+        }
+
         public Boolean IsVideoConsultation { get; set; }
 
         /// <summary>
