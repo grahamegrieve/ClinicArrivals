@@ -18,6 +18,7 @@ namespace ClinicArrivals
         public BackgroundProcess ScanAppointments;
         public BackgroundProcess ProcessUpcomingAppointments;
         public SimulationSmsProcessor smsProcessor { get; set; } = new SimulationSmsProcessor();
+        private IFhirAppointmentReader FhirApptReader;
 
         private readonly NLogAdapter logger = new NLogAdapter();
 
@@ -35,6 +36,7 @@ namespace ClinicArrivals
             ReloadTemplates = new ReloadTemplatesCommand(Storage);
             SeeTemplateDocumentation = new SeeTemplateDocumentationCommand();
             ClearUnproccessedMessages = new ClearUnproccessedMessagesCommand(Storage);
+            FhirApptReader = new FhirAppointmentReader(FhirAppointmentReader.GetServerConnection);
 
             // Simulator for the SMS message processor
             smsProcessor.ClearMessages = new SimulateProcessorCommand(smsProcessor);
@@ -51,7 +53,7 @@ namespace ClinicArrivals
             engine.TemplateProcessor = new TemplateProcessor();
             engine.TemplateProcessor.Initialise(Settings);
             engine.TemplateProcessor.Templates = Templates;
-            engine.AppointmentUpdater = new FhirAppointmentUpdater(MessageProcessing.GetServerConnection);
+            engine.AppointmentUpdater = new FhirAppointmentUpdater(FhirAppointmentReader.GetServerConnection);
             engine.VideoManager = new VideoConferenceManager();
             engine.VideoManager.Initialize(Settings);
             engine.UnprocessableMessages = UnprocessableMessages;
@@ -108,7 +110,7 @@ namespace ClinicArrivals
                 // Logic to run on this process
                 // (called every settings.interval)
                 var engine = PrepareMessagingEngine();
-                List<PmsAppointment> appts = await MessageProcessing.SearchAppointments(this.DisplayingDate, RoomMappings, Storage);
+                List<PmsAppointment> appts = await FhirApptReader.SearchAppointments(this.DisplayingDate, RoomMappings, Storage);
                 engine.ProcessTodaysAppointments(appts);
 
                 // Now update the UI once we've processed it all
@@ -130,8 +132,8 @@ namespace ClinicArrivals
                 // Logic to run on this process
                 // (called every settings.intervalUpcoming)
                 var engine = PrepareMessagingEngine();
-                List<PmsAppointment> appts = await MessageProcessing.SearchAppointments(this.DisplayingDate.AddDays(1), RoomMappings, Storage);
-                appts.AddRange(await MessageProcessing.SearchAppointments(this.DisplayingDate.AddDays(2), RoomMappings, Storage));
+                List<PmsAppointment> appts = await FhirApptReader.SearchAppointments(this.DisplayingDate.AddDays(1), RoomMappings, Storage);
+                appts.AddRange(await FhirApptReader.SearchAppointments(this.DisplayingDate.AddDays(2), RoomMappings, Storage));
                 engine.ProcessUpcomingAppointments(appts);
             }, true);
         }

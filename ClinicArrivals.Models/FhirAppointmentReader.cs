@@ -8,8 +8,14 @@ using System.Text;
 
 namespace ClinicArrivals.Models
 {
-    public class MessageProcessing
+    public class FhirAppointmentReader : IFhirAppointmentReader
     {
+        public FhirAppointmentReader(Func<FhirClient> GetFhirClient)
+        {
+            this.GetFhirClient = GetFhirClient;
+        }
+        private Func<FhirClient> GetFhirClient;
+
         #region << Oridashi Server Configuration and Management >>
         public delegate void StartedServer();
         public delegate void StoppedServer();
@@ -77,7 +83,7 @@ namespace ClinicArrivals.Models
         /// And attach the processing status data from local storage too
         /// </summary>
         /// <param name="model"></param>
-        public static async System.Threading.Tasks.Task<List<PmsAppointment>> SearchAppointments(DateTime date, IList<DoctorRoomLabelMapping> roomMappings, IArrivalsLocalStorage storage)
+        public async System.Threading.Tasks.Task<List<PmsAppointment>> SearchAppointments(DateTime date, IList<DoctorRoomLabelMapping> roomMappings, IArrivalsLocalStorage storage)
         {
             List<PmsAppointment> results = new List<PmsAppointment>();
 
