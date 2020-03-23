@@ -110,18 +110,18 @@ namespace Test.Models
             // read a non extended data
             PmsAppointment appt = new PmsAppointment() { AppointmentFhirID = Guid.NewGuid().ToString("D") };
             Assert.IsNotNull(appt.ExternalData);
-            await storage.LoadAppointmentStatus(testDataToday, appt);
+            await storage.LoadAppointmentStatus(appt);
             Assert.IsNotNull(appt.ExternalData);
 
             // Put some content in there and ensure that a load will clear it out
             appt.ExternalData.LastPatientMessage = "last-message";
             Assert.IsNotNull(appt.ExternalData.LastPatientMessage);
-            await storage.LoadAppointmentStatus(testDataToday, appt);
+            await storage.LoadAppointmentStatus(appt);
             Assert.IsNull(appt.ExternalData.LastPatientMessage);
 
             // Add some content, then save it
             appt.ExternalData.LastPatientMessage = "last-message";
-            await storage.SaveAppointmentStatus(testDataToday, appt);
+            await storage.SaveAppointmentStatus(appt);
             Assert.IsNotNull(appt.ExternalData.LastPatientMessage);
             Assert.AreEqual("last-message", appt.ExternalData.LastPatientMessage);
 

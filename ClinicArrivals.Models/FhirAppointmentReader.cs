@@ -98,7 +98,7 @@ namespace ClinicArrivals.Models
 
             // Debugging
             var doc = System.Xml.Linq.XDocument.Parse(new Hl7.Fhir.Serialization.FhirXmlSerializer().SerializeToString(bundle));
-            Console.WriteLine(doc.ToString(System.Xml.Linq.SaveOptions.None));
+            // Console.WriteLine(doc.ToString(System.Xml.Linq.SaveOptions.None));
 
             Func<ResourceReference, System.Threading.Tasks.Task<Resource>> resolveReference = async (reference) =>
             {
@@ -140,7 +140,7 @@ namespace ClinicArrivals.Models
                             }
 
                             // And read in the extended content from storage
-                            await storage.LoadAppointmentStatus(date, appt);
+                            await storage.LoadAppointmentStatus(appt);
                         }
                     }
                 }

@@ -49,11 +49,12 @@ namespace Test.Models
             reset();
             List<PmsAppointment> appts = new List<PmsAppointment>();
             appts.Add(tomorrowsAppointment());
+            appts[0].ExternalData.PostRegistrationMessageSent = true;
             // run it
             engine.ProcessUpcomingAppointments(appts);
             // inspect outputs:
-            Assert.AreEqual(0, OutputMsgs.Count);
-            Assert.AreEqual(0, StorageOps.Count);
+            Assert.AreEqual(0, OutputMsgs.Count, "Expected no messages to be sent");
+            Assert.AreEqual(0, StorageOps.Count, "Nothing should have been stored");
         }
 
         [TestMethod]
@@ -499,6 +500,10 @@ namespace Test.Models
 
         // test case generation ----------------------------------------------------------
 
+        /// <summary>
+        /// Create an appointment for Test Patient #1 (+0411012345) at 2021-1-2 T9:15:00
+        /// </summary>
+        /// <returns></returns>
         private PmsAppointment tomorrowsAppointment()
         {
             PmsAppointment app = new PmsAppointment();
@@ -720,7 +725,7 @@ namespace Test.Models
                 throw new NotImplementedException();
             }
 
-            public Task LoadAppointmentStatus(DateTime date, PmsAppointment appt)
+            public Task LoadAppointmentStatus(PmsAppointment appt)
             {
                 throw new NotImplementedException();
             }
@@ -750,7 +755,7 @@ namespace Test.Models
                 throw new NotImplementedException();
             }
 
-            public Task SaveAppointmentStatus(DateTime date, PmsAppointment appt)
+            public Task SaveAppointmentStatus(PmsAppointment appt)
             {
                 owner.StorageOps.Add(new StorageOp("save-appt", appt));
                 return null;
