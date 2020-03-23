@@ -12,7 +12,7 @@ namespace Test.Models
         public void Initialize()
         {
             // Start the FHIR Server
-            FhirAppointmentReader.StartServer(true);
+            FhirAppointmentReader.StartServer(true, "", "");
         }
 
         [TestMethod, Ignore]

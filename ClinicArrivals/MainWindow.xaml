@@ -28,6 +28,24 @@
         <local:ViewModel/>
     </Window.DataContext>
     <TabControl>
+        <TabItem Header="Status">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="311*"/>
+                    <ColumnDefinition Width="177*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,-0.333" Grid.RowSpan="2">
+                    <Border BorderThickness="2" BorderBrush="{DynamicResource {x:Static SystemColors.DesktopBrushKey}}">
+
+                        <local:StatusControl DataContext="{Binding Path=serverStatuses, Mode=OneTime}" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </TabItem>
         <TabItem Header="Appointments">
 
             <Grid>
@@ -140,6 +158,12 @@
                 </ListView>
             </Grid>
         </TabItem>
+        <TabItem Header="Sms Simulator">
+            <local:SimulateSmsMessagesControl DataContext="{Binding Path=SimulationSmsProcessor, Mode=OneWay}"></local:SimulateSmsMessagesControl>
+        </TabItem>
+        <TabItem Header="Pms Simulator">
+            <local:SimulatePmsControl DataContext="{Binding Path=PmsSimulator, Mode=OneWay}"></local:SimulatePmsControl>
+        </TabItem>
         <TabItem Header="Room Mappings">
             <Grid>
                 <Grid.RowDefinitions>
@@ -215,12 +239,6 @@
         <TabItem Header="Settings">
             <local:SettingsControl DataContext="{Binding Settings, Mode=OneWay}"></local:SettingsControl>
         </TabItem>
-        <TabItem Header="Sms Simulator">
-            <local:SimulateSmsMessagesControl DataContext="{Binding Path=SimulationSmsProcessor, Mode=OneWay}"></local:SimulateSmsMessagesControl>
-        </TabItem>
-        <TabItem Header="Pms Simulator">
-            <local:SimulatePmsControl DataContext="{Binding Path=PmsSimulator, Mode=OneWay}"></local:SimulatePmsControl>
-        </TabItem>
         <TabItem Header="About">
             <Grid>
                 <Grid.RowDefinitions>
@@ -232,12 +250,6 @@
                                   HorizontalAlignment="Stretch"
                                   Margin="5"
                                   Document="{Binding Path=Text, Converter={StaticResource TextToFlowDocumentConverter}}" />
-                <StackPanel Grid.Row="1">
-                    <Border BorderThickness="2" BorderBrush="{DynamicResource {x:Static SystemColors.DesktopBrushKey}}">
-
-                        <local:StatusControl DataContext="{Binding Path=serverStatuses, Mode=OneTime}" />
-                    </Border>
-                </StackPanel>
             </Grid>
         </TabItem>
     </TabControl>

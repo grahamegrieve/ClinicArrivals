@@ -21,14 +21,14 @@ systems.
 
 The application has the following tabs: 
 
-* **Summary**: Summary of the overall health status of the program - check for any problems at a glance 
+* **Status**: Summary of the overall health status of the program - check for any problems at a glance 
 * **Appointments**: Detailed display of expected appointments for the day, and currently arrived patients (to help with troubleshooting)
 * **Unknown Incoming Messages**: List of SMS messages that have arrived that weren't understood (see note below)
+* **Sms Simulator**: Allows testing the application by simulating sending SMS messages to it (and seeing what has been sent)
+* **PMS Simulator**: Allows testing the application by creating appointments
 * **Room Mappings**: List of instructions for finding the room for a particular Doctor
 * **Message Templates**: Controls the actual text of the messages that get sent out to patients 
 * **Settings**: Application configuration 
-* **Sms Simulator**: Allows testing the application by simulating sending SMS messages to it (and seeing what has been sent)
-* **PMS Simulator**: Allows testing the application by creating appointments
 * **About**: Information about the program 
 
 ## Checking on the status of the program

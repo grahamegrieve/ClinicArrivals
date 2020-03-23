@@ -39,6 +39,10 @@ namespace ClinicArrivals.Models
         public string PhoneWhiteList { get; set; }
 
         public VideoConferencingType VideoType { get; set; }
+
+        public string PMSProfileName { get; set; }
+        public string PMSLicenseKey { get; set; }
+
         public void CopyFrom(Settings other)
         {
             FromTwilioMobileNumber = other.FromTwilioMobileNumber;
@@ -51,6 +55,8 @@ namespace ClinicArrivals.Models
             DeveloperPhoneNumber = other.DeveloperPhoneNumber;
             PhoneWhiteList = other.PhoneWhiteList;
             VideoType = other.VideoType;
+            PMSProfileName = other.PMSProfileName;
+            PMSLicenseKey = other.PMSLicenseKey;
         }
     }
 }

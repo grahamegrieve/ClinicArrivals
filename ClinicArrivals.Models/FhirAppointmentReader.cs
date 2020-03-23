@@ -27,14 +27,14 @@ namespace ClinicArrivals.Models
         public static event StoppedServer OnStopped;
         public static event VisitStarted OnVisitStarted;
 
-        public static void StartServer(bool UseExamples)
+        public static void StartServer(bool UseExamples, string ProfileNameSetting, string LicenseKeySetting)
         {
             if (server == null)
             {
                 server = new Server.Server();
                 server.OnStarted += Server_OnStarted;
                 server.OnStopped += Server_OnStopped;
-                server.Start(UseExamples);
+                server.Start(UseExamples, ProfileNameSetting, LicenseKeySetting);
             }
         }
 

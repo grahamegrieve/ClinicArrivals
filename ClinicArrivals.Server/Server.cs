@@ -18,12 +18,12 @@ namespace ClinicArrivals.Server
         public event StartedServer OnStarted;
         public event StoppedServer OnStopped;
 
-        public async Task Start(bool UseExamples)
+        public async Task Start(bool UseExamples, string ProfileNameSetting, string LicenseKeySetting)
         {
             configuration = new Oridashi.Fhir.Host.Configuration()
             {
-                ProfileName = "clinicarrivals",
-                LicenseKey = "3B36E5E1AD7645C6AD18F7A1",
+                ProfileName = ProfileNameSetting,
+                LicenseKey = LicenseKeySetting,
                 Mode = Oridashi.Fhir.Host.Configuration.SelectSystem.AUTO,
                 IsLive = !UseExamples,
             };
