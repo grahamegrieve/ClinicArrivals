@@ -82,7 +82,14 @@ namespace ClinicArrivals
             engine.TemplateProcessor.Initialise(Settings);
             engine.TemplateProcessor.Templates = Templates;
             engine.AppointmentUpdater = FhirApptUpdater;
-            engine.VideoManager = new VideoConferenceManager();
+            if (Settings.VideoType == VideoConferencingType.Jitsi)
+            {
+                engine.VideoManager = new VideoJitsi();
+            }
+            else
+            {
+                engine.VideoManager = new VideoOpenVidu();
+            }
             engine.VideoManager.Initialize(Settings);
             engine.UnprocessableMessages = UnprocessableMessages;
             // if (!string.IsNullOrEmpty(Settings.DeveloperPhoneNumber))

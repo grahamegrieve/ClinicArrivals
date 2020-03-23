@@ -9,6 +9,13 @@ using System.Windows.Input;
 
 namespace ClinicArrivals.Models
 {
+    public enum VideoConferencingType
+    {
+        OpenVidu,
+        Jitsi
+        
+    }
+
     [AddINotifyPropertyChangedInterface]
     public class Settings
     {
@@ -29,6 +36,9 @@ namespace ClinicArrivals.Models
 
         public string DeveloperPhoneNumber { get; set; }
 
+        public string PhoneWhiteList { get; set; }
+
+        public VideoConferencingType VideoType { get; set; }
         public void CopyFrom(Settings other)
         {
             FromTwilioMobileNumber = other.FromTwilioMobileNumber;
@@ -39,6 +49,8 @@ namespace ClinicArrivals.Models
             ExamplesServer = other.ExamplesServer;
             SystemIdentifier = other.SystemIdentifier;
             DeveloperPhoneNumber = other.DeveloperPhoneNumber;
+            PhoneWhiteList = other.PhoneWhiteList;
+            VideoType = other.VideoType;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ClinicArrivals.Models
 {
-    public class VideoConferenceManager : IVideoConferenceManager
+    public class VideoJitsi : IVideoConferenceManager
     {
         private Guid systemId;
 

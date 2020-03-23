@@ -23,6 +23,8 @@ namespace ClinicArrivals.Models
     /// </summary>
     public class MessagingEngine
     {
+        private List<String> whitelist = new List<string>();
+
         // this specifies what day it is today. In production, this is *always* the current date/time 
         // but it can be overridden to another date/time by testing code (that makes it easier to manage the tests).
         public DateTime TimeNow { get; set; }
@@ -64,6 +66,10 @@ namespace ClinicArrivals.Models
         public void Initialise(Settings settings)
         {
             TimeNow = DateTime.Now;
+            foreach (string s in settings.PhoneWhiteList.Split(','))
+            {
+                whitelist.Add(s.Trim());
+            }
         }
 
         /// <summary>
@@ -79,7 +85,7 @@ namespace ClinicArrivals.Models
             //   has the status changed from arrived to fulfilled? - send the invite message if it's not a TeleHealth consultation
             //   if the appointment is within 3 hours, and the screening message hasn't been sent, send it 
             //   if the appointment is within 10 minutes a TeleHealth consultation, and the setup message hasn't been sent, send it 
-            foreach (var appt in appointments.Where(n => n.PatientMobilePhone != null && IsToday(n.AppointmentStartTime)))
+            foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsToday(n.AppointmentStartTime)))
             {
                 try
                 {
@@ -141,7 +147,7 @@ namespace ClinicArrivals.Models
             // pseudo code
             // for each incoming appointment
             //   is it new - send the pre-registration message, and add it to stored
-            foreach (var appt in appointments.Where(n => n.PatientMobilePhone != null && IsNearFuture(n.AppointmentStartTime))) // we only send these messages 2-3 days in the future
+            foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsNearFuture(n.AppointmentStartTime))) // we only send these messages 2-3 days in the future
             {
                 try
                 {
@@ -194,7 +200,7 @@ namespace ClinicArrivals.Models
                     else
                     {
                         PmsAppointment appt = candidates.Count == 1 ? candidates[0] : ChooseRelevantAppointment(candidates, msg);
-                        if (appt == null)
+                        if (appt == null || !IsUseablePhoneNumber(appt.PatientMobilePhone))
                         {
                             ProcessUnexpectedResponse(candidates[0], msg);
                         }
@@ -223,6 +229,11 @@ namespace ClinicArrivals.Models
             }
         }
 
+        private bool IsUseablePhoneNumber(string num)
+        {
+            num = NormalisePhoneNumber(num);
+            return whitelist.Count == 0 ? true : whitelist.Contains(num);
+        }
 
         private void HandleUnknownMessage(SmsMessage msg)
         {
