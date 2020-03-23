@@ -9,13 +9,14 @@ namespace ClinicArrivals.Models
 {
     public class BackgroundProcess
     {
-        public BackgroundProcess(Settings settings, ServerStatus status, Dispatcher dispatcher, Func<Task> execute)
+        public BackgroundProcess(Settings settings, ServerStatus status, Dispatcher dispatcher, Func<Task> execute, bool useRegisterPollInterval = false)
         {
             _settings = settings;
             _status = status;
             _dispatcher = dispatcher;
             _execute = execute;
             _status.CurrentStatus = "stopped";
+            _useRegisterPollInterval = useRegisterPollInterval;
 
             _status.Start = new ServerStatusCommand(_status, "stopped", () =>
             { Start(); });
@@ -27,11 +28,21 @@ namespace ClinicArrivals.Models
         ServerStatus _status;
         Dispatcher _dispatcher;
         Func<Task> _execute;
+        bool _useRegisterPollInterval;
 
         private System.Threading.Timer _poll;
 
         public void Start()
         {
+            int intervalMS = _settings.PollIntervalSeconds * 1000;
+            if (intervalMS == 0)
+                intervalMS = 10 * 1000; // process every 10 seconds (if not specified)
+            if (_useRegisterPollInterval)
+            {
+                intervalMS = _settings.RegistrationPollIntervalSeconds * 1000;
+                if (intervalMS == 0)
+                    intervalMS = 60 * 1000; // process every 1 minute (if not specified)
+            }
             _poll = new System.Threading.Timer((o) =>
             {
                 _dispatcher.Invoke(async () =>
@@ -50,7 +61,7 @@ namespace ClinicArrivals.Models
                         _status.CurrentStatus = $"Error: {ex.Message}";
                     }
                 });
-            }, null, 0, _settings.PollIntervalSeconds * 1000);
+            }, null, 0, intervalMS);
         }
 
         public void Stop()

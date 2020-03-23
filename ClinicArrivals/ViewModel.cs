@@ -133,7 +133,7 @@ namespace ClinicArrivals
                 List<PmsAppointment> appts = await MessageProcessing.SearchAppointments(this.DisplayingDate.AddDays(1), RoomMappings, Storage);
                 appts.AddRange(await MessageProcessing.SearchAppointments(this.DisplayingDate.AddDays(2), RoomMappings, Storage));
                 engine.ProcessUpcomingAppointments(appts);
-            });
+            }, true);
         }
 
         private void AddMissingTemplates()
