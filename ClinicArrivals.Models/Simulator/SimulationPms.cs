@@ -101,7 +101,7 @@ namespace ClinicArrivals.Models
 
         public void ExecuteCreateNewAppointment()
         {
-            EditingAppointment.AppointmentFhirID = Guid.NewGuid().ToString("X");
+            EditingAppointment.AppointmentFhirID = Guid.NewGuid().ToString();
 
             EditingAppointment.PractitionerFhirID = null;
             foreach (var pid in PractitionerFhirIds)

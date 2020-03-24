@@ -24,10 +24,10 @@ namespace ClinicArrivals.Models
         public VideoCallDetails getConferenceDetails(String appointmentId, Boolean GetItReady)
         {
             var name = systemId.ToString() + "-" + appointmentId;
-            var client = new OpenViduClient("https://video.healthinterections.com.au", secret);
+            var client = new OpenViduClient("https://video.healthintersections.com.au", secret);
             VideoCallDetails ret = new VideoCallDetails();
             ret.id = client.SetUpSession();
-            ret.url = "https://video.healthinterections.com.au/openvidu-call/#/" + name;
+            ret.url = "https://video.healthintersections.com.au/#" + ret.id;
             return ret;
         }
 
@@ -37,16 +37,19 @@ namespace ClinicArrivals.Models
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
         public Boolean canKnowIfJoined()
         {
-            return false;
+            return true;
         }
 
         /// <summary>
         /// Return true if someone (assumed to be the patient) has joined the conference call
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        public Boolean hasSomeoneJoined(String appointmentId)
+        public Boolean hasSomeoneJoined(String VideoId)
         {
-            return false;
+            var client = new OpenViduClient("https://video.healthintersections.com.au", secret);
+            return client.hasAnyoneJoined(VideoId);
+
+
         }
 
 

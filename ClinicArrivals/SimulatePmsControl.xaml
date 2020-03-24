@@ -83,6 +83,7 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Simulated Appointment Details" FontWeight="Bold" FontSize="14" />
                     <Label Grid.Row="1" Grid.Column="0" Content="Patient Name"/>
@@ -101,8 +102,10 @@
                         <ComboBoxItem Name="cbi2">Arrived</ComboBoxItem>
                         <ComboBoxItem Name="cbi3">Fulfilled</ComboBoxItem>
                     </ComboBox>
+                    <Label Grid.Row="7" Grid.Column="0" Content="Is Video Consult"/>
+                    <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding Path=IsVideoConsultation.AppointmentStartTimeUI, Mode=TwoWay}"/>
 
-                    <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal">
+                    <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal">
                         <Button Content="Add New" Command="{Binding Path=CreateNewAppointment}" CommandParameter="CreateNewAppointment"/>
                         <Button Content="Update" Command="{Binding Path=UpdateAppointment}" CommandParameter="UpdateAppointment"/>
                         <Button Content="Delete" Command="{Binding Path=DeleteAppointment}" CommandParameter="DeleteAppointment"/>

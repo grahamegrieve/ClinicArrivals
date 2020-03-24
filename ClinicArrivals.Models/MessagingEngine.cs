@@ -68,7 +68,11 @@ namespace ClinicArrivals.Models
             TimeNow = DateTime.Now;
             foreach (string s in settings.PhoneWhiteList.Split(','))
             {
-                whitelist.Add(s.Trim());
+                var t = s.Trim();
+                if (!String.IsNullOrEmpty(t))
+                {
+                    whitelist.Add(t);
+                }
             }
         }
 
