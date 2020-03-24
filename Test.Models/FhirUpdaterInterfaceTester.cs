@@ -29,7 +29,7 @@ namespace Test.Models
                 ArrivalStatus = Appointment.AppointmentStatus.Arrived
             };
             string notes = "Video Link: blah2";
-            updater.SaveAppointmentAsVideoMeeting(appt, notes);
+            updater.SaveAppointmentAsVideoMeeting(appt, notes, notes);
 
             var apptSaved = server.Read<Appointment>($"{server.Endpoint}Appointment/{appt.AppointmentFhirID}");
             Assert.IsTrue(apptSaved.Comment.Contains(notes), "expected the notes to contain the video link");

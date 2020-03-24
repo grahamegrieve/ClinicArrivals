@@ -33,7 +33,9 @@ and Practitioner resources are also included in the response
 * time of start & end
 * appointment type - valued with "http://hl7.org/au/fhir/CodeSystem/AppointmentType" code = "teleconsultation"
 * status code:  booked | arrived | fulfilled
-* comments
+
+In addition, the interface uses an extension: http://hl7.org.au/fhir/StructureDefinition/telehealth-videolink to represent the 
+actual video link for the doctor to use to talk to the patient.
 
 ### Patient
 

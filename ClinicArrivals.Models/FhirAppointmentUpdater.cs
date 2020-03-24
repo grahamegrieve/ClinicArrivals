@@ -31,9 +31,13 @@ namespace ClinicArrivals.Models
                 || !fhirAppt.Comment.Contains(videoLinkComment))
             {
                 fhirAppt.AppointmentType = teleHealth;
-                fhirAppt.Extension.Add(new Extension() { Url = "http://hl7.org.au/fhir/StructureDefinition/telehealth-videolink", Value = new FhirUrl(VideoUrl) };
-                fhirServer.Update(fhirAppt);
             }
+            fhirAppt.RemoveExtension("http://hl7.org.au/fhir/StructureDefinition/telehealth-videolink");
+            if (VideoUrl != null)
+            {
+                fhirAppt.Extension.Add(new Extension() { Url = "http://hl7.org.au/fhir/StructureDefinition/telehealth-videolink", Value = new FhirUrl(VideoUrl) });
+            }
+            fhirServer.Update(fhirAppt);
         }
 
         /// <summary>

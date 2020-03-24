@@ -60,7 +60,7 @@ namespace ClinicArrivals.Models
         public ILoggingService Logger { get; set; }
 
         public ObservableCollection<DoctorRoomLabelMapping> RoomMappings { get; set; }
-        public ObservableCollection<SmsMessage> UnprocessableMessages { get; set; } 
+        public ObservableCollection<SmsMessage> UnprocessableMessages { get; set; }
 
         // Call this before using the 
         public void Initialise(Settings settings)
@@ -114,12 +114,26 @@ namespace ClinicArrivals.Models
                     {
                         t++;
                         Dictionary<string, string> vars = new Dictionary<string, string>();
-                        vars.Add("url", VideoManager.getConferenceUrl(appt.AppointmentFhirID));
+                        var details = VideoManager.getConferenceDetails(appt.AppointmentFhirID, true);
+                        vars.Add("url", details.url);
                         SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_INVITE, appt, vars));
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "invite to video", appt);
                         appt.ExternalData.VideoInviteSent = true;
+                        appt.ExternalData.VideoSessionId = details.id;
                         Storage.SaveAppointmentStatus(appt);
+                    }
+                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && appt.ExternalData.VideoInviteSent && !String.IsNullOrEmpty(appt.ExternalData.VideoSessionId) && VideoManager.canKnowIfJoined())
+                    {
+                        if (VideoManager.hasSomeoneJoined(appt.ExternalData.VideoSessionId))
+                        {
+                            // PMS:
+                            appt.ArrivalStatus = AppointmentStatus.Arrived;
+                            AppointmentUpdater.SaveAppointmentStatusValue(appt);
+                            // Storage
+                            appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
+                            Storage.SaveAppointmentStatus(appt);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -220,6 +234,7 @@ namespace ClinicArrivals.Models
                         {
                             ProcessScreeningResponse(appt, msg);
                         }
+                        // else if (appt.ExternalData.ScreeningMessageResponse && appt.IsVideoConsultation && )
                         else if (appt.ArrivalStatus == AppointmentStatus.Booked)
                         {
                             ProcessArrivalMessage(appt, msg);
@@ -261,9 +276,8 @@ namespace ClinicArrivals.Models
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_THX, appt, null));
                 SmsSender.SendMessage(rmsg);
                 LogMsg(OUT, rmsg, "accept video response", appt);
-                appt.ArrivalStatus = AppointmentStatus.Arrived;
-
                 // PMS:
+                appt.ArrivalStatus = AppointmentStatus.Arrived;
                 AppointmentUpdater.SaveAppointmentStatusValue(appt);
                 // local storage:
                 appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
@@ -291,7 +305,14 @@ namespace ClinicArrivals.Models
 
                 // PMS:
                 appt.IsVideoConsultation = true;
-                AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID), VideoManager.getConferenceUrl(appt.AppointmentFhirID));
+                if (VideoManager.AsksForVideoUrl())
+                    AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, null, null);
+                else
+                {
+                    var details = VideoManager.getConferenceDetails(appt.AppointmentFhirID, false);
+                    AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, "Video URL: " + details.url, details.url);
+                }
+
 
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;
@@ -328,8 +349,8 @@ namespace ClinicArrivals.Models
                 SmsMessage rmsg = new SmsMessage(msg.phone, TemplateProcessor.processTemplate(MessageTemplate.MSG_ARRIVED_THX, appt, null));
                 SmsSender.SendMessage(rmsg);
                 LogMsg(OUT, rmsg, "process arrival message", appt);
-                appt.ArrivalStatus = AppointmentStatus.Arrived;
                 // PMS:
+                appt.ArrivalStatus = AppointmentStatus.Arrived;
                 AppointmentUpdater.SaveAppointmentStatusValue(appt);
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;

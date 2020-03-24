@@ -9,19 +9,26 @@ namespace ClinicArrivals.Models
     public class VideoOpenVidu : IVideoConferenceManager
     {
         private Guid systemId;
+        private string secret;
 
         public void Initialize(Settings settings)
         {
             systemId = settings.SystemIdentifier;
+            secret = settings.OpenViduSecret;
         }
 
         /// <summary>
         /// Get URL for conference
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        public String getConferenceUrl(String appointmentId)
+        public VideoCallDetails getConferenceDetails(String appointmentId, Boolean GetItReady)
         {
-            return "https://demos.openvidu.io/openvidu-call/#/" + systemId.ToString()+"-"+appointmentId;
+            var name = systemId.ToString() + "-" + appointmentId;
+            var client = new OpenViduClient("https://video.healthinterections.com.au", secret);
+            VideoCallDetails ret = new VideoCallDetails();
+            ret.id = client.SetUpSession();
+            ret.url = "https://video.healthinterections.com.au/openvidu-call/#/" + name;
+            return ret;
         }
 
         /// <summary>
@@ -47,5 +54,12 @@ namespace ClinicArrivals.Models
         {
             return 10;
         }
+
+
+        public bool AsksForVideoUrl()
+        {
+            return false;
+        }
+
     }
 }

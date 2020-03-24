@@ -42,6 +42,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.ColumnSpan="2" Content="SMS Message Settings" FontWeight="Bold" FontSize="14" />
         <Label Grid.Row="1" Grid.Column="0" Content="Twilio Account SID"/>
@@ -70,8 +71,10 @@
             <ComboBoxItem Name="cbi1">OpenVidu</ComboBoxItem>
             <ComboBoxItem Name="cbi2">Jitsi</ComboBoxItem>
         </ComboBox>
+        <Label Grid.Row="13" Grid.Column="0" Content="Video Service Password"/>
+        <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding Path=OpenViduSecret, Mode=TwoWay}"/>
 
-        <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal">
+        <StackPanel Grid.Row="14" Grid.Column="1" Orientation="Horizontal">
             <Button Content="Save" Command="{Binding Save}" CommandParameter="{Binding Mode=OneWay}"/>
             <Button Content="Cancel" Command="{Binding Reload}" CommandParameter="{Binding Mode=OneWay}"/>
         </StackPanel>

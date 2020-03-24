@@ -32,6 +32,8 @@ namespace ClinicArrivals.Models
         public bool ExamplesServer { get; set; }
         public Guid SystemIdentifier { get; private set; }
 
+        public string OpenViduSecret { get; set; }
+
         public void AllocateNewSystemIdentifier() { SystemIdentifier = Guid.NewGuid(); }
 
         public string DeveloperPhoneNumber { get; set; }
@@ -57,6 +59,7 @@ namespace ClinicArrivals.Models
             VideoType = other.VideoType;
             PMSProfileName = other.PMSProfileName;
             PMSLicenseKey = other.PMSLicenseKey;
+            OpenViduSecret = other.OpenViduSecret;
         }
     }
 }

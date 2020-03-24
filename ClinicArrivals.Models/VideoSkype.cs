@@ -19,9 +19,9 @@ namespace ClinicArrivals.Models
         /// Get URL for conference
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        public String getConferenceUrl(String appointmentId)
+        public VideoCallDetails getConferenceDetails(String appointmentId, Boolean GetItReady)
         {
-            return "https://demos.openvidu.io/openvidu-call/#/" + systemId.ToString()+"-"+appointmentId;
+            return new VideoCallDetails() { url = "https://demos.openvidu.io/openvidu-call/#/" + systemId.ToString() + "-" + appointmentId };
         }
 
         /// <summary>
@@ -46,5 +46,12 @@ namespace ClinicArrivals.Models
         {
             return 10;
         }
+
+
+        public bool AsksForVideoUrl()
+        {
+            return true;
+        }
+
     }
 }

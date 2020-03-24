@@ -11,10 +11,10 @@ namespace ClinicArrivals.Models
         void Initialize(Settings settings);
 
         /// <summary>
-        /// Get URL for conference
+        /// Get an internal id for conference
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        String getConferenceUrl(String appointmentId);
+        VideoCallDetails getConferenceDetails(String appointmentId, Boolean GetItReady);
 
         /// <summary>
         /// how much notice is appropriate when the 
@@ -34,5 +34,16 @@ namespace ClinicArrivals.Models
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
         Boolean hasSomeoneJoined(String appointmentId);
 
+        /// <summary>
+        /// Some video conferencing methods 
+        /// </summary>
+        /// <returns></returns>
+        bool AsksForVideoUrl();
+    }
+
+    public class VideoCallDetails
+    {
+        public string id { get; set; }
+        public string url { get; set; }
     }
 }

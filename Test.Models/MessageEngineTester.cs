@@ -637,9 +637,9 @@ namespace Test.Models
                 return false;
             }
 
-            public string getConferenceUrl(string appointmentId)
+            public VideoCallDetails getConferenceDetails(string appointmentId, Boolean GetItReady)
             {
-                return "https://meet.jit.si/:guid:-" + appointmentId;
+                return new VideoCallDetails() { url = "https://meet.jit.si/:guid:-" + appointmentId };
             }
 
             public bool hasSomeoneJoined(string appointmentId)
@@ -650,6 +650,11 @@ namespace Test.Models
             public int getNotificationMinutes()
             {
                 return 10;
+            }
+
+            public bool AsksForVideoUrl()
+            {
+                return false;
             }
 
         }

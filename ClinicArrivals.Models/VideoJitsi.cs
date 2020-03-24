@@ -19,9 +19,9 @@ namespace ClinicArrivals.Models
         /// Get URL for conference
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        public String getConferenceUrl(String appointmentId)
+        public VideoCallDetails getConferenceDetails(String appointmentId, Boolean GetItReady)
         {
-            return "https://meet.jit.si/"+systemId.ToString()+"-"+appointmentId;
+            return new VideoCallDetails() { url = "https://meet.jit.si/" + systemId.ToString() + "-" + appointmentId };
         }
 
         /// <summary>
@@ -45,6 +45,11 @@ namespace ClinicArrivals.Models
         public int getNotificationMinutes()
         {
             return 10;
+        }
+
+        public bool AsksForVideoUrl()
+        {
+            return false;
         }
     }
 }

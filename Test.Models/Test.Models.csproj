@@ -120,6 +120,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VideoClientTester.cs" />
     <Compile Include="MessageTemplateTester.cs" />
     <Compile Include="FhirUpdaterInterfaceTester.cs" />
     <Compile Include="MessageEngineTester.cs" />

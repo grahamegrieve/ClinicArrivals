@@ -60,6 +60,8 @@ namespace ClinicArrivals.Models
         public bool ScreeningMessageResponse { get; set; }
         public bool VideoInviteSent { get; set; }
 
+        public string VideoSessionId { get; set; }
+
         /// <summary>
         /// This is last message that came in via SMS (will be in memory only - cleared if service restarts)
         /// </summary>
