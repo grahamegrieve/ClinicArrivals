@@ -12,10 +12,10 @@ namespace ClinicArrivals.Models
     public class ServerStatusCommand : ICommand
     {
         ServerStatus _model;
-        string _canExecuteInStatus;
+        ServerStatusEnum _canExecuteInStatus;
         Action _execute;
         bool processing;
-        public ServerStatusCommand(ServerStatus model, string canExecuteInStatus, Action execute)
+        public ServerStatusCommand(ServerStatus model, ServerStatusEnum canExecuteInStatus, Action execute)
         {
             _model = model;
             _canExecuteInStatus = canExecuteInStatus;
@@ -35,7 +35,7 @@ namespace ClinicArrivals.Models
         {
             if (processing)
                 return false;
-            if (_model.CurrentStatus != _canExecuteInStatus)
+            if (_model.Status != _canExecuteInStatus)
                 return false;
             return true;
         }

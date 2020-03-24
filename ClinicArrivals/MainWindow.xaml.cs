@@ -32,15 +32,15 @@ namespace ClinicArrivals
                 FhirAppointmentReader.OnVisitStarted += MessageProcessing_OnVisitStarted;
                 FhirAppointmentReader.StartServer(model.Settings.ExamplesServer, model.Settings.PMSProfileName, model.Settings.PMSLicenseKey);
 
-                model.serverStatuses.Oridashi.CurrentStatus = "starting...";
-                model.serverStatuses.Oridashi.Start = new ServerStatusCommand(model.serverStatuses.Oridashi, "stopped", () =>
+                model.serverStatuses.Oridashi.Status = ServerStatusEnum.Starting;
+                model.serverStatuses.Oridashi.Start = new ServerStatusCommand(model.serverStatuses.Oridashi, ServerStatusEnum.Stopped, () =>
                 {
-                    model.serverStatuses.Oridashi.CurrentStatus = "starting...";
+                    model.serverStatuses.Oridashi.Status = ServerStatusEnum.Starting;
                     FhirAppointmentReader.StartServer(model.Settings.ExamplesServer, model.Settings.PMSProfileName, model.Settings.PMSLicenseKey);
                 });
-                model.serverStatuses.Oridashi.Stop = new ServerStatusCommand(model.serverStatuses.Oridashi, "running", async () =>
+                model.serverStatuses.Oridashi.Stop = new ServerStatusCommand(model.serverStatuses.Oridashi, ServerStatusEnum.Running, async () =>
                 {
-                    model.serverStatuses.Oridashi.CurrentStatus = "stopping...";
+                    model.serverStatuses.Oridashi.Status = ServerStatusEnum.Stopping;
                     await FhirAppointmentReader.StopServer();
                 });
             });
@@ -56,7 +56,7 @@ namespace ClinicArrivals
             Dispatcher.Invoke(() =>
             {
                 var model = DataContext as ViewModel;
-                model.serverStatuses.Oridashi.CurrentStatus = "stopped";
+                model.serverStatuses.Oridashi.Status = ServerStatusEnum.Stopped;
                 model.ScanAppointments.Stop();
                 model.ReadSmsMessage.Stop();
             });
@@ -67,7 +67,7 @@ namespace ClinicArrivals
             Dispatcher.Invoke(() =>
             {
                 var model = DataContext as ViewModel;
-                model.serverStatuses.Oridashi.CurrentStatus = "running";
+                model.serverStatuses.Oridashi.Status = ServerStatusEnum.Running;
                 model.ScanAppointments.Start();
                 // model.ReadSmsMessage.Start();
             });

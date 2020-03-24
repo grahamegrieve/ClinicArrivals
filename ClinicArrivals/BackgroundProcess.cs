@@ -15,13 +15,13 @@ namespace ClinicArrivals.Models
             _status = status;
             _dispatcher = dispatcher;
             _execute = execute;
-            _status.CurrentStatus = "stopped";
+            _status.Status = ServerStatusEnum.Stopped;
             _useRegisterPollInterval = useRegisterPollInterval;
 
-            _status.Start = new ServerStatusCommand(_status, "stopped", () =>
+            _status.Start = new ServerStatusCommand(_status, ServerStatusEnum.Stopped, () =>
             { Start(); });
 
-            _status.Stop = new ServerStatusCommand(_status, "running", () =>
+            _status.Stop = new ServerStatusCommand(_status, ServerStatusEnum.Running, () =>
             { Stop(); });
         }
         Settings _settings;
@@ -49,16 +49,17 @@ namespace ClinicArrivals.Models
                 {
                     try
                     {
-                        _status.CurrentStatus = "processing";
+                        _status.Status = ServerStatusEnum.Processing;
                         await _execute.Invoke();
                         if (_poll == null)
-                            _status.CurrentStatus = "stopped";
+                            _status.Status = ServerStatusEnum.Stopped;
                         else
-                            _status.CurrentStatus = "running";
+                            _status.Status = ServerStatusEnum.Running;
                     }
                     catch (Exception ex)
                     {
-                        _status.CurrentStatus = $"Error: {ex.Message}";
+                        _status.Status = ServerStatusEnum.Error;
+                        _status.Error = ex.Message;
                     }
                 });
             }, null, 0, intervalMS);
@@ -74,10 +75,10 @@ namespace ClinicArrivals.Models
 
             _dispatcher.Invoke(() =>
             {
-                if (_status.CurrentStatus == "processing")
-                    _status.CurrentStatus = "stopping";
+                if (_status.Status == ServerStatusEnum.Processing)
+                    _status.Status = ServerStatusEnum.Stopping;
                 else
-                    _status.CurrentStatus = "stopped";
+                    _status.Status = ServerStatusEnum.Stopped;
             });
         }
     }

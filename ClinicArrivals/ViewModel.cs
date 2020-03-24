@@ -147,6 +147,7 @@ namespace ClinicArrivals
                 List<PmsAppointment> appts = new List<PmsAppointment>();
                 appts.AddRange(Appointments);
                 var messagesReceived = await engine.SmsSender.ReceiveMessages();
+                serverStatuses.IncomingSmsReader.Use(messagesReceived.Count());
                 engine.ProcessIncomingMessages(appts, messagesReceived);
             });
 
@@ -156,7 +157,8 @@ namespace ClinicArrivals
                 // (called every settings.interval)
                 var engine = PrepareMessagingEngine();
                 List<PmsAppointment> appts = await FhirApptReader.SearchAppointments(this.DisplayingDate, RoomMappings, Storage);
-                engine.ProcessTodaysAppointments(appts);
+                serverStatuses.Oridashi.Use(1);
+                serverStatuses.AppointmentScanner.Use(engine.ProcessTodaysAppointments(appts));
 
                 // Now update the UI once we've processed it all
                 Expecting.Clear();
@@ -180,7 +182,8 @@ namespace ClinicArrivals
                 List<PmsAppointment> appts = new List<PmsAppointment>();
                 appts.AddRange(await FhirApptReader.SearchAppointments(this.DisplayingDate.AddDays(1), RoomMappings, Storage));
                 appts.AddRange(await FhirApptReader.SearchAppointments(this.DisplayingDate.AddDays(2), RoomMappings, Storage));
-                engine.ProcessUpcomingAppointments(appts);
+                serverStatuses.Oridashi.Use(1); 
+                serverStatuses.UpcomingAppointmentProcessor.Use(engine.ProcessUpcomingAppointments(appts));
             }, true);
         }
 

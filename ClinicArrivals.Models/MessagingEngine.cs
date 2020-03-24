@@ -77,7 +77,7 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="stored">The view of the appointments we already had (important, because it remembers what messages we already sent)</param>
         /// <param name="incoming">The current information from the PMS</param>
-        public void ProcessTodaysAppointments(List<PmsAppointment> appointments)
+        public int ProcessTodaysAppointments(List<PmsAppointment> appointments)
         {
             // pseudo code
             // for each incoming appointment
@@ -85,12 +85,14 @@ namespace ClinicArrivals.Models
             //   has the status changed from arrived to fulfilled? - send the invite message if it's not a TeleHealth consultation
             //   if the appointment is within 3 hours, and the screening message hasn't been sent, send it 
             //   if the appointment is within 10 minutes a TeleHealth consultation, and the setup message hasn't been sent, send it 
+            int t = 0;
             foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsToday(n.AppointmentStartTime)))
             {
                 try
                 {
                     if (appt.ExternalData.ArrivalStatus == AppointmentStatus.Arrived && appt.ArrivalStatus == AppointmentStatus.Fulfilled)
                     {
+                        t++;
                         Dictionary<string, string> vars = new Dictionary<string, string>();
                         vars.Add("room", FindRoomNote(appt.PractitionerFhirID));
                         SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_APPT_READY, appt, vars));
@@ -101,6 +103,7 @@ namespace ClinicArrivals.Models
                     }
                     else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !appt.ExternalData.ScreeningMessageSent)
                     {
+                        t++;
                         SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "send out screening message", appt);
@@ -109,6 +112,7 @@ namespace ClinicArrivals.Models
                     }
                     else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, 10) && !appt.ExternalData.VideoInviteSent)
                     {
+                        t++;
                         Dictionary<string, string> vars = new Dictionary<string, string>();
                         vars.Add("url", VideoManager.getConferenceUrl(appt.AppointmentFhirID));
                         SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_INVITE, appt, vars));
@@ -123,6 +127,7 @@ namespace ClinicArrivals.Models
                     Logger.Log(ERR, "Exception processing " + appt.AppointmentFhirID + ": " + e.Message);
                 }
             }
+            return t;
         }
 
         private const bool IN = true;
@@ -142,17 +147,19 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="stored">The view of the appointments we already had (important, because it remembers what messages we already sent)</param>
         /// <param name="incoming">The current information from the PMS</param>
-        public void ProcessUpcomingAppointments(List<PmsAppointment> appointments)
+        public int ProcessUpcomingAppointments(List<PmsAppointment> appointments)
         {
             // pseudo code
             // for each incoming appointment
             //   is it new - send the pre-registration message, and add it to stored
+            int t = 0;
             foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsNearFuture(n.AppointmentStartTime))) // we only send these messages 2-3 days in the future
             {
                 try
                 {
                     if (!appt.ExternalData.PostRegistrationMessageSent)
                     {
+                        t++;
                         SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_REGISTRATION, appt, null));
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "send registration message", appt);
@@ -165,6 +172,7 @@ namespace ClinicArrivals.Models
                     Logger.Log(ERR, "Exception processing " + appt.AppointmentFhirID + ": " + e.Message);
                 }
             }
+            return t;
         }
 
         /// <summary>

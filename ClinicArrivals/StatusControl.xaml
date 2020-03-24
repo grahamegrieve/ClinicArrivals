@@ -19,21 +19,17 @@
             <Setter Property="Margin" Value="6"/>
         </Style>
     </UserControl.Resources>
-    <Grid>
+    <Grid Margin="0,0,0,-89">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             
-            <ColumnDefinition Width="12"/>
-
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -49,14 +45,14 @@
         <Button Grid.Row="1" Grid.Column="2" Content="Stop" Command="{Binding Path=IncomingSmsReader.Stop}"/>
         <Label Grid.Row="1" Grid.Column="3" Content="{Binding Path=IncomingSmsReader.CurrentStatus}"/>
 
-        <Label Grid.Row="0" Grid.Column="5" Content="{Binding Path=AppointmentScanner.Name}"/>
-        <Button Grid.Row="0" Grid.Column="6" Content="Start" Command="{Binding Path=AppointmentScanner.Start}" CommandParameter="{Binding AppointmentScanner.CurrentStatus, Mode=OneWay}"/>
-        <Button Grid.Row="0" Grid.Column="7" Content="Stop" Command="{Binding Path=AppointmentScanner.Stop}"/>
-        <Label Grid.Row="0" Grid.Column="8" Content="{Binding Path=AppointmentScanner.CurrentStatus}"/>
+        <Label Grid.Row="3" Grid.Column="0" Content="{Binding Path=AppointmentScanner.Name}"/>
+        <Button Grid.Row="3" Grid.Column="1" Content="Start" Command="{Binding Path=AppointmentScanner.Start}" CommandParameter="{Binding AppointmentScanner.CurrentStatus, Mode=OneWay}"/>
+        <Button Grid.Row="3" Grid.Column="2" Content="Stop" Command="{Binding Path=AppointmentScanner.Stop}"/>
+        <Label Grid.Row="3" Grid.Column="3" Content="{Binding Path=AppointmentScanner.CurrentStatus}"/>
 
-        <Label Grid.Row="1" Grid.Column="5" Content="{Binding Path=UpcomingAppointmentProcessor.Name}"/>
-        <Button Grid.Row="1" Grid.Column="6" Content="Start" Command="{Binding Path=UpcomingAppointmentProcessor.Start}" CommandParameter="{Binding UpcomingAppointmentProcessor.CurrentStatus, Mode=OneWay}"/>
-        <Button Grid.Row="1" Grid.Column="7" Content="Stop" Command="{Binding Path=UpcomingAppointmentProcessor.Stop}"/>
-        <Label Grid.Row="1" Grid.Column="8" Content="{Binding Path=UpcomingAppointmentProcessor.CurrentStatus}"/>
+        <Label Grid.Row="4" Grid.Column="0" Content="{Binding Path=UpcomingAppointmentProcessor.Name}"/>
+        <Button Grid.Row="4" Grid.Column="1" Content="Start" Command="{Binding Path=UpcomingAppointmentProcessor.Start}" CommandParameter="{Binding UpcomingAppointmentProcessor.CurrentStatus, Mode=OneWay}"/>
+        <Button Grid.Row="4" Grid.Column="2" Content="Stop" Command="{Binding Path=UpcomingAppointmentProcessor.Stop}"/>
+        <Label Grid.Row="4" Grid.Column="3" Content="{Binding Path=UpcomingAppointmentProcessor.CurrentStatus}"/>
     </Grid>
 </UserControl>
