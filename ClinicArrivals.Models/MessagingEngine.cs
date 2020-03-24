@@ -110,7 +110,7 @@ namespace ClinicArrivals.Models
                         appt.ExternalData.ScreeningMessageSent = true;
                         Storage.SaveAppointmentStatus(appt);
                     }
-                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, 10) && !appt.ExternalData.VideoInviteSent)
+                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, VideoManager.getNotificationMinutes()) && !appt.ExternalData.VideoInviteSent)
                     {
                         t++;
                         Dictionary<string, string> vars = new Dictionary<string, string>();
@@ -291,7 +291,7 @@ namespace ClinicArrivals.Models
 
                 // PMS:
                 appt.IsVideoConsultation = true;
-                AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID));
+                AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, "Video URL: " + VideoManager.getConferenceUrl(appt.AppointmentFhirID), VideoManager.getConferenceUrl(appt.AppointmentFhirID));
 
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;

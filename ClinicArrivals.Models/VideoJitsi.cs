@@ -41,5 +41,10 @@ namespace ClinicArrivals.Models
         {
             return false;
         }
+
+        public int getNotificationMinutes()
+        {
+            return 10;
+        }
     }
 }

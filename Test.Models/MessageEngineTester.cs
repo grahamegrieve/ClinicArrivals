@@ -646,6 +646,12 @@ namespace Test.Models
             {
                 return false;
             }
+
+            public int getNotificationMinutes()
+            {
+                return 10;
+            }
+
         }
 
         private class MessageLogicFhirUpdaterHandler : IFhirAppointmentUpdater
@@ -658,7 +664,7 @@ namespace Test.Models
             }
 
 
-            public void SaveAppointmentAsVideoMeeting(PmsAppointment appt, string videoLinkComment)
+            public void SaveAppointmentAsVideoMeeting(PmsAppointment appt, string videoLinkComment, string videoUrl)
             {
                 // Get the Appointment based on the appointment having an ID
                 // Hl7.Fhir.Model.Appointment fhirAppt = server.Get(appt.FhirAppointmentID);

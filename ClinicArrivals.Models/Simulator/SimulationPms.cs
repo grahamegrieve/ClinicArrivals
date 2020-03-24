@@ -155,7 +155,7 @@ namespace ClinicArrivals.Models
         #endregion
 
         #region << IFhirAppointmentUpdater >>
-        public void SaveAppointmentAsVideoMeeting(PmsAppointment appointment, string videoLinkComment)
+        public void SaveAppointmentAsVideoMeeting(PmsAppointment appointment, string videoLinkComment, string VideoUrl)
         {
             var appt = Appointments.FirstOrDefault(a => a.AppointmentFhirID == appointment.AppointmentFhirID);
             if (appt != null)

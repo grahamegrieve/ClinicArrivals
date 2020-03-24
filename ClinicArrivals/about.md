@@ -6,13 +6,15 @@ to help a GP manage their workflow during the COVID-19 crisis in Australia.
 ## Credits
 Developed at warp speed with contributions from:
 
-* Brett Esler (Oridashi)
-* Brian Postlethwaite (Telstra Health) 
-* Shovan Roy (NSW Health)
-* Grahame Grieve (Health Intersections)
+* Brian Postlethwaite 
+* Brett Esler 
+* Shovan Roy 
+* Grahame Grieve 
+* Mel Grieve
+* Shovan Roy 
+* James Berry 
 
-Thanks to Nathan Pinskier (RACGP) for conceptualization and prototyping & Josh Mandel (Microsoft 
-Health) for invaluable advice.
+Thanks to Nathan Pinskier (RACGP) for conceptualization and prototyping & Josh Mandel for invaluable advice.
 
 ## Documentation
 

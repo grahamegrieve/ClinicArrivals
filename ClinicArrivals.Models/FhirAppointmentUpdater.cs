@@ -19,7 +19,7 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <param name="appointment"></param>
         /// <param name="videoLinkComment"></param>
-        public void SaveAppointmentAsVideoMeeting(PmsAppointment appt, string videoLinkComment)
+        public void SaveAppointmentAsVideoMeeting(PmsAppointment appt, string videoLinkComment, string VideoUrl)
         {
             // Get the Appointment based on the appointment having an ID
             var fhirServer = GetFhirClient();
@@ -31,9 +31,7 @@ namespace ClinicArrivals.Models
                 || !fhirAppt.Comment.Contains(videoLinkComment))
             {
                 fhirAppt.AppointmentType = teleHealth;
-                fhirAppt.Comment = String.IsNullOrEmpty(fhirAppt.Comment) ?
-                   videoLinkComment
-                   : fhirAppt.Comment + Environment.NewLine + Environment.NewLine + videoLinkComment;
+                fhirAppt.Extension.Add(new Extension() { Url = "http://hl7.org.au/fhir/StructureDefinition/telehealth-videolink", Value = new FhirUrl(VideoUrl) };
                 fhirServer.Update(fhirAppt);
             }
         }

@@ -22,3 +22,14 @@ Documentation:
 * [Security Notes](Security.md)
 * [Jitsi Integration details](Jitsi.md)
 * [Technical Specifications for the PMS integration](FHIRDocumentation.md)
+
+
+## Patient Focused Documentation
+
+This is documentation that is linked to directly from the SMS messages
+
+There is one set of instructions for each differetn video call service that can be used:
+
+* [Jitsi](VideoJitsi.md) ()
+* [OpenVidu](VideoOpenVidu.md)  ()
+* [Skype](VideoSkype.md)  ()

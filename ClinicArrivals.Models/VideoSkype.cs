@@ -6,33 +6,45 @@ using System.Threading.Tasks;
 
 namespace ClinicArrivals.Models
 {
-    public interface IVideoConferenceManager
+    public class VideoSkype : IVideoConferenceManager
     {
-        void Initialize(Settings settings);
+        private Guid systemId;
+
+        public void Initialize(Settings settings)
+        {
+            systemId = settings.SystemIdentifier;
+        }
 
         /// <summary>
         /// Get URL for conference
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        String getConferenceUrl(String appointmentId);
-
-        /// <summary>
-        /// how much notice is appropriate when the 
-        /// </summary>
-        /// <returns></returns>
-        int getNotificationMinutes();
+        public String getConferenceUrl(String appointmentId)
+        {
+            return "https://demos.openvidu.io/openvidu-call/#/" + systemId.ToString()+"-"+appointmentId;
+        }
 
         /// <summary>
         /// Return true if it's possible to know if the patient has joined (not always possible with video services)
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        Boolean canKnowIfJoined();
+        public Boolean canKnowIfJoined()
+        {
+            return false;
+        }
 
         /// <summary>
         /// Return true if someone (assumed to be the patient) has joined the conference call
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        Boolean hasSomeoneJoined(String appointmentId);
+        public Boolean hasSomeoneJoined(String appointmentId)
+        {
+            return false;
+        }
 
+        public int getNotificationMinutes()
+        {
+            return 10;
+        }
     }
 }
