@@ -5,8 +5,9 @@
 * The desktop application needs direct access to the PMS application 
 * it also needs web access to the following URLS: 
   * https://api.twilio.com
-  * https://clinics.healthintersections.com.au/twilio
-  * https://meet.jit.si
+  * https://clinics.healthintersections.com.au
+  * https://video.healthintersections.com.au (port 80 and port 4443)
+  
 * it does not perform the role of a server - there is no inbound message connections  
 * the application only uses access to the clinic appointments - there's no access to any other part of the patient record
 

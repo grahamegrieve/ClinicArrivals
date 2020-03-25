@@ -114,7 +114,7 @@ namespace ClinicArrivals.Models
                         appt.ExternalData.ScreeningMessageSent = true;
                         Storage.SaveAppointmentStatus(appt);
                     }
-                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && IsInTimeWindow(appt.AppointmentStartTime, VideoManager.getNotificationMinutes()) && !appt.ExternalData.VideoInviteSent)
+                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && (appt.IsVideoConsultation || appt.ExternalData.IsVideoConsultation) && IsInTimeWindow(appt.AppointmentStartTime, VideoManager.getNotificationMinutes()) && !appt.ExternalData.VideoInviteSent)
                     {
                         t++;
                         Dictionary<string, string> vars = new Dictionary<string, string>();
@@ -127,7 +127,7 @@ namespace ClinicArrivals.Models
                         appt.ExternalData.VideoSessionId = details.id;
                         Storage.SaveAppointmentStatus(appt);
                     }
-                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && appt.IsVideoConsultation && appt.ExternalData.VideoInviteSent && !String.IsNullOrEmpty(appt.ExternalData.VideoSessionId) && VideoManager.canKnowIfJoined())
+                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && (appt.IsVideoConsultation || appt.ExternalData.IsVideoConsultation) && appt.ExternalData.VideoInviteSent && !String.IsNullOrEmpty(appt.ExternalData.VideoSessionId) && VideoManager.canKnowIfJoined())
                     {
                         if (VideoManager.hasSomeoneJoined(appt.ExternalData.VideoSessionId))
                         {
@@ -251,7 +251,7 @@ namespace ClinicArrivals.Models
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(ERR, "Exception processing message: " + e.Message);
+                    Logger.Log(ERR, "Exception processing message: " + e.Message+e.StackTrace);
                 }
             }
         }
@@ -320,6 +320,7 @@ namespace ClinicArrivals.Models
 
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;
+                appt.ExternalData.IsVideoConsultation = true;
                 Storage.SaveAppointmentStatus(appt);
             }
             else if (MessageMatches(msg.message, "no", "n"))

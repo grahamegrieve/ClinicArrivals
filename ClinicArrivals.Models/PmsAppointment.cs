@@ -60,6 +60,7 @@ namespace ClinicArrivals.Models
         public bool ScreeningMessageResponse { get; set; }
         public bool VideoInviteSent { get; set; }
 
+        public bool IsVideoConsultation { get; set; }
         public string VideoSessionId { get; set; }
 
         /// <summary>

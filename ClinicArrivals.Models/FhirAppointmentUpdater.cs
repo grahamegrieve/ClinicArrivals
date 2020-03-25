@@ -24,11 +24,13 @@ namespace ClinicArrivals.Models
             // Get the Appointment based on the appointment having an ID
             var fhirServer = GetFhirClient();
             Hl7.Fhir.Model.Appointment fhirAppt = fhirServer.Read<Appointment>($"{fhirServer.Endpoint}Appointment/{appt.AppointmentFhirID}");
-
+            if (fhirAppt == null)
+            {
+                throw new Exception("Unable to read appointment " + appt.AppointmentFhirID);
+            }
             CodeableConcept teleHealth = new CodeableConcept("http://hl7.org/au/fhir/CodeSystem/AppointmentType", "teleconsultation");
-            if (fhirAppt.AppointmentType.Coding.FirstOrDefault()?.System != teleHealth.Coding[0].System
-                || fhirAppt.AppointmentType.Coding.FirstOrDefault()?.Code != teleHealth.Coding[0].Code
-                || !fhirAppt.Comment.Contains(videoLinkComment))
+            if (fhirAppt.AppointmentType == null || (fhirAppt.AppointmentType.Coding.FirstOrDefault()?.System != teleHealth.Coding[0].System
+                || fhirAppt.AppointmentType.Coding.FirstOrDefault()?.Code != teleHealth.Coding[0].Code))
             {
                 fhirAppt.AppointmentType = teleHealth;
             }
