@@ -13,7 +13,7 @@ namespace Test.Models
     {
         private string secret = "";
 
-        [TestMethod]
+        [TestMethod, TestCategory("SkipWhenLiveUnitTesting")]
         public void testCreateSession()
         {
             var client = new OpenViduClient("https://video.healthintersections.com.au:4443", secret);
@@ -21,7 +21,7 @@ namespace Test.Models
 
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("SkipWhenLiveUnitTesting")]
         public void testHasMemberNo()
         {
             var client = new OpenViduClient("https://video.healthintersections.com.au:4443", secret);
@@ -30,7 +30,7 @@ namespace Test.Models
         }
 
 
-        [TestMethod]
+        [TestMethod, TestCategory("SkipWhenLiveUnitTesting")]
         public void testHasMemberYes()
         {
             var client = new OpenViduClient("https://video.healthintersections.com.au:4443", secret);
