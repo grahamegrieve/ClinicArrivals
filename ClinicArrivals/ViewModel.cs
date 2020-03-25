@@ -92,9 +92,7 @@ namespace ClinicArrivals
             }
             engine.VideoManager.Initialize(Settings);
             engine.UnprocessableMessages = UnprocessableMessages;
-            // if (!string.IsNullOrEmpty(Settings.DeveloperPhoneNumber))
-            engine.SmsSender = SimulationSmsProcessor;
-            // engine.SmsSender = new TwilioSmsProcessor();
+            engine.SmsSender = SmsProcessor;
             engine.TimeNow = DateTime.Now;
 
            
@@ -137,6 +135,8 @@ namespace ClinicArrivals
                 FhirApptReader = new FhirAppointmentReader(FhirAppointmentReader.GetServerConnection);
                 SmsProcessor.Initialize(Settings);
             }
+            SmsProcessor.SendMessage(new SmsMessage("+61411867065", "System is starting"));
+
             // setup the background worker routines
             ReadSmsMessage = new BackgroundProcess(Settings, serverStatuses.IncomingSmsReader, dispatcher, async () =>
             {
