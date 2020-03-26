@@ -22,3 +22,9 @@ jobs:
     
     - name: Build ClinicArrivals.Server
       run: msbuild ClinicArrivals.sln
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: ClinicArrivals
+        path: ${{runner.workspace}}\bin\Debug\
