@@ -1,29 +1,31 @@
 # FHIR Interface
 
-The Application uses a FHIR interface to communicate with the local 
-Practice Management System (PMS). When run in a GP practice, the application
-automatically locates the appropriate PMS (Medical Director or Best Practice)
-and runs it's own internal FHIR Server. 
+The Application uses a FHIR R4 interface to communicate with the local 
+Practice Management System (PMS).
 
-Alternatively, a different FHIR Server may be provided as specified in 
-the configuration. Any FHIR Server must conform to these expectations
-documented here.
+In a GP practice setting with a compatible PMS (i.e. Medical Director or Best Practice),
+the application will stand up its own FHIR server in order to communicate with the PMS.
+
+Alternatively, a different FHIR Server may be specified in the configuration. 
+Any FHIR Server must conform to these expectations documented here.
 
 ## Conceptual Design
 
 The application is appointment based. The application uses Appointment, Patient, and Practitioner 
-Resources, though it only performs operations on the Appointment resource.
+Resources, though it only performs write operations on the Appointment resource.
 
 ## Querying for appointments 
 
-The fundamental query is to make a list of appointments for a day. 
+The fundamental query is to make a list of appointments for a day:
 
     GET [base]/Appointment?date=YYYY-MM-DD&_include=patient&_include=practitioner
     
-Note that the application will scan for the current day and the next few future days (less often). 
+Note that the application will scan the current day and the next few future days (less often). 
 
-The returns a list of appointments. The bundle should not be paged. The Patient 
-and Practitioner resources are also included in the response 
+The query shall returns a list of appointments. The bundle should not be paged. The Patient 
+and Practitioner resources are also included in the response.
+
+The following resource properties are used by the application:
 
 ### Appointment
 
@@ -50,7 +52,7 @@ actual video link for the doctor to use to talk to the patient.
 
 ## Updating an Appointment 
 
-The interface accepts a PUT on an appointment 
+The FHIR interface shall accept a PUT on an Appointment.
 
 Only 3 fields can be changed, and only one change at at time:
 * status from booked to arrived (when the patient SMSs that they are in the carparK)
@@ -60,7 +62,6 @@ Only 3 fields can be changed, and only one change at at time:
 
 ## Running the FHIR interface
 
-Start the provided DLL. This connects to the relevant PMS autoamtically and starts a FHIR interface.
-The interface start function returns both the port that the FHIR server is running on, and also a 
-GUID that must be used for making phone calls
-
+Start the provided DLL. This connects to the relevant PMS automatically and starts a FHIR interface.
+The interface's start function returns both the port that the FHIR server is running on, as well as a 
+GUID that must be used for making phone calls.
