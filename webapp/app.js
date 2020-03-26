@@ -125,7 +125,9 @@ function leaveRoom() {
 	session.disconnect();
 
 	// Back to welcome page
-	window.location.href = window.location.origin + window.location.pathname;
+	// window.location.href = window.location.origin + window.location.pathname;
+  window.location.href = "https://video.healthintersections.com.au";
+  
 }
 
 
