@@ -103,7 +103,7 @@
                         <ComboBoxItem Name="cbi3">Fulfilled</ComboBoxItem>
                     </ComboBox>
                     <Label Grid.Row="7" Grid.Column="0" Content="Is Video Consult"/>
-                    <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding Path=IsVideoConsultation.AppointmentStartTimeUI, Mode=TwoWay}"/>
+                    <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding Path=EditingAppointment.IsVideoConsultation, Mode=TwoWay}"/>
 
                     <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal">
                         <Button Content="Add New" Command="{Binding Path=CreateNewAppointment}" CommandParameter="CreateNewAppointment"/>
