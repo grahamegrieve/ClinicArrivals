@@ -71,6 +71,9 @@ namespace ClinicArrivals.Models
             IsDoingVideo = other.IsDoingVideo;
             OpenViduSecret = other.OpenViduSecret;
             AdministratorPhone = other.AdministratorPhone;
-        }
+            MinutesBeforeScreeningMessage = other.MinutesBeforeScreeningMessage;
+            MinutesBeforeVideoInvitation = other.MinutesBeforeVideoInvitation;
+            AutoStartServices = other.AutoStartServices;
     }
+}
 }
