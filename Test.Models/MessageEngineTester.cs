@@ -657,6 +657,10 @@ namespace Test.Models
                 return false;
             }
 
+            public void cleanUp()
+            {
+                // nothing
+            }
         }
 
         private class MessageLogicFhirUpdaterHandler : IFhirAppointmentUpdater

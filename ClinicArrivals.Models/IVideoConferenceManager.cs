@@ -17,10 +17,12 @@ namespace ClinicArrivals.Models
         String getConferenceDetails(PmsAppointment appointment, Boolean GetItReady);
 
         /// <summary>
-        /// how much notice is appropriate when the 
+        /// how much notice is appropriate when the
+        /// 
+        /// This is not used at the moment - it's a configured setting
         /// </summary>
         /// <returns></returns>
-        int getNotificationMinutes();
+   //     int getNotificationMinutes();
 
         /// <summary>
         /// Return true if it's possible to know if the patient has joined (not always possible with video services)
@@ -39,6 +41,11 @@ namespace ClinicArrivals.Models
         /// </summary>
         /// <returns></returns>
         bool AsksForVideoUrl();
+
+        /// <summary>
+        /// Perform whatever maintenance is necessary
+        /// </summary>
+        void cleanUp();
     }
 
 }

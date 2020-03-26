@@ -11,6 +11,7 @@ namespace ClinicArrivals.Models
         private Guid systemId;
         private string secret;
 
+        private List<ScheduledSession> sessions = new List<ScheduledSession>();
         public void Initialize(Settings settings)
         {
             systemId = settings.SystemIdentifier;
@@ -27,6 +28,7 @@ namespace ClinicArrivals.Models
             {
                 var client = new OpenViduClient("https://video.healthintersections.com.au", secret);
                 appointment.ExternalData.VideoSessionId = client.SetUpSession();
+                sessions.Add(new ScheduledSession() { Start = appointment.AppointmentStartTime, Id = appointment.ExternalData.VideoSessionId });
             }
             return "https://video.healthintersections.com.au/#" + appointment.ExternalData.VideoSessionId; 
         }
@@ -64,5 +66,22 @@ namespace ClinicArrivals.Models
             return false;
         }
 
+        public void cleanUp()
+        {
+            var client = new OpenViduClient("https://video.healthintersections.com.au", secret);
+            foreach (ScheduledSession ss in sessions) 
+            {
+                if (ss.Start.AddHours(1) < DateTime.Now)
+                {
+                    client.EndSession(ss.Id);
+                }
+            }
+        }
+    }
+
+    internal class ScheduledSession
+    {
+        public DateTime Start { get; set; }
+        public string Id { get; set; }
     }
 }

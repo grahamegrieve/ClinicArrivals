@@ -75,6 +75,22 @@ namespace ClinicArrivals.Models
                 }
             }
         }
+
+        internal bool EndSession(string sessionId)
+        {
+            // https://openvidu.io/docs/reference-docs/REST-API/#get-apisessionsltsession_idgt
+
+            String url = BaseUrl + "/api/sessions/" + sessionId;
+            String body = "{\"mediaMode\":\"ROUTED\"}";
+            var webRequest = WebRequest.Create(url);
+            webRequest.Headers["Authorization"] = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes("OPENVIDUAPP:" + Secret));
+            webRequest.Method = "DELETE";
+            var bytes = Encoding.UTF8.GetBytes(body);
+            using (HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse())
+            {
+                return response.StatusCode == HttpStatusCode.NoContent;
+            }
+        }
     }
 
     internal class CreateSessionResponse

@@ -51,5 +51,10 @@ namespace ClinicArrivals.Models
         {
             return false;
         }
+
+        public void cleanUp()
+        {
+           // nothing
+        }
     }
 }
