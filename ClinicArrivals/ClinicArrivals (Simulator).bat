@@ -1,1 +1,1 @@
-Start ""  "ClinicArrivals.exe -simulator"
+Start ""  "ClinicArrivals.exe" -simulator
