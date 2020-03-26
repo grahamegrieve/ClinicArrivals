@@ -22,10 +22,15 @@
 
 ## Video Calls
 
-* Jitsi is used for video calls
+* Jitsi/OpenVidu are supported for video calls
+
+Jitsi:
 * users do not need an account or to sign up in any way
 * the server https://meet.jit.si is used for video call coordination
 * the actual video traffic flows peer to peer, not through a central server
+
+OpenVidu:
+[document me]
 
 ## SMS workflow
 
