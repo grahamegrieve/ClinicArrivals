@@ -25,6 +25,8 @@ namespace ClinicArrivals.Models
     {
         private List<String> whitelist = new List<string>();
         private bool IsDoingVideo;
+        private int MinutesBeforeScreening;
+        private int MinutesBeforeVideoInvite;
 
         // this specifies what day it is today. In production, this is *always* the current date/time 
         // but it can be overridden to another date/time by testing code (that makes it easier to manage the tests).
@@ -68,6 +70,16 @@ namespace ClinicArrivals.Models
         {
             TimeNow = DateTime.Now;
             this.IsDoingVideo = settings.IsDoingVideo;
+            this.MinutesBeforeScreening = settings.MinutesBeforeScreeningMessage;
+            if (this.MinutesBeforeScreening < 10)
+            {
+                this.MinutesBeforeScreening = 180;
+            }
+            this.MinutesBeforeVideoInvite = settings.MinutesBeforeVideoInvitation;
+            if (this.MinutesBeforeVideoInvite < 2) 
+            {
+                this.MinutesBeforeVideoInvite = 10;
+            }
             string[] whiteList = settings.PhoneWhiteList?.Split(',');
             if (whiteList != null)
             {
@@ -111,7 +123,7 @@ namespace ClinicArrivals.Models
                         appt.ExternalData.ArrivalStatus = appt.ArrivalStatus;
                         Storage.SaveAppointmentStatus(appt);
                     }
-                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, 180) && !appt.ExternalData.ScreeningMessageSent)
+                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, MinutesBeforeScreening) && !appt.ExternalData.ScreeningMessageSent && !appt.IsVideoConsultation) 
                     {
                         t++;
                         SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
@@ -120,7 +132,35 @@ namespace ClinicArrivals.Models
                         appt.ExternalData.ScreeningMessageSent = true;
                         Storage.SaveAppointmentStatus(appt);
                     }
-                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && (appt.IsVideoConsultation || appt.ExternalData.IsVideoConsultation) && IsInTimeWindow(appt.AppointmentStartTime, VideoManager.getNotificationMinutes()) && !appt.ExternalData.VideoInviteSent)
+                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, MinutesBeforeScreening) && !appt.ExternalData.ScreeningMessageSent && appt.IsVideoConsultation)
+                    {
+                        //t++;
+                        // it was made as as telehealth consultation manually
+                        // twilio: 
+                        if (IsDoingVideo)
+                        {
+                            SmsMessage rmsg = new SmsMessage(appt.PatientMobilePhone, TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_WELCOME, appt, null));
+                            SmsSender.SendMessage(rmsg);
+                            LogMsg(OUT, rmsg, "start video sequence", appt);
+
+                            // PMS:
+                            appt.IsVideoConsultation = true;
+                            if (VideoManager.AsksForVideoUrl())
+                                AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, null, null);
+                            else
+                            {
+                                var details = VideoManager.getConferenceDetails(appt, false);
+                                AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, "Video URL: " + details, details);
+                            }
+                        }
+
+                        // local storage
+                        appt.ExternalData.ScreeningMessageSent = true;
+                        appt.ExternalData.ScreeningMessageResponse = true;
+                        appt.ExternalData.IsVideoConsultation = true;
+                        Storage.SaveAppointmentStatus(appt);
+                    }
+                    else if (appt.ArrivalStatus == AppointmentStatus.Booked && (appt.IsVideoConsultation || appt.ExternalData.IsVideoConsultation) && IsInTimeWindow(appt.AppointmentStartTime, MinutesBeforeVideoInvite) && !appt.ExternalData.VideoInviteSent)
                     {
                         t++;
                         Dictionary<string, string> vars = new Dictionary<string, string>();
