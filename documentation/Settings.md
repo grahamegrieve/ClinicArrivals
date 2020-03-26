@@ -34,7 +34,7 @@ The values for  Profile Name: / License Key can be obtained from ... someone who
 A series of settings that control how the engine that drives the application works. 
 
 * **Poll Interval**: How often to look for new appointments for today (default: 10secs)
-* **Registration Poll Interval**: How often to look ifor appointments for the next 2 days (not such a hurry to send these out, so do this less often) (default 1 min)
+* **Registration Poll Interval**: How often to look for appointments for the next 2 days (not such a hurry to send these out, so do this less often) (default 1 min)
 * **Screening Message (min)**: How many minutes before the appointment to send the message that asks for teleconsultation vs physical visit (default 180min)
 * **Video Invitation (min)**: How many minutes before the appointment to send the video invitation (default 10min)
 * **Start Automatically**: Whether to start the services automatically when the program runs - enable this once all the other settings are configured correctly
