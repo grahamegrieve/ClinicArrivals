@@ -50,6 +50,10 @@ namespace ClinicArrivals.Models
         public string PMSProfileName { get; set; }
         public string PMSLicenseKey { get; set; }
 
+        public int MinutesBeforeScreeningMessage { get; set; }
+        public int MinutesBeforeVideoInvitation { get; set; }
+
+        public bool AutoStartServices { get; set; }
         public void CopyFrom(Settings other)
         {
             FromTwilioMobileNumber = other.FromTwilioMobileNumber;
