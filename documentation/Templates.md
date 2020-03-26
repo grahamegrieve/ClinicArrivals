@@ -1,14 +1,15 @@
 # Templates
 
-Each SMS message that is sent is based created using a template.
-Templates are maanged using the Message Templates tab in the 
+All SMS messages that the application sends are based on a template.
+
+Templates are managed using the `Message Templates` tab in the 
 Application.
 
 ## Template Syntax
 
-The templates use [Liquid]{https://shopify.github.io/liquid/} as the language. 
+The templates use [Liquid](https://shopify.github.io/liquid/) as the language. 
 
-The concept is very simple. The template looks like this:
+The template looks like this:
 
     This is a message for {{Patient.name}}.
     
@@ -17,7 +18,7 @@ with ```{{}}``` with their actual value, to get this:
 
     This is a message for John Smith.
 
-The langauge is very capable - see [Liquid]{https://shopify.github.io/liquid/} for further details.
+The langauge is very capable - see [Liquid](https://shopify.github.io/liquid/) for further details.
 
 ## Template Variables
 
@@ -29,27 +30,27 @@ The following variable names are supported by the application:
 * ```Appointment.start.date```: The start date of the appointment (dd-mmm)
 * ```Appointment.start.time```: The start time of the appointment (hh:nn AM/PM)
 
-Included for internal debugging purposes, not so useful for patient messages
+Included for internal debugging purposes, not so useful for patient messages:
 
 * ```Patient.telecom.mobile```: The phone number for the patient 
 * ```Appointment.status```: The status of the appointment
-* ```Practitioner.id```: 
-* ```Patient.id```: 
-* ```Appointment.id```: 
+* ```Practitioner.id```: Internal ID of the pracititioner
+* ```Patient.id```: Internal ID of the patient 
+* ```Appointment.id```: Internal ID of the appointment
 
 In addition, there are some event specific variables. THe following events 
-are defined. 
+are defined:
 
 
 ### Registration
 
-This message is sent when an appointment is due in 1-2 days (but not today)
+This message is sent when an appointment is due in 1-2 days (but not today).
 
 A typical example:
 
     Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. 3 hours prior to the appointment, you will be sent an SMS referring to a COVID-19 screening check to decide whether you should talk to the doctor by phone/video rather than seeing the doctor in person. Please do not respond to this message
 
-If video messaging is not in use, the message should not talk about the choice, as this would not be applicable
+If video messaging is not in use, the message should not talk about the choice, as this would not be applicable.
 
 ### Cancellation
 
@@ -72,7 +73,7 @@ A typical example:
 ### TooManyAppointments
 
 This message is sent when a message comes from a phone when patients associated with the phone have more than 3 or more appointments on the one day, 
-or sometimes if there's 2 appointments in the day but the engine can't work out where it is in the workflow 
+or sometimes if there's 2 appointments in the day but the engine can't work out where it is in the workflow.
 
 A typical example:
 
@@ -101,7 +102,7 @@ If the appointment is already marked as telehealth consultation, the video welco
 
 ### ScreeningYesToVideo
 
-This message is sent to the patient after they send "yes" in response to the previous question
+This message is sent to the patient after they send "yes" in response to the previous question.
 
 A typical example:
 
@@ -109,7 +110,7 @@ A typical example:
 
 ### ScreeningNoToVideo
 
-This message is sent to the patient after they send "no" in response to the previous question
+This message is sent to the patient after they send "no" in response to the previous question.
 
 A typical example:
 
@@ -117,7 +118,7 @@ A typical example:
 
 ### ScreeningDontUnderstand
 
-This message is sent to the patient if they reply something other than "yes" or "no" to the previous question
+This message is sent to the patient if they reply something other than "yes" or "no" to the previous question.
 
 A typical example:
 
