@@ -47,11 +47,13 @@ This message is sent when an appointment is due in 1-2 days (but not today)
 
 A typical example:
 
-    Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. 3 hours prior to the appointment, you will be sent an SMS referring to a COVID-19 screening check to decide whether you should do a video consultation rather than seeing the doctor in person. Please do not respond to this message
+    Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. 3 hours prior to the appointment, you will be sent an SMS referring to a COVID-19 screening check to decide whether you should talk to the doctor by phone/video rather than seeing the doctor in person. Please do not respond to this message
+
+If video messaging is not in use, the message should not talk about the choice, as this would not be applicable
 
 ### Cancellation
 
-This message is sent when the appointment is cancelled. Note: you can't cancel via SMS, and this message isn't currently supported
+This message is sent when the appointment is cancelled. Note: you can't cancel via SMS, and this message isn't currently used/supported
 
 A typical example:
 
@@ -74,7 +76,7 @@ or sometimes if there's 2 appointments in the day but the engine can't work out 
 
 A typical example:
 
-    The robot processing this message is stupid, and couldn't figure out which appointment of multiples that this was about. Please phone [clinic number] for help
+    The robot processing this message couldn't figure out which appointment of multiple for this day that this message was about. Please phone [clinic number] for help
 
 ### Unexpected
 
@@ -83,7 +85,7 @@ it is in a messaging workflow - typically, this means that the patient sent an u
 
 A typical example:
 
-    Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}, but this robot is not expecting a message right now
+    Patient {{Patient.name}} does have an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}, but this robot is not expecting a message right now. Please phone [clinic number] if you need help
 
 ### ConsiderTeleHealth
 
@@ -93,7 +95,9 @@ and "no" for a physical in person consultation.
 
 A typical example:
 
-    Please consult the web page http://www.rcpa.org.au/xxx to determine whether you are eligible to meet with the doctor by phone/video. If you are, respond to this message with YES otherwise respond with NO
+    Patient {{Patient.name}} does have an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. If you have symptoms of Covid-19, or exposure to a known case, you MUST choose to talk to the doctor by telephone/video, otherwise, you should choose to this unless you really need to come to the clinic. Respond to this message with YES to choose to telephone/video consultation, otherwise respond with NO
+
+If the appointment is already marked as telehealth consultation, the video welcome message will be sent instead (see below)
 
 ### ScreeningYesToVideo
 
@@ -101,7 +105,7 @@ This message is sent to the patient after they send "yes" in response to the pre
 
 A typical example:
 
-    Thank you. Do not come to the doctor's clinic. You will get an SMS message containing the URL for your video meeting a few minutes before your appointment. You can join from any computer or smartphone
+    Thank you. Do not come to the doctor's clinic. Your doctor will call you for your appointment. When you are ready for your appointment, reply to this message with the word 'waiting'. If the doctor wants to see you by video, they will ask you to follow a link you will be sent before the appointment. You can join from any computer or smartphone. For instructions, see https://bit.ly/2vFGl2c
 
 ### ScreeningNoToVideo
 
@@ -109,7 +113,7 @@ This message is sent to the patient after they send "no" in response to the prev
 
 A typical example:
 
-    Thank you. When you arrive at the clinic, stay in your car (or outside) and reply \"arrived\" to this message
+    Thank you. When you arrive at the clinic, stay in your car (or outside the clinic) and reply "arrived" to this message
 
 ### ScreeningDontUnderstand
 
@@ -117,7 +121,7 @@ This message is sent to the patient if they reply something other than "yes" or 
 
 A typical example:
 
-    The robot processing this message is stupid, and didn't understand your response. Please answer yes or no, or phone [clinic number] for help
+    The robot processing this message didn't understand your response. Please answer yes or no, or phone [clinic number] for help
 
 ### VideoInvite
 
@@ -126,9 +130,9 @@ This message is sent 10 min or so before the appointment is due so the patient c
 
 A typical example:
 
-    Please start your video call at {{url}}. When you have started it, reply to this message with the word \"joined\"
+    Patient {{Patient.name}} does have an appointment with {{Practitioner.name}} at {{Appointment.start.time}} is happening soon. The doctor will ring on this number. If the doctor wants to see you, the link is {{url}}. Reply "ready" when you are ready
 
-Note: if it is possible to tell that the patient has joined the call without asking them, we'll update the documentation (working on it now).
+Note: if the patient follows the link and sets the video call up, we'll automatically assume they are ready 
 
 **Event specific variable**:
 
@@ -140,7 +144,7 @@ Sent to the patient in response to them sending "joined".
 
 A typical example:
 
-    Thank you. The Doctor will join you as soon as possible
+    Thank you. The Doctor will call you as soon as possible
 
 ### VideoDontUnderstand
 
@@ -148,7 +152,7 @@ This mesage is sent in response to the patient sending something else instead of
 
 A typical example:
 
-    The robot processing this message is stupid, and didn't understand your response. Please just say \"joined\" when you have joined the video call
+    The robot processing this message didn't understand your response. Please just say "ready" when you are ready for the call
 
 ### ArrivedThanks
 
@@ -180,5 +184,5 @@ This is sent in response when we expected "arrived" but got something else.
 
 A typical example:
 
-    The robot processing this message is stupid, and didn't understand your response. Please just say \"arrived\", or phone [clinic number] for help
+    The robot processing this message didn't understand your response. Please just say "arrived", or phone [clinic number] for help
 

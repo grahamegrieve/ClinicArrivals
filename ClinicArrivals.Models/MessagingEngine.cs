@@ -461,7 +461,7 @@ namespace ClinicArrivals.Models
                     }
                     return null;
                 }
-                else if (MessageMatches(msg.message, "joined"))
+                else if (MessageMatches(msg.message, "joined", "ready"))
                 {
                     foreach (var appt in candidates)
                     {

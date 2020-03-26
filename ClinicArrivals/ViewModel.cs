@@ -222,6 +222,7 @@ namespace ClinicArrivals
             DefineDefaultTemplate(MessageTemplate.MSG_ARRIVED_THX, MessageTemplate.DEF_MSG_ARRIVED_THX);
             DefineDefaultTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_ARRIVING, MessageTemplate.DEF_MSG_DONT_UNDERSTAND_ARRIVING);
             DefineDefaultTemplate(MessageTemplate.MSG_APPT_READY, MessageTemplate.DEF_MSG_APPT_READY);
+            DefineDefaultTemplate(MessageTemplate.MSG_VIDEO_WELCOME, MessageTemplate.DEF_MSG_VIDEO_WELCOME);
         }
 
         private void DefineDefaultTemplate(string id, string value)
