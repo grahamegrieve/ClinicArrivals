@@ -9,7 +9,7 @@ There are 2 main purposes of the application:
 * Support the use of teleconsulation for patients who are an infection risk
 
 The application uses SMS messages (due to their wide ubiquity) for patient communication,
-and [Jitsi](https://jitsi.org/) for the video consultations. 
+and [OpenVidu](https://openvidu.org/) for the video consultations. 
 
 Documentation:
 
@@ -20,7 +20,7 @@ Documentation:
 * [Program Settings](Settings.md)
 * [Managing SMS templates](Templates.md)
 * [Security Notes](Security.md)
-* [Jitsi Integration details](Jitsi.md)
+* [Getting Support](Support.md)
 * [Technical Specifications for the PMS integration](FHIRDocumentation.md)
 
 
@@ -30,6 +30,6 @@ This is documentation that is linked to directly from the SMS messages
 
 There is one set of instructions for each different video call service that can be used:
 
-* [Jitsi](VideoJitsi.md) ()
 * [OpenVidu](VideoOpenVidu.md)  ()
+* [Jitsi](VideoJitsi.md) ()
 * [Skype](VideoSkype.md)  ()

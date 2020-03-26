@@ -13,6 +13,7 @@ Developed at warp speed with contributions from:
 * Mel Grieve
 * Shovan Roy 
 * James Berry 
+* Vadim Peretokin
 
 Thanks to Nathan Pinskier (RACGP) for conceptualization and prototyping & Josh Mandel for invaluable advice.
 

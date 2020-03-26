@@ -17,7 +17,7 @@ If you are a user, contact RACGP IT forum for advice/support.
 
 ### Local Storage 
 
-The application stores information locally in the [location XX?].
+The application stores information locally in the $AppData$\Roaming\ClinicArrivals.
 
 The current [settings](documentation/Settings.md) are stored there. 
 

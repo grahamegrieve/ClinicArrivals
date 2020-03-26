@@ -38,7 +38,7 @@ Included for internal debugging purposes, not so useful for patient messages:
 * ```Patient.id```: Internal ID of the patient 
 * ```Appointment.id```: Internal ID of the appointment
 
-In addition, there are some event specific variables. THe following events 
+In addition, there are some event specific variables. The following events 
 are defined:
 
 
@@ -91,7 +91,7 @@ A typical example:
 ### ConsiderTeleHealth
 
 This message is sent 2-3 hours in advance of the consultation to find out whether a video consulation is appropriate, or whether the patient 
-should come in. THe exact wording of the message adapts to condition. Whatever the question is, the answer is "yes" for a video consultation,
+should come in. The exact wording of the message adapts to condition. Whatever the question is, the answer is "yes" for a video consultation,
 and "no" for a physical in person consultation. 
 
 A typical example:

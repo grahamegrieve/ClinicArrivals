@@ -37,7 +37,7 @@ message to please come in.
 Field Documentation:
 * **Patient Name**: The patient's name.
 * **Mobile Phone**: The mobile phone for the patient. Unlike the Sms Simulator, no specific format requirement here - but use the formats as approved for data entry in the (imaginary) PMS - typically something like `0411 555 555`.
-* **Practitioner Name**: The name of the practitioner. That the application keeps track of the names and assigns them identifiers in the background, which drives the Room Mapping Entries.
+* **Practitioner Name**: The name of the practitioner. Note that the application keeps track of the names and assigns them identifiers in the background, which drives the Room Mapping Entries.
 * **Appointment Date**: The date of the appointment in `dd-mmm yyyy` format. There's generally no reason to create appointments for testing for anything but today or tomorrow.
 * **Appointment Time**: The time of the appointment in `hh:mm` format.
 * **Arrival Status**: One of ```Booked```, ```Arrived```, ```Fulfilled```. There's generally no point creating new appointments with a value of anything other than "Booked".

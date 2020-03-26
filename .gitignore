@@ -350,3 +350,4 @@ MigrationBackup/
 .ionide/
 /webapp/sites-available
 /webapp/sites-enabled
+/webapp/nginx.conf

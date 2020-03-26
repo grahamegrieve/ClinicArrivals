@@ -33,7 +33,7 @@ The following resource properties are used by the application:
 * patient reference
 * practitioner reference
 * time of start & end
-* appointment type - valued with "http://hl7.org/au/fhir/CodeSystem/AppointmentType" code = "teleconsultation"
+* appointment type - valued with "http://hl7.org.au/fhir/CodeSystem/AppointmentType" code = "teleconsultation"
 * status code:  booked | arrived | fulfilled
 
 In addition, the interface uses an extension: http://hl7.org.au/fhir/StructureDefinition/telehealth-videolink to represent the 
