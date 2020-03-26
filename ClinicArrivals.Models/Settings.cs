@@ -23,6 +23,8 @@ namespace ClinicArrivals.Models
         public ICommand Save { get; set; }
         [JsonIgnore]
         public ICommand Reload { get; set; }
+        [JsonIgnore]
+        public ICommand TestSms { get; set; }
 
         public string FromTwilioMobileNumber { get; set; }
         public string ACCOUNT_SID { get; set; }
@@ -32,6 +34,8 @@ namespace ClinicArrivals.Models
         public bool ExamplesServer { get; set; }
         public Guid SystemIdentifier { get; private set; }
 
+        public string AdministratorPhone { get; set; }
+
         public string OpenViduSecret { get; set; }
 
         public void AllocateNewSystemIdentifier() { SystemIdentifier = Guid.NewGuid(); }
@@ -40,6 +44,7 @@ namespace ClinicArrivals.Models
 
         public string PhoneWhiteList { get; set; }
 
+        public bool IsDoingVideo { get; set; }
         public VideoConferencingType VideoType { get; set; }
 
         public string PMSProfileName { get; set; }
@@ -59,7 +64,9 @@ namespace ClinicArrivals.Models
             VideoType = other.VideoType;
             PMSProfileName = other.PMSProfileName;
             PMSLicenseKey = other.PMSLicenseKey;
+            IsDoingVideo = other.IsDoingVideo;
             OpenViduSecret = other.OpenViduSecret;
+            AdministratorPhone = other.AdministratorPhone;
         }
     }
 }

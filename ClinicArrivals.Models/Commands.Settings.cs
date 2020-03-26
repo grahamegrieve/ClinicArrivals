@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace ClinicArrivals.Models
@@ -42,6 +43,41 @@ namespace ClinicArrivals.Models
                     processing = false;
                     CanExecuteChanged?.Invoke(parameter, new EventArgs());
                 }
+            }
+        }
+    }
+
+    public class TestSmsSettingsCommand : ICommand
+    {
+        IArrivalsLocalStorage _storage;
+
+        public TestSmsSettingsCommand(IArrivalsLocalStorage storage)
+        {
+            _storage = storage;
+        }
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            if (parameter is Settings settings)
+            {
+                try
+                {
+                    TwilioSmsProcessor twilio = new TwilioSmsProcessor();
+                    twilio.Initialize(settings);
+                    twilio.SendMessage(new SmsMessage(settings.AdministratorPhone, "Test Message from Clinic Arrivals"));
+                    MessageBox.Show("Message sent to "+ settings.AdministratorPhone);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error sending message: " + ex.Message);
+                }
+
             }
         }
     }

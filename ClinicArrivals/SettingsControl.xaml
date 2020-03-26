@@ -22,12 +22,14 @@
             <Setter Property="Padding" Value="6"/>
         </Style>
     </UserControl.Resources>
-    <Grid Margin="12">
+    <Grid Margin="12,12,12,-52.667">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -51,32 +53,37 @@
         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=AUTH_TOKEN, Mode=TwoWay}"/>
         <Label Grid.Row="3" Grid.Column="0" Content="From Phone Number"/>
         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Path=FromTwilioMobileNumber, Mode=TwoWay}"/>
-        <Label Grid.Row="4" Grid.ColumnSpan="2" Content="PMS" FontWeight="Bold" FontSize="14" />
-        <Label Grid.Row="5" Grid.Column="0" Content="Profile Name"/>
-        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Path=PMSProfileName, Mode=TwoWay}"/>
-        <Label Grid.Row="6" Grid.Column="0" Content="License Key"/>
-        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Path=PMSLicenseKey, Mode=TwoWay}"/>
-        <Label Grid.Row="7" Grid.Column="0" Content="Poll Interval (seconds)"/>
-        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Path=PollIntervalSeconds, Mode=TwoWay}" HorizontalAlignment="Left"/>
-        <TextBlock Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Width="150">Registration Poll Interval (seconds)</TextBlock>
-        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Path=RegistrationPollIntervalSeconds, Mode=TwoWay}" Width="65" HorizontalAlignment="Left"/>
-        <Label Grid.Row="9" Grid.Column="0" Content="Use Samples Server"/>
-        <CheckBox Grid.Row="9" Grid.Column="1" IsChecked="{Binding Path=ExamplesServer, Mode=TwoWay}" Margin="6"/>
+        <Label Grid.Row="4" Grid.Column="0" Content="Administrator SMS #"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Path=AdministratorPhone, Mode=TwoWay}"/>
+        <Label Grid.Row="5" Grid.Column="0" Content="Mobile Phone White List"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Path=PhoneWhiteList, Mode=TwoWay}"/>
+        <Label Grid.Row="6" Grid.ColumnSpan="2" Content="PMS" FontWeight="Bold" FontSize="14" />
+        <Label Grid.Row="7" Grid.Column="0" Content="Profile Name"/>
+        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Path=PMSProfileName, Mode=TwoWay}"/>
+        <Label Grid.Row="8" Grid.Column="0" Content="License Key"/>
+        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Path=PMSLicenseKey, Mode=TwoWay}"/>
+        <Label Grid.Row="9" Grid.Column="0" Content="Poll Interval (seconds)"/>
+        <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Path=PollIntervalSeconds, Mode=TwoWay}" HorizontalAlignment="Left"/>
+        <TextBlock Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Width="150">Registration Poll Interval (seconds)</TextBlock>
+        <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding Path=RegistrationPollIntervalSeconds, Mode=TwoWay}" Width="65" HorizontalAlignment="Left"/>
+        <Label Grid.Row="11" Grid.Column="0" Content="Use Samples Server"/>
+        <CheckBox Grid.Row="11" Grid.Column="1" IsChecked="{Binding Path=ExamplesServer, Mode=TwoWay}" Margin="6"/>
 
-        <Label Grid.Row="10" Grid.ColumnSpan="2" Content="Other" FontWeight="Bold" FontSize="14" />
-        <Label Grid.Row="11" Grid.Column="0" Content="Mobile Phone White List"/>
-        <TextBox Grid.Row="11" Grid.Column="1" Text="{Binding Path=PhoneWhiteList, Mode=TwoWay}"/>
-        <Label Grid.Row="12" Grid.Column="0" Content="Video Conferencing Manager"/>
-        <ComboBox Grid.Row="12" Grid.Column="1" Text="{Binding Path=VideoType, Mode=TwoWay}" Margin="6">
+        <Label Grid.Row="12" Grid.ColumnSpan="2" Content="Other" FontWeight="Bold" FontSize="14" />
+        <Label Grid.Row="13" Grid.Column="0" Content="Use Video Conferencing"/>
+        <CheckBox Grid.Row="13" Grid.Column="1" IsChecked="{Binding Path=IsDoingVideo, Mode=TwoWay}"/>
+        <Label Grid.Row="14" Grid.Column="0" Content="Video Conferencing Manager"/>
+        <ComboBox Grid.Row="14" Grid.Column="1" Text="{Binding Path=VideoType, Mode=TwoWay}" Margin="6">
             <ComboBoxItem Name="cbi1">OpenVidu</ComboBoxItem>
             <ComboBoxItem Name="cbi2">Jitsi</ComboBoxItem>
         </ComboBox>
-        <Label Grid.Row="13" Grid.Column="0" Content="Video Service Password"/>
-        <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding Path=OpenViduSecret, Mode=TwoWay}"/>
+        <Label Grid.Row="15" Grid.Column="0" Content="Video Service Password"/>
+        <TextBox Grid.Row="15" Grid.Column="1" Text="{Binding Path=OpenViduSecret, Mode=TwoWay}"/>
 
-        <StackPanel Grid.Row="14" Grid.Column="1" Orientation="Horizontal">
+        <StackPanel Grid.Row="16" Grid.Column="1" Orientation="Horizontal">
             <Button Content="Save" Command="{Binding Save}" CommandParameter="{Binding Mode=OneWay}"/>
             <Button Content="Cancel" Command="{Binding Reload}" CommandParameter="{Binding Mode=OneWay}"/>
+            <Button Content="Test Sms" Command="{Binding TestSms}" CommandParameter="{Binding Mode=OneWay}"/>
         </StackPanel>
     </Grid>
 </UserControl>

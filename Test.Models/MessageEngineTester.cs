@@ -637,9 +637,9 @@ namespace Test.Models
                 return false;
             }
 
-            public VideoCallDetails getConferenceDetails(string appointmentId, Boolean GetItReady)
+            public String getConferenceDetails(PmsAppointment appointment, Boolean GetItReady)
             {
-                return new VideoCallDetails() { url = "https://meet.jit.si/:guid:-" + appointmentId };
+                return "https://meet.jit.si/:guid:-" + appointment.AppointmentFhirID;
             }
 
             public bool hasSomeoneJoined(string appointmentId)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClinicArrivals.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -34,6 +35,7 @@ namespace ClinicArrivals
             {
                 // This thread created the kernel object so no other instance
                 // of this application must be running.
+                System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
             }
             else
             {
@@ -63,6 +65,45 @@ namespace ClinicArrivals
                 // system the specified exit code.
                 Environment.Exit(-2);
             }
+        }
+
+        public static string AdministratorPhone { get; set; }
+        public static ISmsProcessor SmsSender { get; set; }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            if (e.ApplicationExitCode != -2) // the -2 is that the app was a dup open attempt below.
+            {
+                if (!String.IsNullOrEmpty(AdministratorPhone))
+                {
+                    try
+                    {
+                        SmsSender.SendMessage(new SmsMessage(AdministratorPhone, "System is stopping"));
+                    } 
+                    catch 
+                    {
+                        // nothing at all
+                    }
+                }
+
+            }
+            base.OnExit(e);
+        }
+
+        static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (!String.IsNullOrEmpty(AdministratorPhone))
+            {
+                try
+                {
+                    SmsSender.SendMessage(new SmsMessage(AdministratorPhone, "System is stopping"));
+                }
+                catch 
+                {
+                    // nothing at all
+                }
+            }
+
+            Environment.Exit(1);
         }
 
         private static class NativeMethods

@@ -28,7 +28,7 @@ namespace ClinicArrivals
         // actual in-use implementations
         private IFhirAppointmentReader FhirApptReader;
         private IFhirAppointmentUpdater FhirApptUpdater;
-        private ISmsProcessor SmsProcessor;
+        public ISmsProcessor SmsProcessor;
 
 
         public ViewModel()
@@ -41,6 +41,7 @@ namespace ClinicArrivals
             Storage = new ArrivalsFileSystemStorage(IsSimulation);
             Settings.Save = new SaveSettingsCommand(Storage);
             Settings.Reload = new ReloadSettingsCommand(Storage);
+            Settings.TestSms = new TestSmsSettingsCommand(Storage);
             SaveRoomMappings = new SaveRoomMappingsCommand(Storage);
             ReloadRoomMappings = new ReloadRoomMappingsCommand(Storage);
             SaveTemplates = new SaveTemplatesCommand(Storage);
@@ -135,7 +136,24 @@ namespace ClinicArrivals
                 FhirApptReader = new FhirAppointmentReader(FhirAppointmentReader.GetServerConnection);
                 SmsProcessor.Initialize(Settings);
             }
-            SmsProcessor.SendMessage(new SmsMessage("+61411867065", "System is starting"));
+            logger.Log(1, "Start up");
+            if (!String.IsNullOrEmpty(Settings.AdministratorPhone))
+            {
+                logger.Log(1, "Send SMS to "+ Settings.AdministratorPhone);
+                try
+                {
+                    SmsProcessor.SendMessage(new SmsMessage(Settings.AdministratorPhone, "System is starting"));
+                    if (!IsSimulation)
+                    {
+                        App.AdministratorPhone = Settings.AdministratorPhone;
+                        App.SmsSender = SmsProcessor;
+                    }
+                } 
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Error sending message: " + ex.Message);
+                }
+              }
 
             // setup the background worker routines
             ReadSmsMessage = new BackgroundProcess(Settings, serverStatuses.IncomingSmsReader, dispatcher, async () =>

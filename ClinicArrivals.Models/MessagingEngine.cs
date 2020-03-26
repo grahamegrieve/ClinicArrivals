@@ -24,6 +24,7 @@ namespace ClinicArrivals.Models
     public class MessagingEngine
     {
         private List<String> whitelist = new List<string>();
+        private bool IsDoingVideo;
 
         // this specifies what day it is today. In production, this is *always* the current date/time 
         // but it can be overridden to another date/time by testing code (that makes it easier to manage the tests).
@@ -66,6 +67,7 @@ namespace ClinicArrivals.Models
         public void Initialise(Settings settings)
         {
             TimeNow = DateTime.Now;
+            this.IsDoingVideo = settings.IsDoingVideo;
             string[] whiteList = settings.PhoneWhiteList?.Split(',');
             if (whiteList != null)
             {
@@ -122,13 +124,12 @@ namespace ClinicArrivals.Models
                     {
                         t++;
                         Dictionary<string, string> vars = new Dictionary<string, string>();
-                        var details = VideoManager.getConferenceDetails(appt.AppointmentFhirID, true);
-                        vars.Add("url", details.url);
+                        var details =  VideoManager.getConferenceDetails(appt, true);
+                        vars.Add("url", details);
                         SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_VIDEO_INVITE, appt, vars));
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "invite to video", appt);
                         appt.ExternalData.VideoInviteSent = true;
-                        appt.ExternalData.VideoSessionId = details.id;
                         Storage.SaveAppointmentStatus(appt);
                     }
                     else if (appt.ArrivalStatus == AppointmentStatus.Booked && (appt.IsVideoConsultation || appt.ExternalData.IsVideoConsultation) && appt.ExternalData.VideoInviteSent && !String.IsNullOrEmpty(appt.ExternalData.VideoSessionId) && VideoManager.canKnowIfJoined())
@@ -311,20 +312,29 @@ namespace ClinicArrivals.Models
                 SmsSender.SendMessage(rmsg);
                 LogMsg(OUT, rmsg, "process screening response 'yes'", appt);
 
-                // PMS:
-                appt.IsVideoConsultation = true;
-                if (VideoManager.AsksForVideoUrl())
-                    AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, null, null);
-                else
+                if (IsDoingVideo)
                 {
-                    var details = VideoManager.getConferenceDetails(appt.AppointmentFhirID, false);
-                    AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, "Video URL: " + details.url, details.url);
+                    // PMS:
+                    appt.IsVideoConsultation = true;
+                    if (VideoManager.AsksForVideoUrl())
+                        AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, null, null);
+                    else
+                    {
+                        var details = VideoManager.getConferenceDetails(appt, false);
+                        AppointmentUpdater.SaveAppointmentAsVideoMeeting(appt, "Video URL: " + details, details);
+                    }
                 }
-
 
                 // local storage
                 appt.ExternalData.ScreeningMessageResponse = true;
-                appt.ExternalData.IsVideoConsultation = true;
+                if (IsDoingVideo)
+                {
+                    appt.ExternalData.IsVideoConsultation = true;
+                }
+                else
+                {
+                    appt.IsVideoConsultation = false;
+                }
                 Storage.SaveAppointmentStatus(appt);
             }
             else if (MessageMatches(msg.message, "no", "n"))

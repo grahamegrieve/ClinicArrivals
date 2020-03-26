@@ -21,14 +21,14 @@ namespace ClinicArrivals.Models
         /// Get URL for conference
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        public VideoCallDetails getConferenceDetails(String appointmentId, Boolean GetItReady)
+        public String getConferenceDetails(PmsAppointment appointment, Boolean GetItReady)
         {
-            var name = systemId.ToString() + "-" + appointmentId;
-            var client = new OpenViduClient("https://video.healthintersections.com.au", secret);
-            VideoCallDetails ret = new VideoCallDetails();
-            ret.id = client.SetUpSession();
-            ret.url = "https://video.healthintersections.com.au/#" + ret.id;
-            return ret;
+            if (String.IsNullOrEmpty(appointment.ExternalData.VideoSessionId))
+            {
+                var client = new OpenViduClient("https://video.healthintersections.com.au", secret);
+                appointment.ExternalData.VideoSessionId = client.SetUpSession();
+            }
+            return "https://video.healthintersections.com.au/#" + appointment.ExternalData.VideoSessionId; 
         }
 
         /// <summary>

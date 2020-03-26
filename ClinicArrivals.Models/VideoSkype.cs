@@ -8,20 +8,18 @@ namespace ClinicArrivals.Models
 {
     public class VideoSkype : IVideoConferenceManager
     {
-        private Guid systemId;
-
+ 
         public void Initialize(Settings settings)
         {
-            systemId = settings.SystemIdentifier;
         }
 
         /// <summary>
         /// Get URL for conference
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        public VideoCallDetails getConferenceDetails(String appointmentId, Boolean GetItReady)
+        public String getConferenceDetails(PmsAppointment appointment, Boolean GetItReady)
         {
-            return new VideoCallDetails() { url = "https://demos.openvidu.io/openvidu-call/#/" + systemId.ToString() + "-" + appointmentId };
+            return null;
         }
 
         /// <summary>

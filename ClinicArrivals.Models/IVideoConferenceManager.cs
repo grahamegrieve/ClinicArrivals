@@ -14,7 +14,7 @@ namespace ClinicArrivals.Models
         /// Get an internal id for conference
         /// </summary>
         /// <param name="id">The id of the appointment (unique ==> Appointment Resource id)</param>
-        VideoCallDetails getConferenceDetails(String appointmentId, Boolean GetItReady);
+        String getConferenceDetails(PmsAppointment appointment, Boolean GetItReady);
 
         /// <summary>
         /// how much notice is appropriate when the 
@@ -41,9 +41,4 @@ namespace ClinicArrivals.Models
         bool AsksForVideoUrl();
     }
 
-    public class VideoCallDetails
-    {
-        public string id { get; set; }
-        public string url { get; set; }
-    }
 }
