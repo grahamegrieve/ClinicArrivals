@@ -67,9 +67,13 @@ namespace ClinicArrivals
             Dispatcher.Invoke(() =>
             {
                 var model = DataContext as ViewModel;
-                model.serverStatuses.Oridashi.Status = ServerStatusEnum.Running;
-                model.ScanAppointments.Start();
-                // model.ReadSmsMessage.Start();
+                if (model.Settings.AutoStartServices)
+                {
+                    model.serverStatuses.Oridashi.Status = ServerStatusEnum.Running;
+                    model.ScanAppointments.Start();
+                    model.ReadSmsMessage.Start();
+                    model.ProcessUpcomingAppointments.Start();
+                }
             });
         }
     }
