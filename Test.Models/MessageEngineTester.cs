@@ -563,7 +563,9 @@ namespace Test.Models
         // supporting infrastructure
         private Settings testSettings()
         {
-            return new Settings();
+            var settings = new Settings();
+            settings.IsDoingVideo = true;
+            return settings;
         }
 
         private MessagingEngine makeEngine()

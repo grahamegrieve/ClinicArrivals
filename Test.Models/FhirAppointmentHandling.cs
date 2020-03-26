@@ -20,6 +20,7 @@ namespace Test.Models
         {
             ArrivalsModel model = new ArrivalsModel();
             var appts = await new FhirAppointmentReader(FhirAppointmentReader.GetServerConnection).SearchAppointments(model.DisplayingDate, model.RoomMappings, model.Storage);
+            Assert.IsNotNull(appts);
         }
     }
 }

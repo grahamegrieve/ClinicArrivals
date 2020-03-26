@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Test.Models
 {
-    [TestClass]
+    [TestClass, Ignore] //  passing these tests requires other resources that don't usually exist
     public class FhirUpdaterInterfaceTester
     {
         private FhirClient GetFhirClient()

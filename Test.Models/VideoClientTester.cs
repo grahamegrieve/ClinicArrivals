@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Test.Models
 {
-    [TestClass]
+    [TestClass, Ignore] // you can only run this if you provide the correct API token and since the only place to do this is in the checked in code, we don't usually run these tests 
     public class VideoClientTester
     {
         private string secret = "";
