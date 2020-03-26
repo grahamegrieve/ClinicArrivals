@@ -1,0 +1,30 @@
+on: [push, pull_request]
+  
+jobs:
+  build-clinicarrivals:
+    runs-on: windows-latest
+     
+    steps:
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1.4.0
+    
+    - name: Setup nuget.exe
+      uses: warrenbuckley/Setup-Nuget@v1
+    
+    - name: Setup msbuild.exe
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Checkout source code
+      uses: actions/checkout@v2.0.0
+  
+    - name: Restore packages
+      run: nuget restore
+    
+    - name: Build ClinicArrivals
+      run: msbuild ClinicArrivals.sln
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: ClinicArrivals
+        path: ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\Debug

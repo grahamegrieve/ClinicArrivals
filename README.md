@@ -15,6 +15,13 @@ If you are a user, contact RACGP IT forum for advice/support.
 
 ## Developer Documemntation
 
+### Building
+
+Requirements:
+Visual Studio 2019 on Windows.
+
+.NET Framework target: 4.6.2.
+
 ### Local Storage 
 
 The application stores information locally in the $AppData$\Roaming\ClinicArrivals.
