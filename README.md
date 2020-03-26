@@ -17,9 +17,9 @@ If you are a user, contact RACGP IT forum for advice/support.
 
 ### Local Storage 
 
-The application stores information locally in the location [XX?]
+The application stores information locally in the [location XX?].
 
-The current [settings](Settings.md) are stored there. 
+The current [settings](documentation/Settings.md) are stored there. 
 
 In addition, the communication record of past appointments is 
 also stored there. Deleting this information or moving the 
@@ -29,11 +29,12 @@ patients.
 
 ### Kernel
 
-The core of the program is in MessageEngine.cs. This is where
+The core of the program is in `MessageEngine.cs`. This is where
 the application queries for the current appointment list from the
-PMS, and also scans for incoming sms messages to process
+Practice Management System (PMS), and also scans for incoming sms
+messages to process.
 
-Every X seconds (as specified in the settings, the application 
+Every X seconds (as specified in the settings), the application 
 searches for all appointments on the current day. Then it works 
 through the appointments
 
