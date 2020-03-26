@@ -31,6 +31,6 @@ This is documentation that is linked to directly from the SMS messages
 
 There is one set of instructions for each different video call service that can be used:
 
-* [OpenVidu](VideoOpenVidu.md)  ()
-* [Jitsi](VideoJitsi.md) ()
-* [Skype](VideoSkype.md)  ()
+* [OpenVidu](VideoOpenVidu.md)  (https://bit.ly/33MFitY)
+* [Jitsi](VideoJitsi.md) (https://bit.ly/3bufeq9)
+* [Skype](VideoSkype.md) (https://bit.ly/2WJrL4O)
