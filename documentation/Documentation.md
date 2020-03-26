@@ -1,7 +1,7 @@
 # ClinicArrivals Documentation
  
 This program is written to fit into an existing GP clinic workflow
-to help a GP manage their workflow during the COVID-19 crisis. 
+to help a GP manage their workflow during the [COVID-19](https://en.wikipedia.org/wiki/Coronavirus_disease_2019) crisis. 
 
 There are 2 main purposes of the application: 
 
@@ -9,7 +9,7 @@ There are 2 main purposes of the application:
 * Support the use of teleconsulation for patients who are an infection risk
 
 The application uses SMS messages (due to their wide ubiquity) for patient communication,
-and jitsi for the video consultations. 
+and [Jitsi](https://jitsi.org/) for the video consultations. 
 
 Documentation:
 
@@ -28,7 +28,7 @@ Documentation:
 
 This is documentation that is linked to directly from the SMS messages
 
-There is one set of instructions for each differetn video call service that can be used:
+There is one set of instructions for each different video call service that can be used:
 
 * [Jitsi](VideoJitsi.md) ()
 * [OpenVidu](VideoOpenVidu.md)  ()
