@@ -8,3 +8,8 @@ jobs:
     steps:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1.4.0
+
+    - name: Checkout source code
+      uses: actions/checkout@v2.0.0
+    
+    - run: dotnet build ClinicArrivals.sln
