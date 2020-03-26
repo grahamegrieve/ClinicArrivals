@@ -15,6 +15,7 @@ Documentation:
 
 * [Description of the messaging workflow](Workflow.md)
 * [User Guide](UserGuide.md)
+* [Installation](Installation.md)
 * [Using the Simulator](Simulator.md)
 * [Setting up the SMS phone # using Twilio](Twilio.md)
 * [Program Settings](Settings.md)
