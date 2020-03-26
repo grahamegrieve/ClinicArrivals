@@ -7,6 +7,9 @@ jobs:
     steps:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1.4.0
+    
+    - name: Setup Nuget.exe
+      uses: warrenbuckley/Setup-Nuget@v1
 
     - name: Checkout source code
       uses: actions/checkout@v2.0.0
