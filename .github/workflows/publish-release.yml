@@ -50,7 +50,7 @@ jobs:
                 
         nuget pack "$Script:NuSpec" -Version "$env:TAG_NAME" -BasePath $SQUIRRELWIN -OutputDirectory $SQUIRRELWIN
 
-        TREE /F
+        TREE /F $SQUIRRELWIN
 
       shell: powershell
     
