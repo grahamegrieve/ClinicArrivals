@@ -66,7 +66,7 @@ jobs:
         TREE /F $env:workspace\ClinicArrivals
        
         # fails silently if the nupkg file is not found
-        .\squirrel.windows\tools\Squirrel --releasify $Script:NupkgPath --releaseDir $RELEASEDIR --no-msi --setupIcon $env:workspace\ClinicArrivals\ClinicArrivals.ico        
+        .\squirrel.windows\tools\Squirrel --releasify $Script:NupkgPath --releaseDir $RELEASEDIR --no-msi --setupIcon $env:workspace\ClinicArrivals\ClinicArrivals\ClinicArrivals.ico        
         
         if (-not (Test-Path -Path "${Env:APPVEYOR_BUILD_FOLDER}\src\release\Setup.exe" -PathType Leaf)) {
           Write-Output "=== ERROR: Squirrel failed to generate the installer! Build aborted. Squirrel log is:"
