@@ -49,7 +49,7 @@ jobs:
 
         TREE /F
 
-      shell: pwsh
+      shell: powershell
     
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
