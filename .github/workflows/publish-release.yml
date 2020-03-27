@@ -44,6 +44,7 @@ jobs:
         
         Move-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals\bin\$env:buildtype\* $SQUIRRELWINBIN
         Remove-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals\bin\$env:buildtype\* -include *.pdb, *.vshost.*
+        Move-Item $env:workspace\ClinicArrivals.png $SQUIRRELWIN
         
         $Script:NuSpec = "$env:WORKSPACE\ClinicArrivals\ClinicArrivals.nuspec"
                 
