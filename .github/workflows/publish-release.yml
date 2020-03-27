@@ -36,20 +36,14 @@ jobs:
         path: ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}
             
     - name: Create archive
-      run: 7z a ClinArrivals-${{github.event.release.tag_name}}-win86.zip ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}\*
+      run: 7z a ClinArrivals-${{github.event.release.tag_name}}-win.zip ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}\*
                 
     - name: Upload to release
       uses: actions/upload-release-asset@v1.0.1
-      env: { GITHUB_TOKEN: "${{ secrets.RELEASE_TOKEN }}" }
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_name: ClinArrivals-${{github.event.release.tag_name}}-win86.zip
-        asset_path: ClinArrivals-${{github.event.release.tag_name}}-win86.zip
+        asset_name: ClinArrivals-${{github.event.release.tag_name}}-win.zip
+        asset_path: ClinArrivals-${{github.event.release.tag_name}}-win.zip
         asset_content_type: application/zip
-
-#     - name: Upload to release
-#       uses: JasonEtco/upload-to-release@master
-#       with:
-#         args: ClinArrivals-$(git describe --tags)-win86.zip
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
