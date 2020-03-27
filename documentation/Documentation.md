@@ -16,7 +16,7 @@ Documentation:
 * [User Guide](UserGuide.md)
 * [Installation](Installation.md)
 * [Using the Simulator](Simulator.md)
-* [Setting up the SMS phone # using Twilio](Twilio.md)
+* [Setting up the SMS phone number using Twilio](Twilio.md)
 * [Program Settings](Settings.md)
 * [Managing SMS templates](Templates.md)
 * [Security Notes](Security.md)

@@ -1,5 +1,5 @@
 # How to use the Video Conference
 
-### ON your Mobile Phone
+### On your Mobile Phone
 
-Todo...
+To do...

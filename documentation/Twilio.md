@@ -4,7 +4,7 @@ The application uses Twilio to send and receive SMS messages. You must set up a 
 
 ## Twilio Account set up instructions
 
-* Set up a Twilio Account
+* Set up a Twilio Account https://www.twilio.com/sms/pricing/au
 * Buy an Australian phone number. The only capability that matters is SMS
 * Mark the number as a business number 
 * Go through the tiresome number regulatory process and wait for approval

@@ -12,11 +12,11 @@ An example template looks like this:
 
     This is a message for {{Patient.name}}.
     
-The template processor will replace all the variables that are surrounded by ```{{}}``` with their actual value, to get this:
+The template processor will replace all the variables that are surrounded by ```{{}}``` with their actual value, to arrive at this:
 
     This is a message for John Smith.
 
-The langauge is very capable - see [Liquid](https://shopify.github.io/liquid/) for further details.
+The language is very capable - see [Liquid](https://shopify.github.io/liquid/) for further details.
 
 ## Template Variables
 
@@ -25,10 +25,10 @@ The following variable names are supported by the application:
 * ```Patient.name```: The name of the patient
 * ```Practitioner.name```: The name of the doctor the patient is seeing
 * ```Appointment.start```: The start date/time of the appointment
-* ```Appointment.start.date```: The start date of the appointment (dd-mmm)
-* ```Appointment.start.time```: The start time of the appointment (hh:nn AM/PM)
+* ```Appointment.start.date```: The start date of the appointment (dd-MMM)
+* ```Appointment.start.time```: The start time of the appointment (hh:mm AM/PM)
 
-Included for internal debugging purposes, not so useful for patient messages:
+Included for internal debugging purposes; not so useful for patient messages:
 
 * ```Patient.telecom.mobile```: The phone number for the patient
 * ```Appointment.status```: The status of the appointment
@@ -58,7 +58,7 @@ A typical example:
 
 ### UnknownPhone
 
-The reply when a message is received from a phone number not associated with any appointment. This is typically something that happens in response to the welcome on the clinic door, when a patient's carer calls, or there is no phone number associated with the patient. The phone number should be the reception desk, and they should enter the mobile phone number against the patient, which will start the screening workflow.
+The reply when a message is received from a phone number not associated with any appointment. This is typically something that happens in response to the welcome on the clinic door, when a patient's carer calls, or there is no phone number associated with the patient. The [clinic number] should be the reception desk, and they respond to the call by entering the correct mobile phone number against the patient, which will start the screening workflow.
 
 A typical example:
 
@@ -66,7 +66,7 @@ A typical example:
 
 ### TooManyAppointments
 
-This message is sent when a message comes from a phone when patients associated with the phone have more than 3 appointments on the one day, or sometimes if there's only 2 appointments but the engine can't work out where it is in the messaging workflow.
+This message is sent when a message comes from a phone associated with a patient that has more than 3 appointments on the one day, or sometimes only 2 appointments if the engine can't work out where it is in the messaging workflow.
 
 A typical example:
 
@@ -82,7 +82,7 @@ A typical example:
 
 ### ConsiderTeleHealth
 
-This message is sent 2-3 hours in advance of the consultation to find out whether a video consulation is appropriate, or whether the patient should come in. The exact wording of the message adapts to condition. Whatever the question is, the answer is "yes" for a video consultation, and "no" for a physical in person consultation. 
+This message is sent 2-3 hours in advance of the consultation to find out whether a video consulation is appropriate, or whether the patient should come in to the clinic. The exact wording of the message adapts to condition. Whatever the question is, the answer is "yes" for a video consultation, and "no" for a physical in person consultation. 
 
 A typical example:
 
@@ -116,7 +116,7 @@ A typical example:
 
 ### VideoInvite
 
-If the consultation has been marked as a video consultation by either the previous exchange or by the reception staff, then this work flow applies. This message is sent 10 min or so before the appointment is due so the patient can get ready.
+If the consultation has been marked as a video consultation by either the previous exchange or by the reception staff, then this work flow applies. This message is sent ten minutes or so before the appointment is due so the patient can get ready.
 
 A typical example:
 
@@ -138,17 +138,17 @@ A typical example:
 
 ### VideoDontUnderstand
 
-This mesage is sent in response to the patient sending something else instead of "joined".
+This message is sent in response to the patient sending something else instead of "joined".
 
 A typical example:
 
-    The robot processing this message didn't understand your response. Please just say "ready" when you are ready for the call
+    The robot processing this message didn't understand your response. Please just reply "ready" when you are ready for the call
 
 ### ArrivedThanks
 
 The following messages apply when the patient is actually turning up.
 
-This is sent in response a recognised phone number sending "Arrived".
+This is sent in response a recognised phone number sending "arrived".
 
 A typical example:
 

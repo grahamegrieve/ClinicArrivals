@@ -1,10 +1,10 @@
-# Workflow Development
+# Workflow Description
 
 The application is appointment-based. 
 
 ## Post registration
 
-As soon as an appointment is registered, the system sends the patient an SMS.
+As soon as an appointment is registered, the system sends the patient an SMS:
 
 "Thank you for making an appointment to see Dr X. [X] hours before the appointment, we will send you an SMS asking with you meet the criteria documented at http://www.rcpa.org.au/xxx, to decide whether you will talk to the doctor by telephone video, or physically come to the clinic. Please respond to this message to confirm you have seen it (or your appointment will be cancelled)"
 
@@ -32,7 +32,7 @@ If the patient is eligible for a teleconsultation (reply matches 'yes') then:
 
 When the patient joins the room, they will be marked as arrived in the PMS. When the doctor is ready to see the patient, they copy the URL out of the appointment notes and paste into their browser. 
 
-## Phyical meeting pathway
+## Physical meeting pathway
 
 If the patient is not eligible for a teleconsultation (reply matches 'no') then:
 
@@ -40,7 +40,7 @@ Send patient SMS like this:
 
 "Due to the COVID-19 pandemic, the clinic no longer has an open patient waiting room. When you arrive at the clinic, stay in your car and respond to this SMS with the word "arrived". The wait in your car until you are invited in. If you do not arrive by car, then wait [instructions]"
 
- - note: for non care arrivals (taxis etc), the clinic needs to figure out least worst instructions whether it's the waiting room, or
+ - note: for non care arrivals (taxis etc), the clinic needs to figure out least-worst instructions whether it's the waiting room, or
    
 Clinic has a sign on the door something like:
 
