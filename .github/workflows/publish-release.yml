@@ -30,6 +30,27 @@ jobs:
     - name: Build ClinicArrivals
       run: msbuild /p:Configuration=${{env.buildtype}} -maxcpucount:2 ClinicArrivals.sln
     
+    - name: Update nuspec
+      env:
+        TAG_NAME: ${{github.event.release.tag_name}}
+        WORKSPACE: ${{runner.workspace}}
+      run: |
+        $SQUIRRELWIN = "$env:WORKSPACE\squirrel-packaging-prep"
+        $SQUIRRELWINBIN = "$SQUIRRELWIN\lib\net45\"
+        if (-not $(Test-Path "$SQUIRRELWINBIN")) {
+          New-Item "$SQUIRRELWINBIN" -ItemType "directory"
+        }
+        
+        Move-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals\bin\$env:buildtype\* $SQUIRRELWINBIN
+        Remove-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals\bin\$env:buildtype\* -include *.pdb, *.vshost.*
+        
+        $Script:NuSpec = "$env:WORKSPACE\ClinicArrivals\ClinicArrivals\ClinicArrivals.nuspec"
+        nuget pack "$Script:NuSpec" -Version $$env:TAG_NAME" -BasePath $SQUIRRELWIN -OutputDirectory $SQUIRRELWIN
+
+        TREE /F
+
+      shell: pwsh
+    
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
@@ -37,10 +58,12 @@ jobs:
         path: ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}
             
     - name: Create release archive
+      if: "false"
       run: 7z a ClinicArrivals-${{github.event.release.tag_name}}-win.zip ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}\*
-                
+
     - name: Upload archive to release
       uses: actions/upload-release-asset@v1.0.1
+      if: "false"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
