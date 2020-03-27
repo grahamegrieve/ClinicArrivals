@@ -1,9 +1,8 @@
 name: Publish release
 
-on: push
-#   release:
-#     types: created      
-  
+on:
+  release:
+    types: created      
   
 jobs:
   publish-clinicarrivals:
@@ -32,9 +31,9 @@ jobs:
     
     - name: Build installer
       env:
-#         TAG_NAME: ${{github.event.release.tag_name}}
-        TAG_NAME: "0.0.1"
+        TAG_NAME: ${{github.event.release.tag_name}}
         WORKSPACE: ${{runner.workspace}}
+      shell: powershell
       run: |
         $SQUIRRELWIN = "$env:WORKSPACE\squirrel-packaging-prep"
         $SQUIRRELWINBIN = "$SQUIRRELWIN\lib\net45\"
@@ -63,7 +62,6 @@ jobs:
         # fails silently if the nupkg file is not found
         .\squirrel.windows\tools\Squirrel --releasify $Script:NupkgPath --releaseDir $RELEASEDIR --no-msi --setupIcon $env:workspace\ClinicArrivals\ClinicArrivals\ClinicArrivals.ico        
         
-        TREE /F $RELEASEDIR
         if (-not (Test-Path -Path "$RELEASEDIR\Setup.exe" -PathType Leaf)) {
           Write-Output "=== ERROR: Squirrel failed to generate the installer! Build aborted. Squirrel log is:"
           Get-Content -Path .\squirrel.windows\tools\SquirrelSetup.log
@@ -71,8 +69,6 @@ jobs:
         }
         
         echo "::set-env name=RELEASEDIR::$RELEASEDIR"
-
-      shell: powershell
     
     - name: Upload installer
       uses: actions/upload-artifact@v1.0.0
@@ -80,17 +76,12 @@ jobs:
         name: ClinicArrivals-${{github.event.release.tag_name}}-win.zip
         path: ${{env.RELEASEDIR}}\Setup.exe
             
-    - name: Create release archive
-      if: "false"
-      run: 7z a ClinicArrivals-${{github.event.release.tag_name}}-win.zip ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}\*
-
     - name: Upload archive to release
       uses: actions/upload-release-asset@v1.0.1
-      if: "false"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_name: ClinicArrivals-${{github.event.release.tag_name}}-win.zip
-        asset_path: ClinicArrivals-${{github.event.release.tag_name}}-win.zip
-        asset_content_type: application/zip
+        asset_name: ClinicArrivals-${{github.event.release.tag_name}}-win.exe
+        asset_path: ${{env.RELEASEDIR}}\Setup.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
