@@ -35,10 +35,10 @@ jobs:
         name: ClinicArrivals
         path: ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}
             
-    - name: Create archive
+    - name: Create release archive
       run: 7z a ClinArrivals-${{github.event.release.tag_name}}-win.zip ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}\*
                 
-    - name: Upload to release
+    - name: Upload archive to release
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
