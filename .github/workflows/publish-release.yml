@@ -27,10 +27,10 @@ jobs:
     - name: Restore packages
       run: nuget restore
     
-    - name: Build ClinicArrivals
+    - name: Compile ClinicArrivals
       run: msbuild /p:Configuration=${{env.buildtype}} -maxcpucount:2 ClinicArrivals.sln
     
-    - name: Update nuspec
+    - name: Build installer
       env:
 #         TAG_NAME: ${{github.event.release.tag_name}}
         TAG_NAME: "0.0.1"
@@ -53,34 +53,38 @@ jobs:
 
         $Script:NupkgPath = "$SQUIRRELWIN\ClinicArrivals.$env:TAG_NAME.nupkg"
         
-        
-        TREE /F $SQUIRRELWIN
-        
         if (-not (Test-Path -Path $Script:NupkgPath -PathType Leaf)) {
           Write-Output "ERROR: nupkg doesn't exist as expected! Build aborted."
           exit 1
         }  
                
         nuget install squirrel.windows -ExcludeVersion
-        
-        TREE /F $env:workspace\ClinicArrivals
        
         # fails silently if the nupkg file is not found
         .\squirrel.windows\tools\Squirrel --releasify $Script:NupkgPath --releaseDir $RELEASEDIR --no-msi --setupIcon $env:workspace\ClinicArrivals\ClinicArrivals\ClinicArrivals.ico        
         
-        if (-not (Test-Path -Path "${Env:APPVEYOR_BUILD_FOLDER}\src\release\Setup.exe" -PathType Leaf)) {
+        TREE /F $RELEASEDIR
+        if (-not (Test-Path -Path "$RELEASEDIR\Setup.exe" -PathType Leaf)) {
           Write-Output "=== ERROR: Squirrel failed to generate the installer! Build aborted. Squirrel log is:"
           Get-Content -Path .\squirrel.windows\tools\SquirrelSetup.log
           exit 1
         }
+        
+        echo "::set-env name=RELEASEDIR::$RELEASEDIR
 
       shell: powershell
     
-    - name: Upload artifact
+    - name: Upload raw build
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: ClinicArrivals-installer
+        path: ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}
+        
+    - name: Upload installer
       uses: actions/upload-artifact@v1.0.0
       with:
         name: ClinicArrivals
-        path: ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}
+        path: ${{env.RELEASEDIR}}
             
     - name: Create release archive
       if: "false"
