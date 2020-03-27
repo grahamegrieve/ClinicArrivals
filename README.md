@@ -6,7 +6,7 @@ This program should help a General Practitioner (GP) manage increased workload d
 
 ## Contributions
 
-Contributions are welcome, either as Pull Requests or bug reports. You can joint the chat at: 
+Contributions are welcome, either as Pull Requests or bug reports. You can join the chat at: 
 https://chat.fhir.org/#narrow/stream/227888-clinic-arrivals
 
 If you are a user, contact RACGP IT forum for advice/support.

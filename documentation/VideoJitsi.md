@@ -1,8 +1,8 @@
 # How to use the Video Conference
 
-## ON your Mobile Phone
+## On your Mobile Phone
 
-1. A link to the chat will be send to your by your doctor in an SMS message
+1. A link to the chat will be send to you by your doctor in an SMS message
 
 - Click the attached link
 - A webpage will open automatically with a prompt to download the app. Click 'download the app'.
@@ -18,7 +18,7 @@
 
 - The red button in the bottom centre of the screen will end the call.
 - The microphone icon to the left of this will mute the call.
-- Likewise, the camera icon on the other side will remove your video.
+- Likewise, the camera icon on the other side will turn off your camera.
 
 ## Computer 
 - A computer can be used, but then you can only use the ```Chrome``` web browser. 

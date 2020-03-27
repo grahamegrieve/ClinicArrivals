@@ -1,13 +1,13 @@
 # User Guide
 
-The Clinical Arrivals Program is mainly intended to be ignored while running - it will look after itself. Users interact with the program for 4 different reasons:
+The ClinicArrivals Program is mainly intended to be ignored while running - it will look after itself. Users interact with the program for four different reasons:
 
 * checking on the status of the program (ongoing monitoring)
 * managing the room arrangements and message wording (ongoing configuration)
 * performing initial configuration (only while setting up)
 * testing the behavior of the application (only when workflows are being changed)
 
-The Clinical Arrivals application is tricky to conceptualise and manage because 
+The ClinicArrivals application is tricky to conceptualise and manage because 
 it's a glue application between 3 different systems:
 * A Practice Management System (PMS) - this manages the clinic and maintains the appointments 
 * Twilio - an SMS sending/receiving system
@@ -23,17 +23,17 @@ The application has the following tabs:
 * **Appointments**: Detailed display of expected appointments for the day, and currently arrived patients (to help with troubleshooting)
 * **Unknown Incoming Messages**: List of SMS messages that have arrived that weren't understood (see note below)
 * **Sms Simulator**: Allows testing the application by simulating sending SMS messages to it (and seeing what has been sent)
-* **PMS Simulator**: Allows testing the application by creating appointments
-* **Room Mappings**: List of instructions for finding the room for a particular Doctor
-* **Message Templates**: Controls the actual text of the messages that get sent out to patients 
-* **Settings**: Application configuration 
-* **About**: Information about the program 
+* **Pms Simulator**: Allows testing the application by creating appointments
+* **Room Mappings**: List of instructions for finding the room for a particular doctor
+* **Message Templates**: Controls the actual text of the messages that get sent out to patients
+* **Settings**: Application configuration
+* **About**: Information about the program
 
 ## Checking on the status of the program
 
-Because the application is glue between 3 others systems, issues with any of these other systems or connectivity to them can interrupt the normal running of the program.
+Because the application is glue between three other systems, issues with any of these systems or connectivity to them can interrupt the normal running of the program.
 
-You can check on the program by watching the counts of the appointments with different statuses, and how many SMS messages have been sent and received, and also by how long it is since any numbers changed.
+You can check on the program by watching the counts of the appointments with different status, and how many SMS messages have been sent and received, and also by how long it is since any numbers changed.
 
 In addition, for ease of review, the application lists which appointments are still expected for the day, and which have patients who have arrived (either in the carpark, or on video). Note that this list only includes patients that have a mobile phone associated with the appointment; other appointments are ignored and must be managed another way.
 
@@ -49,13 +49,13 @@ If the patient is physically attending the practice, they wait out in the car pa
   
 This saves or reduces the need for the patient interacting with (and maybe waiting at) reception to find out where they should go, if they don't already know.
 
-However the PMS systems do not track which room the Doctor is in. So this information must come from the application itself. The Room Mappings tab contains a list of Doctor Names who have appointments for the day, and a text note that explains where to go for that doctors office. If no note is configured for the doctor, the message will say:
+However the PMS systems do not track which room the doctor is in. So this information must come from the application itself. The Room Mappings tab contains a list of doctors who have appointments for the day, and a text note that explains where to go for that doctor's office. If no note is configured for the doctor, the message will say:
 
   Dr Adam Ant is ready to see you now
 
 ## Performing Initial Configuration 
 
-This screen handles configuration when the prgram is first set up, and shouldn't require any additional management after that.
+This screen handles configuration when the program is first set up, and shouldn't require any additional management after that.
 
 See:
 

@@ -1,7 +1,7 @@
 # How to use the Video Conference
 
 ## On your Mobile Phone
-1. A link to the chat will be send to your by your doctor
+1. A link to the chat will be send to you by your doctor
 - Click the attached link
 - You will be redirected to a webpage which will ask for permission to use the microphone and camera. Click 'Allow'.
 - A window will pop up to show what the video will look like along with a number of different options. Scroll to the bottom and change your nickname to your own name.
@@ -20,5 +20,5 @@ Important note: this video service doesn't work with Internet Explorer (or old E
 
 ### Once in the call
 - The red circular button at the top of the screen will end the call.
-- The camera icon three to the left of this will remove your video.
+- The camera icon three to the left of this will turn off your camera.
 - The microphone icon immediately to the left of the video button will mute the call.
