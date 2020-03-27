@@ -70,7 +70,7 @@ jobs:
           exit 1
         }
         
-        echo "::set-env name=RELEASEDIR::$RELEASEDIR
+        echo "::set-env name=RELEASEDIR::$RELEASEDIR"
 
       shell: powershell
     
