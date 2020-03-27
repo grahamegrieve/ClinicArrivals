@@ -32,7 +32,8 @@ jobs:
     
     - name: Update nuspec
       env:
-        TAG_NAME: ${{github.event.release.tag_name}}
+#         TAG_NAME: ${{github.event.release.tag_name}}
+        TAG_NAME: "0.0.1"
         WORKSPACE: ${{runner.workspace}}
       run: |
         $SQUIRRELWIN = "$env:WORKSPACE\squirrel-packaging-prep"
