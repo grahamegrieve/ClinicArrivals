@@ -45,7 +45,7 @@ jobs:
         
         Move-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals\bin\$env:buildtype\* $SQUIRRELWINBIN
         Remove-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals\bin\$env:buildtype\* -include *.pdb, *.vshost.*
-        Move-Item $env:workspace\ClinicArrivals\ClinicArrivals.png $SQUIRRELWIN
+        Move-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals.png $SQUIRRELWIN
         
         $Script:NuSpec = "$env:WORKSPACE\ClinicArrivals\ClinicArrivals.nuspec"
                 
@@ -60,16 +60,14 @@ jobs:
           Write-Output "ERROR: nupkg doesn't exist as expected! Build aborted."
           exit 1
         }  
-        
-        TREE /F $SQUIRRELWIN
-        
+               
         nuget install squirrel.windows -ExcludeVersion
+        
+        TREE /F $env:workspace\ClinicArrivals
        
         # fails silently if the nupkg file is not found
         .\squirrel.windows\tools\Squirrel --releasify $Script:NupkgPath --releaseDir $RELEASEDIR --no-msi --setupIcon $env:workspace\ClinicArrivals\ClinicArrivals.ico        
         
-        TREE /F $RELEASEDIR
-
         if (-not (Test-Path -Path "${Env:APPVEYOR_BUILD_FOLDER}\src\release\Setup.exe" -PathType Leaf)) {
           Write-Output "=== ERROR: Squirrel failed to generate the installer! Build aborted. Squirrel log is:"
           Get-Content -Path .\squirrel.windows\tools\SquirrelSetup.log
