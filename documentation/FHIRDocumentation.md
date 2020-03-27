@@ -4,7 +4,8 @@ The Application uses a FHIR R4 interface to communicate with the local Practice 
 
 In a GP practice setting with a compatible PMS (i.e. Medical Director or Best Practice), the application will stand up its own FHIR server in order to communicate with the PMS.
 
-Alternatively, a different FHIR Server may be specified in the configuration. Any FHIR Server must conform to the expectations documented here.
+Alternatively, a different FHIR Server may be specified in the configuration. Any FHIR Server used in the end must conform to the expectations documented here.
+
 
 ## Conceptual Design
 
