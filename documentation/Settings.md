@@ -2,12 +2,11 @@
 
 ## SMS Message Settings
 
-* **Twilio Account SID**: The Twilio Account id
+* **Twilio Account SID**: The Twilio Account ID
 * **Twilio Auth Token**: The Twilio API Token
 * **From Phone Number**: The Twilio Phone number for the SMS services 
 
-The first 3 settings come from your Twilio account - see [Twilio Setup](Twilio.md). The phone number is the number that represents 
-the clinic. It must use the standard format (e.g. `+6140155555`)
+The first 3 settings come from your Twilio account - see [Twilio Setup](Twilio.md). The phone number is the number that represents the clinic. It must use the full standard format (e.g. `+6140155555`).
 
 * **Administrator SMS**: An SMS number that gets a message when ever the program starts or stops (but not when it crashes unexpectedly)
 * **Mobile Phone White List**: A comma-separated list of mobile phone numbers that the application will send messages to; other appointments are ignored 
