@@ -3,6 +3,7 @@
 This program should help a General Practitioner (GP) manage increased workload during the [COVID-19](https://en.wikipedia.org/wiki/Coronavirus_disease_2019) crisis in Australia. It is designed to fit into an existing clinic workflow using common Practice Management Systems (PMS).
 
 * [Product documentation](documentation/Documentation.md)
+* [Download latest](https://github.com/grahamegrieve/ClinicArrivals/releases/latest)
 
 ## Contributions
 
