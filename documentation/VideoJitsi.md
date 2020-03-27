@@ -12,7 +12,7 @@
 - The app will ask for permission to use the microphone and camera. Click 'Ok'.
 - A window will pop up asking for a password. Enter the surname of your doctor.
 - The video chat will open automatically.
-- now go back to the SMS and reply with "joined", and then go back to the video call
+- Now go back to the SMS and reply with "joined", and then go back to the video call
 
 ## Once in the call
 
@@ -21,12 +21,11 @@
 - Likewise, the camera icon on the other side will remove your video.
 
 ## Computer 
-- A computer can be used, but the you can only use the ```Chrome``` web browser. 
+- A computer can be used, but then you can only use the ```Chrome``` web browser. 
 - A link to a video chat will be sent to you from your doctor in an SMS message
-- copy that, and send it to your computer somehow
-- oepn the URL on your computer
-- Your default browser will open and ask for permission to use your microphone and camera. Click 'Allow'
+- Copy that, and send it to your computer somehow
+- Open the URL on your computer (in the ```Chrome``` web browser if it is not your default browser)
+- Your ```Chrome``` web browser browser will open and ask for permission to use your microphone and camera. Click 'Allow'
 - A window will pop up asking for a password. Enter the surname of your doctor.
 - The video chat will open automatically
-- now reply to the SMS with "joined"
-
+- Now reply to the SMS with "joined"
