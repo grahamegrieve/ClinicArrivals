@@ -23,6 +23,9 @@ Documentation:
 * [Getting Support](Support.md)
 * [Technical Specifications for the PMS integration](FHIRDocumentation.md)
 
+Developer documentation:
+
+* [Making a new release](Releasing.md)
 
 ## Patient-focused Documentation
 
