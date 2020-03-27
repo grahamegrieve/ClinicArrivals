@@ -1,4 +1,4 @@
-Name: Build ClinicArrivals
+name: Build ClinicArrivals
 
 on: [push, pull_request]
   
