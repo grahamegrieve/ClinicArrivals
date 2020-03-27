@@ -74,16 +74,10 @@ jobs:
 
       shell: powershell
     
-    - name: Upload raw build
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: ClinicArrivals-installer
-        path: ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}
-        
     - name: Upload installer
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: ClinicArrivals
+        name: ClinicArrivals-installer
         path: ${{env.RELEASEDIR}}
             
     - name: Create release archive
