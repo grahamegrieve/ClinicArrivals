@@ -24,7 +24,8 @@ Documentation:
 * [Technical Specifications for the PMS integration](FHIRDocumentation.md)
 
 
-## Patient-Focused Documentation
+## Patient-focused Documentation
+
 
 This is documentation that is linked to directly from the SMS messages.
 
