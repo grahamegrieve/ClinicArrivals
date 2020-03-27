@@ -45,7 +45,7 @@ jobs:
         Remove-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals\bin\$env:buildtype\* -include *.pdb, *.vshost.*
         
         $Script:NuSpec = "$env:WORKSPACE\ClinicArrivals\ClinicArrivals\ClinicArrivals.nuspec"
-        nuget pack "$Script:NuSpec" -Version $$env:TAG_NAME" -BasePath $SQUIRRELWIN -OutputDirectory $SQUIRRELWIN
+        nuget pack "$Script:NuSpec" -Version "$env:TAG_NAME" -BasePath $SQUIRRELWIN -OutputDirectory $SQUIRRELWIN
 
         TREE /F
 
