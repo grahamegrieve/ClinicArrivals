@@ -53,7 +53,10 @@ jobs:
 
         $Script:NupkgPath = "$SQUIRRELWIN\ClinicArrivals.$env:TAG_NAME.nupkg"
         
-        if (-not (Test-Path -Path Script:NupkgPath -PathType Leaf)) {
+        
+        TREE /F $SQUIRRELWIN
+        
+        if (-not (Test-Path -Path $Script:NupkgPath -PathType Leaf)) {
           Write-Output "ERROR: nupkg doesn't exist as expected! Build aborted."
           exit 1
         }  
