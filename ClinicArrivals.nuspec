@@ -6,9 +6,9 @@
     <version>0.0.0</version>
     <authors>ClinicArrivals Authors</authors>
     <owners>ClinicArrivals Authors</owners>
-    <licenseUrl>https://raw.githubusercontent.com/grahamegrieve/ClinicArrivals/development/COPYING</licenseUrl>
+    <license type="expression">BSD-2-Clause</license>
     <projectUrl>https://github.com/grahamegrieve/ClinicArrivals</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/grahamegrieve/ClinicArrivals/master/ClinicArrivals/ClinicArrivals.ico</iconUrl>
+    <icon>ClinicArrivals.png</icon>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Manage Clinic Arrivals digitally so patients don't congregate in the waiting room (infection risk)</description>
     <copyright>Copyright 2020, ClinicArrivals Authors</copyright>
