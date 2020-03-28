@@ -9,7 +9,6 @@ jobs:
     runs-on: windows-latest
     env:
       buildtype: Release
-      WORKSPACE: ${{runner.workspace}}
       TAG_NAME: ${{github.event.release.tag_name}}
      
     steps:
@@ -48,6 +47,8 @@ jobs:
     
     - name: Build installer
       shell: powershell
+      env:
+        WORKSPACE: ${{runner.workspace}}
       run: |
         $SQUIRRELWIN = "$env:WORKSPACE\squirrel-packaging-prep"
         $SQUIRRELWINBIN = "$SQUIRRELWIN\lib\net45\"
