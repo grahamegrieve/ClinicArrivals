@@ -30,18 +30,19 @@ jobs:
     - name: Update version number in assemblies
       shell: powershell
       run: |
-        # Resolve-Path -Path "*\*\AssemblyInfo.cs" | Get-Content
-        $assemblyinfo = "ClinicArrivals\Properties\AssemblyInfo.cs"
+        # Ideally this uses Resolve-Path -Path "*\*\AssemblyInfo.cs" | Get-Content
         $regex = 'Assembly(File)?Version\(".+?"\)'
-        $replacement = "Assembly`$1Version\(`"$env:TAG_NAME`")\)"
-        
-        echo $regex
-        echo $replacement
-        
+        $replacement = "Assembly`$1Version(`"$env:TAG_NAME`"))"
+
+        $assemblyinfo = "ClinicArrivals\Properties\AssemblyInfo.cs"
         (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
         
-        echo $(Get-Content $assemblyinfo -Raw)
-    
+        $assemblyinfo = "\ClinicArrivals.Server\Properties\AssemblyInfo.cs"
+        (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
+        
+        $assemblyinfo = "Test.Models\Properties\AssemblyInfo.cs"
+        (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
+            
     - name: Compile ClinicArrivals
       run: msbuild /p:Configuration=${{env.buildtype}} -maxcpucount:2 ClinicArrivals.sln
     
