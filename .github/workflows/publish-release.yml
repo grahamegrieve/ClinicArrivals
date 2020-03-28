@@ -47,6 +47,7 @@ jobs:
       shell: powershell
       env:
         WORKSPACE: ${{runner.workspace}}
+        WORKSPACEGIT: ${{runner.workspace}}\ClinicArrivals
       run: |
         $SQUIRRELWIN = "$env:WORKSPACE\squirrel-packaging-prep"
         $SQUIRRELWINBIN = "$SQUIRRELWIN\lib\net45\"
@@ -55,11 +56,11 @@ jobs:
           New-Item "$SQUIRRELWINBIN" -ItemType "directory"
         }
         
-        Move-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals\bin\$env:buildtype\* $SQUIRRELWINBIN
-        Remove-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals\bin\$env:buildtype\* -include *.pdb, *.vshost.*
-        Move-Item $env:WORKSPACE\ClinicArrivals\ClinicArrivals.png $SQUIRRELWIN
+        Move-Item $env:WORKSPACEGIT\ClinicArrivals\bin\$env:buildtype\* $SQUIRRELWINBIN
+        Remove-Item $env:WORKSPACEGIT\ClinicArrivals\bin\$env:buildtype\* -include *.pdb, *.vshost.*
+        Move-Item $env:WORKSPACEGIT\ClinicArrivals.png $SQUIRRELWIN
         
-        $Script:NuSpec = "$env:WORKSPACE\ClinicArrivals\ClinicArrivals.nuspec"
+        $Script:NuSpec = "$env:WORKSPACEGIT\ClinicArrivals.nuspec"
                 
         nuget pack "$Script:NuSpec" -Version "$env:TAG_NAME" -BasePath $SQUIRRELWIN -OutputDirectory $SQUIRRELWIN
 
@@ -72,10 +73,10 @@ jobs:
                
         nuget install squirrel.windows -ExcludeVersion
        
-        .\squirrel.windows\tools\Squirrel --releasify $Script:NupkgPath --releaseDir $RELEASEDIR --no-msi --setupIcon $env:workspace\ClinicArrivals\ClinicArrivals\ClinicArrivals.ico        
+        .\squirrel.windows\tools\Squirrel --releasify $Script:NupkgPath --releaseDir $RELEASEDIR --no-msi --setupIcon $env:WORKSPACEGIT\ClinicArrivals\ClinicArrivals.ico        
         
         if (-not (Test-Path -Path "$RELEASEDIR\Setup.exe" -PathType Leaf)) {
-          Write-Output "=== ERROR: Squirrel failed to generate the installer! Build aborted. Squirrel log is:"
+          Write-Output ERROR: Squirrel failed to generate the installer! Build aborted. Squirrel log is:"
           Get-Content -Path .\squirrel.windows\tools\SquirrelSetup.log
           exit 1
         }
