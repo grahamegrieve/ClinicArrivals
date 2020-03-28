@@ -37,11 +37,17 @@ jobs:
         $assemblyinfo = "ClinicArrivals\Properties\AssemblyInfo.cs"
         (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
         
+        Get-Content $assemblyinfo
+        
         $assemblyinfo = "ClinicArrivals.Server\Properties\AssemblyInfo.cs"
         (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
         
+        Get-Content $assemblyinfo
+        
         $assemblyinfo = "Test.Models\Properties\AssemblyInfo.cs"
         (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
+        
+        Get-Content $assemblyinfo
             
     - name: Compile ClinicArrivals
       run: msbuild /p:Configuration=${{env.buildtype}} -maxcpucount:2 ClinicArrivals.sln
