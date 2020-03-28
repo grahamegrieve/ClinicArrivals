@@ -33,7 +33,7 @@ jobs:
         # Resolve-Path -Path "*\*\AssemblyInfo.cs" | Get-Content
         $assemblyinfo = "ClinicArrivals\Properties\AssemblyInfo.cs"
         $regex = 'AssemblyVersion\(".+?"\)'
-        $replacement = 'AssemblyVersion\("$env:TAG_NAME")\)'
+        $replacement = "AssemblyVersion\(`"$env:TAG_NAME`")\)"
         
         echo $regex
         echo $replacement
