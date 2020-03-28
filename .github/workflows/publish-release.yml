@@ -13,7 +13,7 @@ jobs:
      
     steps:
     - name: Validate release version
-      shell: powershell
+      shell: pwsh
       run: |
         # Validate that the version used in the release is one that'll work with all of our tooling
         # Squirrel can be picky: https://github.com/Squirrel/Squirrel.Windows/issues/1394
