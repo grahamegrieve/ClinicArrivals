@@ -38,7 +38,7 @@ jobs:
         echo $regex
         echo $replacement
         
-        (Get-Content $assemblyinfo -Raw) -replace $regex, $$replacement | Set-Content $assemblyinfo
+        (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
         
         echo $(Get-Content $assemblyinfo -Raw)
     
