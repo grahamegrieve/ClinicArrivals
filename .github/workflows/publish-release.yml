@@ -9,6 +9,8 @@ jobs:
     runs-on: windows-latest
     env:
       buildtype: Release
+      WORKSPACE: ${{runner.workspace}}
+      TAG_NAME: ${{github.event.release.tag_name}}
      
     steps:
     - name: Setup .NET Core SDK
@@ -26,13 +28,25 @@ jobs:
     - name: Restore packages
       run: nuget restore
     
+    - name: Update version number in assemblies
+      shell: powershell
+      run: |
+        # Resolve-Path -Path "*\*\AssemblyInfo.cs" | Get-Content
+        $assemblyinfo = "ClinicArrivals\Properties\AssemblyInfo.cs"
+        $regex = 'AssemblyVersion\(".+?"\)'
+        $replacement = 'AssemblyVersion\("$env:TAG_NAME")\)'
+        
+        echo $regex
+        echo $replacement
+        
+        (Get-Content $assemblyinfo -Raw) -replace $regex, $$replacement | Set-Content $assemblyinfo
+        
+        echo $(Get-Content $assemblyinfo -Raw)
+    
     - name: Compile ClinicArrivals
       run: msbuild /p:Configuration=${{env.buildtype}} -maxcpucount:2 ClinicArrivals.sln
     
     - name: Build installer
-      env:
-        TAG_NAME: ${{github.event.release.tag_name}}
-        WORKSPACE: ${{runner.workspace}}
       shell: powershell
       run: |
         $SQUIRRELWIN = "$env:WORKSPACE\squirrel-packaging-prep"
@@ -59,7 +73,6 @@ jobs:
                
         nuget install squirrel.windows -ExcludeVersion
        
-        # fails silently if the nupkg file is not found
         .\squirrel.windows\tools\Squirrel --releasify $Script:NupkgPath --releaseDir $RELEASEDIR --no-msi --setupIcon $env:workspace\ClinicArrivals\ClinicArrivals\ClinicArrivals.ico        
         
         if (-not (Test-Path -Path "$RELEASEDIR\Setup.exe" -PathType Leaf)) {
@@ -70,13 +83,7 @@ jobs:
         
         echo "::set-env name=RELEASEDIR::$RELEASEDIR"
     
-    - name: Upload installer
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: ClinicArrivals-${{github.event.release.tag_name}}-win.zip
-        path: ${{env.RELEASEDIR}}\Setup.exe
-            
-    - name: Upload archive to release
+    - name: Upload installer to release
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
