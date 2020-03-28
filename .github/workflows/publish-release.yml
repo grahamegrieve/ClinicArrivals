@@ -37,7 +37,7 @@ jobs:
         $assemblyinfo = "ClinicArrivals\Properties\AssemblyInfo.cs"
         (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
         
-        $assemblyinfo = "\ClinicArrivals.Server\Properties\AssemblyInfo.cs"
+        $assemblyinfo = "ClinicArrivals.Server\Properties\AssemblyInfo.cs"
         (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
         
         $assemblyinfo = "Test.Models\Properties\AssemblyInfo.cs"
