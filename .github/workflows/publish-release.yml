@@ -17,7 +17,9 @@ jobs:
       run: |
         # Validate that the version used in the release is one that'll work with all of our tooling
         # Squirrel can be picky: https://github.com/Squirrel/Squirrel.Windows/issues/1394
-        [ValidatePattern("^(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[a-z][0-9a-z-]*)?$")][string]$version = $env:TAG_NAME     
+        [ValidatePattern("^(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[a-z][0-9a-z-]*)?$", `
+          ErrorMessage = 'The release version is not valid with all of our tooling.')] `
+          [string]$version = $env:TAG_NAME     
     
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1.4.0
