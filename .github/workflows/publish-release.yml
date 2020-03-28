@@ -58,11 +58,12 @@ jobs:
         
         Move-Item $env:WORKSPACEGIT\ClinicArrivals\bin\$env:buildtype\* $SQUIRRELWINBIN
         Remove-Item $env:WORKSPACEGIT\ClinicArrivals\bin\$env:buildtype\* -include *.pdb, *.vshost.*
-        Move-Item $env:WORKSPACEGIT\ClinicArrivals.png $SQUIRRELWIN
+        Copy-Item $env:WORKSPACEGIT\ClinicArrivals.png $SQUIRRELWIN
         
         $Script:NuSpec = "$env:WORKSPACEGIT\ClinicArrivals.nuspec"
                 
-        nuget pack "$Script:NuSpec" -Version "$env:TAG_NAME" -BasePath $SQUIRRELWIN -OutputDirectory $SQUIRRELWIN
+        nuget pack "$Script:NuSpec" -Version "$env:TAG_NAME" `
+          -BasePath $SQUIRRELWIN -OutputDirectory $SQUIRRELWIN
 
         $Script:NupkgPath = "$SQUIRRELWIN\ClinicArrivals.$env:TAG_NAME.nupkg"
         
