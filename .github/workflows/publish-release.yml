@@ -73,10 +73,11 @@ jobs:
                
         nuget install squirrel.windows -ExcludeVersion
        
-        .\squirrel.windows\tools\Squirrel --releasify $Script:NupkgPath `
+        .\squirrel.windows\tools\Squirrel `
+          --releasify $Script:NupkgPath `
           --releaseDir $RELEASEDIR --no-msi `
           --framework-version=462 `
-          --setupIcon $env:WORKSPACEGIT\ClinicArrivals\ClinicArrivals.ico
+          --setupIcon $env:WORKSPACEGIT\ClinicArrivals\ClinicArrivals.ico `
           --loadingGif=$env:WORKSPACEGIT\ClinicArrivals.png
         
         if (-not (Test-Path -Path "$RELEASEDIR\Setup.exe" -PathType Leaf)) {
