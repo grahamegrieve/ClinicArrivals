@@ -1,19 +1,18 @@
 # ClinicArrivals 
  
-This program is writtent to fit into an existing GP clinic workflow
-to help a GP manage their workflow during the COVID-19 crisis in Australia.
+This program should help a General Practitioner (GP) manage increased workload during the [COVID-19](https://en.wikipedia.org/wiki/Coronavirus_disease_2019) crisis in Australia. It is designed to fit into an existing clinic workflow using common Practice Management Systems (PMS).
 
 * [Product documentation](documentation/Documentation.md)
+* [Download latest](https://github.com/grahamegrieve/ClinicArrivals/releases/latest)
 
 ## Contributions
 
-Contributions are welcome, either as Pull Requests or bug 
-reports. Or you can joint the chat at 
+Contributions are welcome, either as Pull Requests or bug reports. You can join the chat at: 
 https://chat.fhir.org/#narrow/stream/227888-clinic-arrivals
 
 If you are a user, contact RACGP IT forum for advice/support.
 
-## Developer Documemntation
+## Developer Documentation
 
 ### Building
 
@@ -28,24 +27,13 @@ The application stores information locally in the $AppData$\Roaming\ClinicArriva
 
 The current [settings](documentation/Settings.md) are stored there. 
 
-In addition, the communication record of past appointments is 
-also stored there. Deleting this information or moving the 
-application to a different PC without moving this data will
-result in resetting any ongoing messaging flows with the 
-patients.
+In addition, the communication record of past appointments is also stored there. Deleting this information or moving the application to a different PC without moving this data will reset any ongoing messaging flows with the patients.
 
 ### Kernel
 
-The core of the program is in `MessageEngine.cs`. This is where
-the application queries for the current appointment list from the
-Practice Management System (PMS), and also scans for incoming sms
-messages to process.
+The core of the program is in `MessageEngine.cs`. This is where the application queries for the current appointment list from the PMS, and also scans for incoming SMS messages to process.
 
-Every X seconds (as specified in the settings), the application 
-searches for all appointments on the current day. Then it works 
-through the appointments
+Periodically (as specified in the settings), the application searches for all appointments on the current day. Then it works through the appointments.
 
 
 ### Testing
-
-
