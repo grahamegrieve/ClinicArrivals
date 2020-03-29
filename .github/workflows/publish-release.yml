@@ -7,6 +7,7 @@ on:
 jobs:
   publish-clinicarrivals:
     runs-on: windows-latest
+    if: github.repository == 'grahamegrieve/ClinicArrivals'
     env:
       buildtype: Release
       TAG_NAME: ${{github.event.release.tag_name}}
