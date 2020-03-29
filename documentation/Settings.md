@@ -19,14 +19,14 @@ The mobile phone whitelist is provided so that clinics can set up the applicatio
 * **Video Conferencing Manager**: The style of the video conferencing supported (at present only OpenVidu is supported, which is what is used if nothing is specified)
 * **Video Service Password** The password for the control API of the video service for OpenVidu
 
-You get the last value from the system administrator for https://video.healthintersections.com.au
+You get the video service password from the system administrator for video.healthintersections.com.au - email admin@healthintersections.com.au (see below)
 
 ## PMS (Practice Management System) 
 
 * **Profile Name**: / **License Key**: Needed for Best Practice sites. 
 * **Use Sample Server**: .... to do....
 
-The values for  Profile Name: / License Key can be obtained from ... someone who knows (?not sure yet).
+The values for  Profile Name: / License Key can be obtained from the system administrator for video.healthintersections.com.au - email admin@healthintersections.com.au (see below)
 
 ## Engine
 
@@ -42,6 +42,7 @@ A series of settings that control how the engine that drives the application wor
 
 For Support...  see [Support](Support.md)
 
+
 ## Todo
 
 These settings don't actually exist yet
@@ -52,3 +53,26 @@ Auth Token:
 If these are blank, the program will automatically connect to the local PMS 
 (Medical Director or Best Practice) and use that. If these are populated,
 the Server must conform to the [FHIR Documentation](FHIRDocumentation.md)
+
+## Healthintersections.com.au - Services
+
+The application depends on services provided by healthintersections.com.au. (video conferencing and SMS relaying). These
+services are presently provided free of charge while the cost of providing the services is determined, and we figure out 
+whether appropriate support is available. It's possible that it may be necessary to introduce a GoFundMe or require
+clinics to run their own copy of these servers (they run open source services, but are not - at this time - straight 
+forward to set up).
+
+In order to access these services, you must email your agreement these terms and conditions to admin@healthintersections.com.au:
+
+
+> I understand the services provided by healthintersections.com.au are provided on an as is basis, 
+> in order to allow Australian GPs to respond urgently to the challenges provided by the COVID-19
+> epidemic. I understand that the commercial arrangements that support the free provision of these 
+> services is not yet fully worked out, and that Health Intersections Pty Ltd will continue to 
+> work with Australian GPs and the RACGP to find sustainable ongoing arrangements. I understand
+> that the services may cease to be provided and/or free at such a time as better options become 
+> available. 
+> 
+> I agree that this service agreement is a transient one to make the services available, and 
+> will be revised in the future based on legal advice. 
+ 
