@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>ClinicArrivals</id>
+    <title>ClinicArrivals</title>
+    <version>0.0.0</version>
+    <authors>ClinicArrivals Authors</authors>
+    <owners>ClinicArrivals Authors</owners>
+    <license type="expression">BSD-2-Clause</license>
+    <projectUrl>https://github.com/grahamegrieve/ClinicArrivals</projectUrl>
+    <icon>ClinicArrivals.png</icon>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Manage Clinic Arrivals digitally so patients don't congregate in the waiting room (infection risk)</description>
+    <copyright>Copyright 2020, ClinicArrivals Authors</copyright>
+    <tags>sms health clinic covid</tags>
+  </metadata>
+</package>
