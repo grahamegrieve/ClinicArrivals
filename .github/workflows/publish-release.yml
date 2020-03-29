@@ -31,6 +31,10 @@ jobs:
     
     - name: Setup msbuild.exe
       uses: microsoft/setup-msbuild@v1
+    
+    - name: Install Squirrel
+      shell: powershell
+      run: nuget install squirrel.windows -ExcludeVersion
 
     - name: Checkout source code
       uses: actions/checkout@v2.0.0
@@ -82,8 +86,6 @@ jobs:
           Write-Output "ERROR: nupkg doesn't exist as expected! Build aborted."
           exit 1
         }  
-               
-        nuget install squirrel.windows -ExcludeVersion
        
         .\squirrel.windows\tools\Squirrel `
           --releasify $Script:NupkgPath `
