@@ -33,10 +33,6 @@ jobs:
     - name: Setup msbuild.exe
       uses: microsoft/setup-msbuild@v1
 
-    - name: Install Squirrel
-      shell: powershell
-      run: nuget install squirrel.windows -ExcludeVersion
-
     - name: Checkout source code
       uses: actions/checkout@v2.0.0
 
@@ -89,7 +85,9 @@ jobs:
           exit 1
         }
 
-        $env:WORKSPACEGIT\squirrel.windows\tools\Squirrel `
+        nuget install squirrel.windows -ExcludeVersion
+
+        .\squirrel.windows\tools\Squirrel `
           --releasify $Script:NupkgPath `
           --releaseDir $RELEASEDIR --no-msi `
           --framework-version=462 `
