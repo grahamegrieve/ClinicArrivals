@@ -89,7 +89,7 @@ jobs:
           exit 1
         }
 
-        .\squirrel.windows\tools\Squirrel `
+        $env:WORKSPACEGIT\squirrel.windows\tools\Squirrel `
           --releasify $Script:NupkgPath `
           --releaseDir $RELEASEDIR --no-msi `
           --framework-version=462 `
