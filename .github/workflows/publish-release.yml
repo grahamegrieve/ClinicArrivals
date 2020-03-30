@@ -18,11 +18,15 @@ jobs:
       run: |
         # Validate that the version used in the release is one that'll work with all of our tooling
         # Squirrel can be picky: https://github.com/Squirrel/Squirrel.Windows/issues/1394
-
-        [ValidatePattern("^(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[a-z][0-9a-z-]*)?$" `
-        # ErrorMessage not yet supported in Github's powershell
-        #  , ErrorMessage = 'The release version is not valid with all of our tooling.' `
-          )][string]$version = $env:TAG_NAME
+        
+        if ($env:TAG_NAME -match "^v(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[a-z][0-9a-z-]*)?$") {
+          $SHORT_TAG_NAME = $Matches.Version
+        } else {
+          echo "$env:TAG_NAME isn't a valid release name - make sure it matches v#.#.#"
+          exit 1
+        }
+        
+        Write-Output "::set-env name=SHORT_TAG_NAME::${SHORT_TAG_NAME}"
 
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1.4.0
@@ -43,7 +47,7 @@ jobs:
       shell: powershell
       run: |
         $regex = 'Assembly(File)?Version\(".+?"\)'
-        $replacement = "Assembly`$1Version(`"$env:TAG_NAME`")"
+        $replacement = "Assembly`$1Version(`"$env:SHORT_TAG_NAME`")"
 
         $assemblyinfo = "ClinicArrivals\Properties\AssemblyInfo.cs"
         # Ideally this uses Resolve-Path -Path "*\*\AssemblyInfo.cs" | Get-Content
@@ -75,10 +79,10 @@ jobs:
 
         $Script:NuSpec = "$env:WORKSPACEGIT\ClinicArrivals.nuspec"
 
-        nuget pack "$Script:NuSpec" -Version "$env:TAG_NAME" `
+        nuget pack "$Script:NuSpec" -Version "$env:SHORT_TAG_NAME" `
           -BasePath $SQUIRRELWIN -OutputDirectory $SQUIRRELWIN
 
-        $Script:NupkgPath = "$SQUIRRELWIN\ClinicArrivals.$env:TAG_NAME.nupkg"
+        $Script:NupkgPath = "$SQUIRRELWIN\ClinicArrivals.$env:SHORT_TAG_NAME.nupkg"
 
         if (-not (Test-Path -Path $Script:NupkgPath -PathType Leaf)) {
           Write-Output "ERROR: nupkg doesn't exist as expected! Build aborted."
