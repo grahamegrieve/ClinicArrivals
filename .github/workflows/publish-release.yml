@@ -79,10 +79,10 @@ jobs:
 
         $Script:NuSpec = "$env:WORKSPACEGIT\ClinicArrivals.nuspec"
 
-        nuget pack "$Script:NuSpec" -Version "$env:TAG_NAME" `
+        nuget pack "$Script:NuSpec" -Version "$env:SHORT_TAG_NAME" `
           -BasePath $SQUIRRELWIN -OutputDirectory $SQUIRRELWIN
 
-        $Script:NupkgPath = "$SQUIRRELWIN\ClinicArrivals.$env:TAG_NAME.nupkg"
+        $Script:NupkgPath = "$SQUIRRELWIN\ClinicArrivals.$env:SHORT_TAG_NAME.nupkg"
 
         if (-not (Test-Path -Path $Script:NupkgPath -PathType Leaf)) {
           Write-Output "ERROR: nupkg doesn't exist as expected! Build aborted."
