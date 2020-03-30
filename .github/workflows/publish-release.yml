@@ -2,48 +2,117 @@ name: Publish release
 
 on:
   release:
-    types: created      
-  
+    types: created
+
 jobs:
   publish-clinicarrivals:
     runs-on: windows-latest
+    if: github.repository == 'grahamegrieve/ClinicArrivals'
     env:
       buildtype: Release
-     
+      TAG_NAME: ${{github.event.release.tag_name}}
+
     steps:
+    - name: Validate release version
+      shell: powershell
+      run: |
+        # Validate that the version used in the release is one that'll work with all of our tooling
+        # Squirrel can be picky: https://github.com/Squirrel/Squirrel.Windows/issues/1394
+        
+        if ($env:TAG_NAME -match "^v(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[a-z][0-9a-z-]*)?$") {
+          $SHORT_TAG_NAME = $Matches.Version
+        } else {
+          echo "$env:TAG_NAME isn't a valid release name - make sure it matches v#.#.#"
+          exit 1
+        }
+        
+        Write-Output "::set-env name=SHORT_TAG_NAME::${SHORT_TAG_NAME}"
+
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1.4.0
-    
+
     - name: Setup nuget.exe
       uses: warrenbuckley/Setup-Nuget@v1
-    
+
     - name: Setup msbuild.exe
       uses: microsoft/setup-msbuild@v1
 
     - name: Checkout source code
       uses: actions/checkout@v2.0.0
-  
+
     - name: Restore packages
       run: nuget restore
-    
-    - name: Build ClinicArrivals
+
+    - name: Update version number in assemblies
+      shell: powershell
+      run: |
+        $regex = 'Assembly(File)?Version\(".+?"\)'
+        $replacement = "Assembly`$1Version(`"$env:SHORT_TAG_NAME`")"
+
+        $assemblyinfo = "ClinicArrivals\Properties\AssemblyInfo.cs"
+        # Ideally this uses Resolve-Path -Path "*\*\AssemblyInfo.cs" | Get-Content
+        (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
+
+        $assemblyinfo = "ClinicArrivals.Server\Properties\AssemblyInfo.cs"
+        (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
+
+    - name: Compile ClinicArrivals
       run: msbuild /p:Configuration=${{env.buildtype}} -maxcpucount:2 ClinicArrivals.sln
-    
-    - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: ClinicArrivals
-        path: ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}
-            
-    - name: Create release archive
-      run: 7z a ClinicArrivals-${{github.event.release.tag_name}}-win.zip ${{runner.workspace}}\ClinicArrivals\ClinicArrivals\bin\${{env.buildtype}}\*
-                
-    - name: Upload archive to release
+
+    - name: Build installer
+      shell: powershell
+      env:
+        WORKSPACE: ${{runner.workspace}}
+        WORKSPACEGIT: ${{runner.workspace}}\ClinicArrivals
+        SIGNING_PASSWORD: ${{ secrets.SIGNING_CERT }}
+      run: |
+        $SQUIRRELWIN = "$env:WORKSPACE\squirrel-packaging-prep"
+        $SQUIRRELWINBIN = "$SQUIRRELWIN\lib\net45\"
+        $RELEASEDIR = "$env:WORKSPACE\finished-installer"
+        if (-not $(Test-Path "$SQUIRRELWINBIN")) {
+          New-Item "$SQUIRRELWINBIN" -ItemType "directory"
+        }
+
+        Move-Item $env:WORKSPACEGIT\ClinicArrivals\bin\$env:buildtype\* $SQUIRRELWINBIN
+        Remove-Item $env:WORKSPACEGIT\ClinicArrivals\bin\$env:buildtype\* -include *.pdb, *.vshost.*
+        Copy-Item $env:WORKSPACEGIT\ClinicArrivals.png $SQUIRRELWIN
+
+        $Script:NuSpec = "$env:WORKSPACEGIT\ClinicArrivals.nuspec"
+
+        nuget pack "$Script:NuSpec" -Version "$env:SHORT_TAG_NAME" `
+          -BasePath $SQUIRRELWIN -OutputDirectory $SQUIRRELWIN
+
+        $Script:NupkgPath = "$SQUIRRELWIN\ClinicArrivals.$env:SHORT_TAG_NAME.nupkg"
+
+        if (-not (Test-Path -Path $Script:NupkgPath -PathType Leaf)) {
+          Write-Output "ERROR: nupkg doesn't exist as expected! Build aborted."
+          exit 1
+        }
+
+        nuget install squirrel.windows -ExcludeVersion
+
+        .\squirrel.windows\tools\Squirrel `
+          --releasify $Script:NupkgPath `
+          --releaseDir $RELEASEDIR --no-msi `
+          --framework-version=462 `
+          --setupIcon $env:WORKSPACEGIT\ClinicArrivals\ClinicArrivals.ico `
+          --loadingGif=$env:WORKSPACEGIT\ClinicArrivals.png `
+          --signWithParams="/a /f $env:WORKSPACEGIT\healthintersections.p12 /p $Env:SIGNING_PASSWORD /fd sha256 /tr http://timestamp.digicert.com /td sha256"
+
+        if (-not (Test-Path -Path "$RELEASEDIR\Setup.exe" -PathType Leaf)) {
+          Write-Output "ERROR: Squirrel failed to generate the installer! Build aborted. Squirrel log is:"
+          Get-Content -Path .\squirrel.windows\tools\SquirrelSetup.log
+          exit 1
+        }
+
+        echo "::set-env name=RELEASEDIR::$RELEASEDIR"
+
+    - name: Upload installer to release
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_name: ClinicArrivals-${{github.event.release.tag_name}}-win.zip
-        asset_path: ClinicArrivals-${{github.event.release.tag_name}}-win.zip
-        asset_content_type: application/zip
+        asset_name: ClinicArrivals-${{github.event.release.tag_name}}-win.exe
+        asset_path: ${{env.RELEASEDIR}}\Setup.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
