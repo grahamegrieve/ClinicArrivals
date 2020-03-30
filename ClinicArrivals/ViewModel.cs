@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using Squirrel;
 
 namespace ClinicArrivals
 {
@@ -69,6 +70,8 @@ namespace ClinicArrivals
                 FhirApptUpdater = new FhirAppointmentUpdater(FhirAppointmentReader.GetServerConnection);
                 SmsProcessor = new TwilioSmsProcessor();
             }
+
+            CheckForUpdates(2);
         }
 
 
@@ -260,6 +263,16 @@ namespace ClinicArrivals
             });
             
 #endif
+        }
+
+        private async void CheckForUpdates(int afterSeconds)
+        {
+            await Task.Delay(afterSeconds * 1000);
+            Console.WriteLine("after 2s");
+            using (var mgr = new UpdateManager("C:\\Projects\\MyApp\\Releases"))
+            {
+                await mgr.UpdateApp();
+            }
         }
     }
 }
