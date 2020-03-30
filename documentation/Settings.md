@@ -10,6 +10,7 @@ The first 3 settings come from your Twilio account - see [Twilio Setup](Twilio.m
 
 * **Administrator SMS**: An SMS number that gets a message when ever the program starts or stops (but not when it crashes unexpectedly)
 * **Mobile Phone White List**: A comma-separated list of mobile phone numbers that the application will send messages to; other appointments are ignored 
+* **Message Limit per Number**: The upper limit to the number of messages that will be sent to a single phone number on a single day. This is intended to prevent sms storms where the recipient is also a program and they get stuck messaging each other with error messages (default if value is 0: 1 min)
 
 The mobile phone whitelist is provided so that clinics can set up the application against the live PMS and Twilio and then test for a restricted set of numbers (sys admins etc).
 

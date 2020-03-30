@@ -42,6 +42,8 @@ namespace ClinicArrivals.Models
 
         public string DeveloperPhoneNumber { get; set; }
 
+        public int MessageLimitForNumber { get; set; }
+
         public string PhoneWhiteList { get; set; }
 
         public bool IsDoingVideo { get; set; }
@@ -74,6 +76,7 @@ namespace ClinicArrivals.Models
             MinutesBeforeScreeningMessage = other.MinutesBeforeScreeningMessage;
             MinutesBeforeVideoInvitation = other.MinutesBeforeVideoInvitation;
             AutoStartServices = other.AutoStartServices;
+            MessageLimitForNumber = other.MessageLimitForNumber;
     }
 }
 }
