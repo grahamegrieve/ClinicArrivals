@@ -130,12 +130,12 @@ jobs:
         asset_path: ${{env.RELEASEDIR}}\RELEASES
         asset_content_type: text/plain
 
-    - name: Upload update finished-installer
+    - name: Upload release nupkg
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_name: ClinicArrivals.${{env.SHORT_TAG_NAME}}.nupkg
-        asset_path: ${{env.RELEASEDIR}}\ClinicArrivals.${{env.SHORT_TAG_NAME}}-full.nupkg
+        asset_path: ${{env.RELEASEDIR}}\ClinicArrivals-${{env.SHORT_TAG_NAME}}-full.nupkg
         asset_content_type: application/zip
