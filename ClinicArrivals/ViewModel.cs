@@ -31,8 +31,12 @@ namespace ClinicArrivals
         private IFhirAppointmentUpdater FhirApptUpdater;
         public ISmsProcessor SmsProcessor;
 
-        public string WindowTitle = $"Clinic Arrivals - Virtual Waiting room - {System.Reflection.Assembly.GetEntryAssembly().GetName().Version}";
-
+        private string _windowTitle = $"Clinic Arrivals - Virtual Waiting room - {System.Reflection.Assembly.GetEntryAssembly().GetName().Version}";
+        public string WindowTitle
+        { 
+            get => _windowTitle;
+            set => _windowTitle = value;
+        }
 
         public ViewModel()
         {
