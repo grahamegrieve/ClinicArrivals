@@ -15,7 +15,7 @@ namespace ClinicArrivals
     {
         public string Text { get { return System.IO.File.ReadAllText("about.md"); } }
         private readonly NLogAdapter logger = new NLogAdapter();
-        private readonly string RepoUrl = "https://github.com/grahamegrieve/ClinicArrivals";
+        private readonly string RepoUrl = "https://github.com/vadi2/ClinicArrivals";
 
         public BackgroundProcess ReadSmsMessage;
         public BackgroundProcess ScanAppointments;
