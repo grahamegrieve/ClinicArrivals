@@ -24,7 +24,7 @@ namespace ClinicArrivals.Server
             {
                 ProfileName = ProfileNameSetting,
                 LicenseKey = LicenseKeySetting,
-                Mode = Oridashi.Fhir.Host.Configuration.SelectSystem.ZM,
+                Mode = Oridashi.Fhir.Host.Configuration.SelectSystem.AUTO,
                 IsLive = !UseExamples,
             };
 
