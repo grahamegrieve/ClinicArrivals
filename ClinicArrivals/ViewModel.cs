@@ -15,6 +15,7 @@ namespace ClinicArrivals
     {
         public string Text { get { return System.IO.File.ReadAllText("about.md"); } }
         private readonly NLogAdapter logger = new NLogAdapter();
+        private readonly string RepoUrl = "https://github.com/grahamegrieve/ClinicArrivals";
 
         public BackgroundProcess ReadSmsMessage;
         public BackgroundProcess ScanAppointments;
@@ -71,7 +72,10 @@ namespace ClinicArrivals
                 SmsProcessor = new TwilioSmsProcessor();
             }
 
+#if INCLUDE_UPDATER
             CheckForUpdates(2);
+#endif
+
         }
 
 
@@ -265,14 +269,16 @@ namespace ClinicArrivals
 #endif
         }
 
+#if INCLUDE_UPDATER
         private async void CheckForUpdates(int afterSeconds)
         {
             await Task.Delay(afterSeconds * 1000);
-            Console.WriteLine("after 2s");
-            using (var mgr = new UpdateManager("C:\\Projects\\MyApp\\Releases"))
+
+            using (var mgr = UpdateManager.GitHubUpdateManager(RepoUrl))
             {
-                await mgr.UpdateApp();
+                await mgr.Result.UpdateApp();
             }
         }
     }
+#endif
 }
