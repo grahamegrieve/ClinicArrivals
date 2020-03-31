@@ -57,7 +57,7 @@ jobs:
         (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
 
     - name: Compile ClinicArrivals
-      run: msbuild /p:Configuration=${{env.buildtype}} -maxcpucount:2 ClinicArrivals.sln
+      run: msbuild /p:Configuration=${{env.buildtype}} /p:DefineConstants="INCLUDE_UPDATER" -maxcpucount:2 ClinicArrivals.sln
 
     - name: Build installer
       shell: powershell
@@ -107,7 +107,7 @@ jobs:
 
         echo "::set-env name=RELEASEDIR::$RELEASEDIR"
 
-    - name: Upload installer to release
+    - name: Upload installer .exe
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -116,3 +116,23 @@ jobs:
         asset_name: ClinicArrivals-${{github.event.release.tag_name}}-win.exe
         asset_path: ${{env.RELEASEDIR}}\Setup.exe
         asset_content_type: application/vnd.microsoft.portable-executable
+
+    - name: Upload release metadata
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_name: RELEASES
+        asset_path: ${{env.RELEASEDIR}}\RELEASES
+        asset_content_type: text/plain
+
+    - name: Upload update finished-installer
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_name: ClinicArrivals.${{env.SHORT_TAG_NAME}}.nupkg
+        asset_path: ${{env.RELEASEDIR}}\ClinicArrivals.${{env.SHORT_TAG_NAME}}.nupkg
+        asset_content_type: application/zip
