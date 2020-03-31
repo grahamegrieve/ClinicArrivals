@@ -31,12 +31,16 @@ namespace ClinicArrivals
         private IFhirAppointmentUpdater FhirApptUpdater;
         public ISmsProcessor SmsProcessor;
 
+        public string WindowTitle = $"Clinic Arrivals - Virtual Waiting room - {System.Reflection.Assembly.GetEntryAssembly().GetName().Version}";
+
 
         public ViewModel()
         {
             CreateTestDataForDebug();
 
             IsSimulation = Environment.GetCommandLineArgs().Any(n => n == "-simulator");
+
+            Console.WriteLine($"WindowTitle {WindowTitle}");
 
             // Assign all of the implementations for the interfaces
             Storage = new ArrivalsFileSystemStorage(IsSimulation);

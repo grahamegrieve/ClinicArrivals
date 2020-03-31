@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:ClinicArrivals"
         x:Class="ClinicArrivals.MainWindow"
         mc:Ignorable="d"
-        Title="Clinic Arrivals - Virtual Waiting room" Height="556" Width="991" Icon="ClinicArrivals.ico">
+        Title="{Binding WindowTitle}" Height="556" Width="991" Icon="ClinicArrivals.ico">
     <Window.Resources>
         <markdown:Markdown x:Key="Markdown"
                         DocumentStyle="{StaticResource DocumentStyle}"
