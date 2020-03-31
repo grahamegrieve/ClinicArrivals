@@ -96,8 +96,9 @@ jobs:
           --releaseDir $RELEASEDIR --no-msi `
           --framework-version=462 `
           --setupIcon $env:WORKSPACEGIT\ClinicArrivals\ClinicArrivals.ico `
-          --loadingGif=$env:WORKSPACEGIT\ClinicArrivals.png `
-          --signWithParams="/a /f $env:WORKSPACEGIT\healthintersections.p12 /p $Env:SIGNING_PASSWORD /fd sha256 /tr http://timestamp.digicert.com /td sha256"
+          --loadingGif=$env:WORKSPACEGIT\ClinicArrivals.png
+          # --loadingGif=$env:WORKSPACEGIT\ClinicArrivals.png `
+          # --signWithParams="/a /f $env:WORKSPACEGIT\healthintersections.p12 /p $Env:SIGNING_PASSWORD /fd sha256 /tr http://timestamp.digicert.com /td sha256"
 
         if (-not (Test-Path -Path "$RELEASEDIR\Setup.exe" -PathType Leaf)) {
           Write-Output "ERROR: Squirrel failed to generate the installer! Build aborted. Squirrel log is:"
