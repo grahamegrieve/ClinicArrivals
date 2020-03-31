@@ -108,8 +108,6 @@ jobs:
 
         echo "::set-env name=RELEASEDIR::$RELEASEDIR"
 
-        TREE /F $RELEASEDIR
-
     - name: Upload installer .exe
       uses: actions/upload-release-asset@v1.0.1
       env:
