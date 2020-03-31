@@ -24,10 +24,12 @@ You get the video service password from the system administrator for video.healt
 
 ## PMS (Practice Management System) 
 
-* **Profile Name**: / **License Key**: Needed for Best Practice sites. 
+* **Profile Name**: / **License Key**: Needed for all installations to enable integration.
 * **Use Sample Server**: .... to do....
 
 The values for  Profile Name: / License Key can be obtained from the system administrator for video.healthintersections.com.au - email admin@healthintersections.com.au (see below)
+
+For Zedmed v31 you will be prompted for the INTEGRATOR database password on starting up. This password is normally set on installation of Zedmed and may be changed in Zedmed security settings. Be aware changing this datbase password may affect other integrating software so care should be taken.
 
 ## Engine
 
