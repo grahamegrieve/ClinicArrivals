@@ -63,6 +63,7 @@ namespace ClinicArrivals
 
                 // Terminate this process and gives the underlying operating 
                 // system the specified exit code.
+                Console.WriteLine("Another instance is already running - quitting.");
                 Environment.Exit(-2);
             }
         }
