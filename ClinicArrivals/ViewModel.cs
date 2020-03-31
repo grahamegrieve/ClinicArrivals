@@ -73,7 +73,7 @@ namespace ClinicArrivals
             }
 
 #if INCLUDE_UPDATER
-            CheckForUpdates(2);
+            CheckForUpdates(2); 
 #endif
 
         }
