@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using Squirrel;
 
 namespace ClinicArrivals
 {
@@ -75,7 +74,6 @@ namespace ClinicArrivals
 #if INCLUDE_UPDATER
             CheckForUpdates(2); 
 #endif
-
         }
 
 
@@ -274,10 +272,7 @@ namespace ClinicArrivals
         {
             await Task.Delay(afterSeconds * 1000);
 
-            using (var mgr = UpdateManager.GitHubUpdateManager(RepoUrl))
-            {
-                await mgr.Result.UpdateApp();
-            }
+            
         }
     }
 #endif
