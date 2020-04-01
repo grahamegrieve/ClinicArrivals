@@ -145,7 +145,8 @@ namespace Test.Models
             // inspect outputs:
             Assert.AreEqual(1, OutputMsgs.Count);
             Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
-            Assert.AreEqual("Patient Test Patient #2 has an appointment with Dr Adam Ant at 01:00 PM on 1-Jan. When you arrive at the clinic, stay in your car (or outside the clinic) and reply \"arrived\" to this message. If you have any potential symptoms of Covid-19, or exposure to a known case, you MUST advise the Doctor and staff by telephone i advance of your appointment", OutputMsgs[0].message);
+            Assert.AreEqual("Patient Test Patient #2 has an appointment with Dr Adam Ant at 01:00 PM on 1-Jan. When you arrive at the clinic, stay in your car (or outside the clinic) and reply \"arrived\" to this message. If you have any potential symptoms of Covid-19, or exposure to a known case, you MUST advise the Doctor and staff by telephone in advance of your appointment", OutputMsgs[0].message);
+
             Assert.AreEqual(1, StorageOps.Count);
             Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
             Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ScreeningMessageSent);
