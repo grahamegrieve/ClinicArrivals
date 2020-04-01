@@ -55,7 +55,8 @@ However the PMS systems do not track which room the doctor is in. So this inform
 
 In addition, on a per doctor basis, you can specify that:
 
-* a doctor does not participate in messaging at all - this is typically used for special slots like nurse prep visits that are in person, and paired with other appointments so there's no poing messaging about them
+* a doctor does not participate in messaging at all - this is typically used for special slots like nurse prep visits that are in person, and paired with other appointments so there's no point messaging about them
+
 * A doctor does not participate in video at all - all appointments are physical  - this is typically used for special slots like nurse visits that must be in person. If a doctor is not using video, then a different welcoming message is sent out (CantConsiderTeleHealth)
 
 ## Performing Initial Configuration 
