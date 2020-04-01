@@ -112,6 +112,24 @@ namespace Test.Models
         }
 
         [TestMethod]
+        public void testScreeningMsgNoDoctor()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 10, 55, 0);
+            reset();
+            engine.RoomMappings[0].IgnoreThisDoctor = true;
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            // run it
+            engine.ProcessTodaysAppointments(appts);
+            // inspect outputs:
+            Assert.AreEqual(0, OutputMsgs.Count);
+            Assert.AreEqual(0, StorageOps.Count);
+        }
+
+        [TestMethod]
         public void testScreeningMsgDone()
         {
             MessagingEngine engine = makeEngine();

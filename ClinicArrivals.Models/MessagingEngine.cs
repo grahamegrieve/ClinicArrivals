@@ -108,7 +108,7 @@ namespace ClinicArrivals.Models
             //   if the appointment is within 3 hours, and the screening message hasn't been sent, send it 
             //   if the appointment is within 10 minutes a TeleHealth consultation, and the setup message hasn't been sent, send it 
             int t = 0;
-            foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsToday(n.AppointmentStartTime)))
+            foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsToday(n.AppointmentStartTime) && isNotIgnoreDoctor(n.PractitionerFhirID)))
             {
                 try
                 {
@@ -193,6 +193,18 @@ namespace ClinicArrivals.Models
             return t;
         }
 
+        private bool isNotIgnoreDoctor(string id)
+        {
+            foreach (DoctorRoomLabelMapping dr in RoomMappings)
+            {
+                if (dr.PractitionerFhirID == id)
+                {
+                    return !dr.IgnoreThisDoctor;
+                }
+            }
+            return false;
+        }
+
         private const bool IN = true;
         private const bool OUT = false;
         private const int MSG = 1;
@@ -216,7 +228,7 @@ namespace ClinicArrivals.Models
             // for each incoming appointment
             //   is it new - send the pre-registration message, and add it to stored
             int t = 0;
-            foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsNearFuture(n.AppointmentStartTime))) // we only send these messages 2-3 days in the future
+            foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsNearFuture(n.AppointmentStartTime) && isNotIgnoreDoctor(n.PractitionerFhirID))) // we only send these messages 2-3 days in the future
             {
                 try
                 {

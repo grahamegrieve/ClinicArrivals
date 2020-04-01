@@ -8,17 +8,21 @@ As soon as an appointment is registered, the system sends the patient an SMS:
 
 "Thank you for making an appointment to see Dr X. [X] hours before the appointment, we will send you an SMS asking with you meet the criteria documented at http://www.rcpa.org.au/xxx, to decide whether you will talk to the doctor by telephone video, or physically come to the clinic. Please respond to this message to confirm you have seen it (or your appointment will be cancelled)"
 
+This message is only sent for appointments on the next day or the day after. It is not sent for appointments that are made on the same day.
+
 ### Error conditions
 
-If the patient replies with anything other than "arrived", then....?
-
-No response: cancel appointment? 
+If the patient replies with anything, then an error message is sent back to the patient advising them to talk to reception if anything is needed.
 
 ## Pre-appointment 
 
 X hours (e.g. 2-3) before the appointment, send a message to the patient:
 
-"Please consult the web page http://www.rcpa.org.au/xxx to determine whether you are eligable to meet with the doctor by phone/video. If you are, respond to this message with YES otherwise respond with NO"
+"Please consult the web page http://www.rcpa.org.au/xxx to determine whether you are eligible to meet with the doctor by phone/video. If you are, respond to this message with YES otherwise respond with NO"
+
+Notes:
+* the time is configurable in the application 
+* appointments that are made within the X hours time window - right up to now - will still cause this message to be sent. 
 
 ## Teleconsulation pathway
 
