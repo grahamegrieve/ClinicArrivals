@@ -43,5 +43,7 @@ namespace ClinicArrivals.Models
         public string LocationDescription { get; set; }
 
         public bool IgnoreThisDoctor { get; set; }
+
+        public Boolean NoVideoForThisDoctor { get; set; }
     }
 }

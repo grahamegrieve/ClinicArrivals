@@ -126,7 +126,17 @@ namespace ClinicArrivals.Models
                     else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, MinutesBeforeScreening) && !appt.ExternalData.ScreeningMessageSent && !appt.IsVideoConsultation) 
                     {
                         t++;
-                        SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
+                        SmsMessage msg;
+                        if (!IsDoingVideo || NoVideoForDoctor(appt.PractitionerFhirID))
+                        {
+                            msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_NOVIDEO, appt, null));
+                            // this one doesn't ask for a yes/no so we say that we have already received the appt response
+                            appt.ExternalData.ScreeningMessageResponse = true;
+                        }
+                        else
+                        {
+                            msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
+                        }
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "send out screening message", appt);
                         appt.ExternalData.ScreeningMessageSent = true;
@@ -200,6 +210,18 @@ namespace ClinicArrivals.Models
                 if (dr.PractitionerFhirID == id)
                 {
                     return !dr.IgnoreThisDoctor;
+                }
+            }
+            return false;
+        }
+
+        private bool NoVideoForDoctor(string id)
+        {
+            foreach (DoctorRoomLabelMapping dr in RoomMappings)
+            {
+                if (dr.PractitionerFhirID == id)
+                {
+                    return dr.NoVideoForThisDoctor;
                 }
             }
             return false;

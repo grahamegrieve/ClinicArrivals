@@ -213,6 +213,7 @@ namespace ClinicArrivals
             DefineDefaultTemplate(MessageTemplate.MSG_TOO_MANY_APPOINTMENTS, MessageTemplate.DEF_MSG_TOO_MANY_APPOINTMENTS);
             DefineDefaultTemplate(MessageTemplate.MSG_UNEXPECTED, MessageTemplate.DEF_MSG_UNEXPECTED);
             DefineDefaultTemplate(MessageTemplate.MSG_SCREENING, MessageTemplate.DEF_MSG_SCREENING);
+            DefineDefaultTemplate(MessageTemplate.MSG_SCREENING_NOVIDEO, MessageTemplate.DEF_MSG_SCREENING_NOVIDEO);
             DefineDefaultTemplate(MessageTemplate.MSG_SCREENING_YES, MessageTemplate.DEF_MSG_SCREENING_YES);
             DefineDefaultTemplate(MessageTemplate.MSG_SCREENING_NO, MessageTemplate.DEF_MSG_SCREENING_NO);
             DefineDefaultTemplate(MessageTemplate.MSG_DONT_UNDERSTAND_SCREENING, MessageTemplate.DEF_MSG_DONT_UNDERSTAND_SCREENING);

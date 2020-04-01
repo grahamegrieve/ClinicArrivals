@@ -24,7 +24,7 @@ The application has the following tabs:
 * **Unknown Incoming Messages**: List of SMS messages that have arrived that weren't understood (see note below)
 * **Sms Simulator**: Allows testing the application by simulating sending SMS messages to it (and seeing what has been sent)
 * **Pms Simulator**: Allows testing the application by creating appointments
-* **Room Mappings**: List of instructions for finding the room for a particular doctor
+* **Doctor Settings**: Settings for the Doctots in the clinic (including instructions for finding the room for a particular doctor)
 * **Message Templates**: Controls the actual text of the messages that get sent out to patients
 * **Settings**: Application configuration
 * **About**: Information about the program
@@ -52,6 +52,11 @@ This saves or reduces the need for the patient interacting with (and maybe waiti
 However the PMS systems do not track which room the doctor is in. So this information must come from the application itself. The Room Mappings tab contains a list of doctors who have appointments for the day, and a text note that explains where to go for that doctor's office. If no note is configured for the doctor, the message will say:
 
   Dr Adam Ant is ready to see you now
+
+In addition, on a per doctor basis, you can specify that:
+
+* a doctor does not participate in messaging at all - this is typically used for special slots like nurse prep visits that are in person, and paired with other appointments so there's no poing messaging about them
+* A doctor does not participate in video at all - all appointments are physical  - this is typically used for special slots like nurse visits that must be in person
 
 ## Performing Initial Configuration 
 
