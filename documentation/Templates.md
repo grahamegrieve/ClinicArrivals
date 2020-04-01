@@ -82,7 +82,7 @@ A typical example:
 
 ### ConsiderTeleHealth
 
-This message is sent 2-3 hours in advance of the consultation to find out whether a video consulation is appropriate, or whether the patient should come in to the clinic. The exact wording of the message adapts to condition. Whatever the question is, the answer is "yes" for a video consultation, and "no" for a physical in person consultation. 
+This message is sent 2-3 hours in advance of the consultation to find out whether a video consultation is appropriate, or whether the patient should come in to the clinic. The exact wording of the message adapts to condition. Whatever the question is, the answer is "yes" for a video consultation, and "no" for a physical in person consultation. 
 
 A typical example:
 
@@ -113,6 +113,17 @@ This message is sent to the patient if they reply something other than "yes" or 
 A typical example:
 
     The robot processing this message didn't understand your response. Please answer yes or no, or phone [clinic number] for help
+
+
+### CantConsiderTeleHealth
+
+This message is sent 2-3 hours in advance of the consultation if a video consultation is known not be appropriate for a doctor (see [doctor settings](UserGuide.md)). There is no answer to this message (it shoud cover sending "arrive" when in the car park). 
+
+A typical example:
+
+    Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. When you arrive at the clinic, stay in your car (or outside the clinic) and reply "arrived" to this message. If you have any potential symptoms of Covid-19, or exposure to a known case, you MUST advise the Doctor and staff by telephone in advance of your appointment.
+
+It is assumed that the appointment is not already marked as telehealth consultation in the PMS.
 
 ### VideoInvite
 

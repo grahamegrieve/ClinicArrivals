@@ -41,7 +41,7 @@ Patients are asked to respond to SMS messages that are sent to them with one wor
 
 See [Troubleshooting](Troubleshooting.md) for additional information.
 
-## Managing the room configurations
+## Doctor Settings
 
 If the patient is physically attending the practice, they wait out in the car park until they arrive, and then they are summoned into the practice by a message that the doctor is ready to see them. The message might read something like this:
 
@@ -56,7 +56,7 @@ However the PMS systems do not track which room the doctor is in. So this inform
 In addition, on a per doctor basis, you can specify that:
 
 * a doctor does not participate in messaging at all - this is typically used for special slots like nurse prep visits that are in person, and paired with other appointments so there's no poing messaging about them
-* A doctor does not participate in video at all - all appointments are physical  - this is typically used for special slots like nurse visits that must be in person
+* A doctor does not participate in video at all - all appointments are physical  - this is typically used for special slots like nurse visits that must be in person. If a doctor is not using video, then a different welcoming message is sent out (CantConsiderTeleHealth)
 
 ## Performing Initial Configuration 
 

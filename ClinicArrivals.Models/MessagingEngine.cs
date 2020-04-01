@@ -127,7 +127,7 @@ namespace ClinicArrivals.Models
                     {
                         t++;
                         SmsMessage msg;
-                        if (!IsDoingVideo || NoVideoForDoctor(appt.PractitionerFhirID))
+                        if (NoVideoForDoctor(appt.PractitionerFhirID))
                         {
                             msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_NOVIDEO, appt, null));
                             // this one doesn't ask for a yes/no so we say that we have already received the appt response
