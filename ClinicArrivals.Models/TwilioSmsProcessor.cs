@@ -15,12 +15,20 @@ namespace ClinicArrivals.Models
     public class TwilioSmsProcessor : ISmsProcessor
     {
         Settings _settings;
+        Dictionary<String, int> numCount;
+        int maxMessagePerPhone = 20;
+        DateTime day;
+
         public void Initialize(Settings settings)
         {
             _settings = settings;
             System.Diagnostics.Debug.WriteLine("account: " + _settings.ACCOUNT_SID);
             System.Diagnostics.Debug.WriteLine("token: " + _settings.AUTH_TOKEN);
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            if (_settings.MessageLimitForNumber > 0)
+            {
+                maxMessagePerPhone = _settings.MessageLimitForNumber;
+            }
         }
 
         /// <summary>
@@ -29,6 +37,29 @@ namespace ClinicArrivals.Models
         /// <param name="message"></param>
         public void SendMessage(SmsMessage sendMessage)
         {
+            if (day != DateTime.Today)
+            {
+                day = DateTime.Today;
+                numCount.Clear();
+            }
+            if (!numCount.ContainsKey(sendMessage.phone))
+            {
+                numCount.Add(sendMessage.phone, 1);
+            } 
+            else
+            {
+                int i = numCount[sendMessage.phone];
+                i++;  
+                if (i == maxMessagePerPhone)
+                {
+                    sendMessage.message = sendMessage.message + ". This message is that last that will be sent to this phone number today (max limit reached)";
+                } 
+                else if (i > maxMessagePerPhone)
+                {
+                    return; // just don't send anything
+                }
+                numCount[sendMessage.phone] = i;
+            }
             String url = "https://api.twilio.com/2010-04-01/Accounts/" + _settings.ACCOUNT_SID + "/Messages";
             String body = "To="+sendMessage.phone+"&From="+ _settings.FromTwilioMobileNumber + "&Body="+ Uri.EscapeDataString(sendMessage.message);
             var webRequest = WebRequest.Create(url);
