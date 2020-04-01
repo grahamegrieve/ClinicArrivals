@@ -1,10 +1,15 @@
 ﻿using ClinicArrivals.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
@@ -14,7 +19,9 @@ namespace ClinicArrivals
     {
         public string Text { get { return System.IO.File.ReadAllText("about.md"); } }
         private readonly NLogAdapter logger = new NLogAdapter();
-        private readonly string RepoUrl = "https://github.com/vadi2/ClinicArrivals";
+        private const string API_LATEST_RELEASE_URL = "https://api.github.com/repos/vadi2/ClinicArrivals/releases/latest";
+        private const RegexOptions _flags = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
+        private static readonly Regex versionRegex = new Regex(@"^v(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[0-9a-z-.]+)?$", _flags);
 
         public BackgroundProcess ReadSmsMessage;
         public BackgroundProcess ScanAppointments;
@@ -78,6 +85,9 @@ namespace ClinicArrivals
                 FhirApptUpdater = new FhirAppointmentUpdater(FhirAppointmentReader.GetServerConnection);
                 SmsProcessor = new TwilioSmsProcessor();
             }
+
+            // ensure default is 1.2+ as Github dropped support for 1.1
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
 #if INCLUDE_UPDATER
             CheckForUpdates(2); 
@@ -278,9 +288,40 @@ namespace ClinicArrivals
 #if INCLUDE_UPDATER
         private async void CheckForUpdates(int afterSeconds)
         {
+            // don't slow down loading by checking for updates right away
             await Task.Delay(afterSeconds * 1000);
+            try
+            {
+                using (var webClient = new HttpClient())
+                {
+                    webClient.DefaultRequestHeaders.Add("User-Agent", nameof(ClinicArrivals));
+                    var result = await webClient.GetAsync(API_LATEST_RELEASE_URL);
+                    var textData = await result.Content.ReadAsStringAsync();
+                    JObject releaseJson = (JObject)JsonConvert.DeserializeObject(textData);
+                    if (releaseJson["tag_name"] is null) {
+                        System.Diagnostics.Trace.WriteLine($"Latest release does not seem to be valid - received the following from Github: \n  {textData}");
+                        return;
+                    }
+                    String tag = releaseJson["tag_name"].ToString();
+                    if (string.IsNullOrEmpty(tag))
+                    {
+                        System.Diagnostics.Trace.WriteLine("Release version seems to be empty.");
+                        return;
+                    } else if (!releaseJson["assets"].HasValues)
+                    {
+                        System.Diagnostics.Trace.WriteLine($"Release {tag} hasn't got any files yet, ignoring.");
+                        return;
+                    }
 
-            
+                    var match = versionRegex.Match(tag.Trim());
+                    var releaseVersion = match.Groups["Version"].Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine(ex.Message);
+                return;
+            }
         }
 #endif
     }
