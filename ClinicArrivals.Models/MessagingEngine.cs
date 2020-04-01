@@ -108,7 +108,7 @@ namespace ClinicArrivals.Models
             //   if the appointment is within 3 hours, and the screening message hasn't been sent, send it 
             //   if the appointment is within 10 minutes a TeleHealth consultation, and the setup message hasn't been sent, send it 
             int t = 0;
-            foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsToday(n.AppointmentStartTime)))
+            foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsToday(n.AppointmentStartTime) && isNotIgnoreDoctor(n.PractitionerFhirID)))
             {
                 try
                 {
@@ -126,7 +126,17 @@ namespace ClinicArrivals.Models
                     else if (appt.ArrivalStatus == AppointmentStatus.Booked && IsInTimeWindow(appt.AppointmentStartTime, MinutesBeforeScreening) && !appt.ExternalData.ScreeningMessageSent && !appt.IsVideoConsultation) 
                     {
                         t++;
-                        SmsMessage msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
+                        SmsMessage msg;
+                        if (NoVideoForDoctor(appt.PractitionerFhirID))
+                        {
+                            msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING_NOVIDEO, appt, null));
+                            // this one doesn't ask for a yes/no so we say that we have already received the appt response
+                            appt.ExternalData.ScreeningMessageResponse = true;
+                        }
+                        else
+                        {
+                            msg = new SmsMessage(NormalisePhoneNumber(appt.PatientMobilePhone), TemplateProcessor.processTemplate(MessageTemplate.MSG_SCREENING, appt, null));
+                        }
                         SmsSender.SendMessage(msg);
                         LogMsg(OUT, msg, "send out screening message", appt);
                         appt.ExternalData.ScreeningMessageSent = true;
@@ -193,6 +203,30 @@ namespace ClinicArrivals.Models
             return t;
         }
 
+        private bool isNotIgnoreDoctor(string id)
+        {
+            foreach (DoctorRoomLabelMapping dr in RoomMappings)
+            {
+                if (dr.PractitionerFhirID == id)
+                {
+                    return !dr.IgnoreThisDoctor;
+                }
+            }
+            return false;
+        }
+
+        private bool NoVideoForDoctor(string id)
+        {
+            foreach (DoctorRoomLabelMapping dr in RoomMappings)
+            {
+                if (dr.PractitionerFhirID == id)
+                {
+                    return dr.NoVideoForThisDoctor;
+                }
+            }
+            return false;
+        }
+
         private const bool IN = true;
         private const bool OUT = false;
         private const int MSG = 1;
@@ -216,7 +250,7 @@ namespace ClinicArrivals.Models
             // for each incoming appointment
             //   is it new - send the pre-registration message, and add it to stored
             int t = 0;
-            foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsNearFuture(n.AppointmentStartTime))) // we only send these messages 2-3 days in the future
+            foreach (var appt in appointments.Where(n => IsUseablePhoneNumber(n.PatientMobilePhone) && IsNearFuture(n.AppointmentStartTime) && isNotIgnoreDoctor(n.PractitionerFhirID))) // we only send these messages 2-3 days in the future
             {
                 try
                 {

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace ClinicArrivals.Models
 {
+    // actually this does more than room label mappings, but the name is kept the same so as not to lose settings
+
     [AddINotifyPropertyChangedInterface]
     public class DoctorRoomLabelMapping
     {
@@ -40,5 +42,9 @@ namespace ClinicArrivals.Models
         /// Any additional 
         /// </summary>
         public string LocationDescription { get; set; }
+
+        public bool IgnoreThisDoctor { get; set; }
+
+        public Boolean NoVideoForThisDoctor { get; set; }
     }
 }

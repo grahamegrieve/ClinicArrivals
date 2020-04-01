@@ -112,6 +112,47 @@ namespace Test.Models
         }
 
         [TestMethod]
+        public void testScreeningMsgNoDoctor()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 10, 55, 0);
+            reset();
+            engine.RoomMappings[0].IgnoreThisDoctor = true;
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            // run it
+            engine.ProcessTodaysAppointments(appts);
+            // inspect outputs:
+            Assert.AreEqual(0, OutputMsgs.Count);
+            Assert.AreEqual(0, StorageOps.Count);
+        }
+
+        [TestMethod]
+        public void testScreeningMsgNoVideo()
+        {
+            MessagingEngine engine = makeEngine();
+            engine.TimeNow = new DateTime(2021, 1, 1, 10, 55, 0);
+            reset();
+            engine.RoomMappings[0].NoVideoForThisDoctor = true;
+            List<PmsAppointment> appts = new List<PmsAppointment>();
+            // set it up:
+            appts.Add(appt10am());
+            appts.Add(appt1pm());
+            // run it
+            engine.ProcessTodaysAppointments(appts);
+            // inspect outputs:
+            Assert.AreEqual(1, OutputMsgs.Count);
+            Assert.AreEqual("+61411012345", OutputMsgs[0].phone);
+            Assert.AreEqual("Patient Test Patient #2 has an appointment with Dr Adam Ant at 01:00 PM on 1-Jan. When you arrive at the clinic, stay in your car (or outside the clinic) and reply \"arrived\" to this message. If you have any potential symptoms of Covid-19, or exposure to a known case, you MUST advise the Doctor and staff by telephone in advance of your appointment", OutputMsgs[0].message);
+
+            Assert.AreEqual(1, StorageOps.Count);
+            Assert.AreEqual("1002", StorageOps[0].Appointment.AppointmentFhirID);
+            Assert.IsTrue(StorageOps[0].Appointment.ExternalData.ScreeningMessageSent);
+        }
+
+        [TestMethod]
         public void testScreeningMsgDone()
         {
             MessagingEngine engine = makeEngine();
@@ -594,6 +635,8 @@ namespace Test.Models
             tp.Templates = new System.Collections.ObjectModel.ObservableCollection<MessageTemplate>();
             tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_REGISTRATION, "Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. 3 hours prior to the appointment, you will be sent a COVID-19 screening check to decide whether you should do a video consultation rather than seeing the doctor in person"));
             tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING, "Please consult the web page http://www.rcpa.org.au/xxx to determine whether you are eligible to meet with the doctor by phone/video. If you are, respond to this message with YES otherwise respond with NO"));
+            tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING_NOVIDEO, "Patient {{Patient.name}} has an appointment with {{Practitioner.name}} at {{Appointment.start.time}} on {{Appointment.start.date}}. When you arrive at the clinic, stay in your car (or outside the clinic) and reply \"arrived\" to this message. If you have any potential symptoms of Covid-19, or exposure to a known case, you MUST advise the Doctor and staff by telephone in advance of your appointment"));
+
             tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING_YES, "Thank you. Do not come to the doctor's clinic. You will get an SMS message containing the URL for your video meeting a few minutes before your appointment. You can join from any computer or smartphone"));
             tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_SCREENING_NO, "Thank you. When you arrive at the clinic, stay in your car (or outside) and reply \"arrived\" to this message"));
             tp.Templates.Add(new MessageTemplate(MessageTemplate.MSG_VIDEO_INVITE, "Please start your video call at {{url}}. When you have started it, reply to this message with the word \"joined\""));

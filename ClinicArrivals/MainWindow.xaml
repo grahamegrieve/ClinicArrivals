@@ -164,7 +164,7 @@
         <TabItem Header="Pms Simulator">
             <local:SimulatePmsControl DataContext="{Binding Path=PmsSimulator, Mode=OneWay}"></local:SimulatePmsControl>
         </TabItem>
-        <TabItem Header="Room Mappings">
+        <TabItem Header="Doctor Settings">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -192,6 +192,8 @@
                         <DataTemplate>
                             <StackPanel Margin="12" HorizontalAlignment="Stretch">
                                 <TextBlock Text="{Binding Path=PractitionerName}" TextWrapping="Wrap" FontSize="16"/>
+                                <CheckBox IsChecked="{Binding Path=IgnoreThisDoctor}">Ignore this Doctor</CheckBox>
+                                <CheckBox IsChecked="{Binding Path=NoVideoForThisDoctor}">No Video for Doctor</CheckBox>
                                 <TextBox Text="{Binding Path=LocationName, Mode=TwoWay}" TextWrapping="Wrap" FontSize="16" SpellCheck.IsEnabled="True"/>
                                 <TextBox Text="{Binding Path=LocationDescription, Mode=TwoWay}" TextWrapping="Wrap" FontWeight="Normal" FontSize="16" AcceptsReturn="True" Height="60" Padding="4" SpellCheck.IsEnabled="True"/>
                             </StackPanel>
