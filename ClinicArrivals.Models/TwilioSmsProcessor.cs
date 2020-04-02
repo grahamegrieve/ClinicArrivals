@@ -15,7 +15,7 @@ namespace ClinicArrivals.Models
     public class TwilioSmsProcessor : ISmsProcessor
     {
         Settings _settings;
-        Dictionary<String, int> numCount;
+        Dictionary<String, int> numCount = new Dictionary<String, int>();
         int maxMessagePerPhone = 20;
         DateTime day;
 
