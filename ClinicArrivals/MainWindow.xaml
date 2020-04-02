@@ -9,6 +9,7 @@
         mc:Ignorable="d"
         Title="{Binding WindowTitle}" Height="556" Width="991" Icon="ClinicArrivals.ico">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <markdown:Markdown x:Key="Markdown"
                         DocumentStyle="{StaticResource DocumentStyle}"
                         Heading1Style="{StaticResource H1Style}"
@@ -44,6 +45,7 @@
                         <local:StatusControl DataContext="{Binding Path=serverStatuses, Mode=OneTime}" />
                     </Border>
                 </StackPanel>
+                <Label Content="A newer ClinicArrivals is available!" Grid.Row="1" Visibility="{Binding Path=UpdateAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
         </TabItem>
         <TabItem Header="Appointments">

@@ -20,8 +20,10 @@ namespace ClinicArrivals
         public string Text { get { return System.IO.File.ReadAllText("about.md"); } }
         private readonly NLogAdapter logger = new NLogAdapter();
         private const string API_LATEST_RELEASE_URL = "https://api.github.com/repos/vadi2/ClinicArrivals/releases/latest";
-        private const RegexOptions _flags = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
-        private static readonly Regex versionRegex = new Regex(@"^v(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[0-9a-z-.]+)?$", _flags);
+        private static readonly Regex versionRegex = new Regex(@"^v(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[0-9a-z-.]+)?$",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+        // this is set by the build process and is used instead of AssemblyInfo because .NET mutates that string
+        private const string APP_VERSION = "0.0.0";
 
         public BackgroundProcess ReadSmsMessage;
         public BackgroundProcess ScanAppointments;
@@ -38,11 +40,18 @@ namespace ClinicArrivals
         private IFhirAppointmentUpdater FhirApptUpdater;
         public ISmsProcessor SmsProcessor;
 
-        private string _windowTitle = $"Clinic Arrivals - Virtual Waiting room - {System.Reflection.Assembly.GetEntryAssembly().GetName().Version}";
+        private string _windowTitle = $"Clinic Arrivals - Virtual Waiting room - {APP_VERSION}";
         public string WindowTitle
         { 
             get => _windowTitle;
             set => _windowTitle = value;
+        }
+
+        private bool _updateAvailable;
+        public bool UpdateAvailable
+        {
+            get => _updateAvailable;
+            set => _updateAvailable = value;
         }
 
         public ViewModel()
@@ -50,8 +59,6 @@ namespace ClinicArrivals
             CreateTestDataForDebug();
 
             IsSimulation = Environment.GetCommandLineArgs().Any(n => n == "-simulator");
-
-            Console.WriteLine($"WindowTitle {WindowTitle}");
 
             // Assign all of the implementations for the interfaces
             Storage = new ArrivalsFileSystemStorage(IsSimulation);
@@ -290,6 +297,18 @@ namespace ClinicArrivals
         {
             // don't slow down loading by checking for updates right away
             await Task.Delay(afterSeconds * 1000);
+            var latestRelease = await GetLatestRelease();
+
+            if (!string.IsNullOrEmpty(latestRelease) && latestRelease != APP_VERSION)
+            {
+                UpdateAvailable = true;
+                Console.WriteLine($"new update available! {latestRelease} {UpdateAvailable}");
+                /*NotifyOfUpdates();*/
+            }
+        }
+
+        private static async Task<string> GetLatestRelease()
+        {
             try
             {
                 using (var webClient = new HttpClient())
@@ -298,29 +317,32 @@ namespace ClinicArrivals
                     var result = await webClient.GetAsync(API_LATEST_RELEASE_URL);
                     var textData = await result.Content.ReadAsStringAsync();
                     JObject releaseJson = (JObject)JsonConvert.DeserializeObject(textData);
-                    if (releaseJson["tag_name"] is null) {
+                    if (releaseJson["tag_name"] is null)
+                    {
                         System.Diagnostics.Trace.WriteLine($"Latest release does not seem to be valid - received the following from Github: \n  {textData}");
-                        return;
+                        return null;
                     }
                     String tag = releaseJson["tag_name"].ToString();
                     if (string.IsNullOrEmpty(tag))
                     {
-                        System.Diagnostics.Trace.WriteLine("Release version seems to be empty.");
-                        return;
-                    } else if (!releaseJson["assets"].HasValues)
+                        System.Diagnostics.Trace.WriteLine("Release tag seems to be invalid - it's empty.");
+                        return null;
+                    }
+                    else if (!releaseJson["assets"].HasValues)
                     {
                         System.Diagnostics.Trace.WriteLine($"Release {tag} hasn't got any files yet, ignoring.");
-                        return;
+                        return null;
                     }
 
                     var match = versionRegex.Match(tag.Trim());
                     var releaseVersion = match.Groups["Version"].Value;
+                    return releaseVersion;
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Trace.WriteLine(ex.Message);
-                return;
+                return null;
             }
         }
 #endif
