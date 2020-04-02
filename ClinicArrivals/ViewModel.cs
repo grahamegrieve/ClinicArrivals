@@ -47,13 +47,6 @@ namespace ClinicArrivals
             set => _windowTitle = value;
         }
 
-        private bool _updateAvailable;
-        public bool UpdateAvailable
-        {
-            get => _updateAvailable;
-            set => _updateAvailable = value;
-        }
-
         public ViewModel()
         {
             CreateTestDataForDebug();
@@ -97,7 +90,7 @@ namespace ClinicArrivals
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
 #if INCLUDE_UPDATER
-            CheckForUpdates(2); 
+            CheckForUpdates(10); 
 #endif
         }
 
@@ -301,8 +294,8 @@ namespace ClinicArrivals
 
             if (!string.IsNullOrEmpty(latestRelease) && latestRelease != APP_VERSION)
             {
-                UpdateAvailable = true;
-                Console.WriteLine($"new update available! {latestRelease} {UpdateAvailable}");
+                Settings.UpdateAvailable = true;
+                Console.WriteLine($"new update available! {latestRelease} {Settings.UpdateAvailable}");
                 /*NotifyOfUpdates();*/
             }
         }
