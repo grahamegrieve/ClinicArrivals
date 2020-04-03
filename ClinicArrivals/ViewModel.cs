@@ -90,7 +90,7 @@ namespace ClinicArrivals
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
 #if INCLUDE_UPDATER
-            CheckForUpdates(10); 
+            CheckForUpdates(2); 
 #endif
         }
 
@@ -288,19 +288,21 @@ namespace ClinicArrivals
 #if INCLUDE_UPDATER
         private async void CheckForUpdates(int afterSeconds)
         {
-            // don't slow down loading by checking for updates right away
+            // don't slow down initialisation by checking for updates right away
             await Task.Delay(afterSeconds * 1000);
-            var latestRelease = await GetLatestRelease();
 
-            if (!string.IsNullOrEmpty(latestRelease) && latestRelease != APP_VERSION)
+            var releaseData = await GetLatestRelease();
+            if (!string.IsNullOrEmpty(releaseData.version) && releaseData.version != APP_VERSION)
             {
                 Settings.UpdateAvailable = true;
-                Console.WriteLine($"new update available! {latestRelease} {Settings.UpdateAvailable}");
-                /*NotifyOfUpdates();*/
+                if (string.IsNullOrEmpty(Settings.AdminNotifiedOfUpdate) || Settings.AdminNotifiedOfUpdate != releaseData.version)
+                {
+                    NotifyOfUpdate(releaseData.version, releaseData.tag);
+                }
             }
         }
 
-        private static async Task<string> GetLatestRelease()
+        private static async Task<(string tag, string version)> GetLatestRelease()
         {
             try
             {
@@ -312,30 +314,45 @@ namespace ClinicArrivals
                     JObject releaseJson = (JObject)JsonConvert.DeserializeObject(textData);
                     if (releaseJson["tag_name"] is null)
                     {
-                        System.Diagnostics.Trace.WriteLine($"Latest release does not seem to be valid - received the following from Github: \n  {textData}");
-                        return null;
+                        System.Diagnostics.Trace.WriteLine($"Latest release does not seem to be valid - received the following from Github:\n  {textData}");
+                        return (null, null);
                     }
                     String tag = releaseJson["tag_name"].ToString();
                     if (string.IsNullOrEmpty(tag))
                     {
                         System.Diagnostics.Trace.WriteLine("Release tag seems to be invalid - it's empty.");
-                        return null;
+                        return (null, null);
                     }
                     else if (!releaseJson["assets"].HasValues)
                     {
-                        System.Diagnostics.Trace.WriteLine($"Release {tag} hasn't got any files yet, ignoring.");
-                        return null;
+                        System.Diagnostics.Trace.WriteLine($"Release {tag} hasn't got any files yet, ignoring for now.");
+                        return (null, null);
                     }
 
                     var match = versionRegex.Match(tag.Trim());
                     var releaseVersion = match.Groups["Version"].Value;
-                    return releaseVersion;
+                    return (tag, releaseVersion);
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine(ex.Message);
-                return null;
+                new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception checking for latest release: " + ex.Message);
+                return (null, null);
+            }
+        }
+
+        private void NotifyOfUpdate(string version, string tag)
+        {
+            try
+            {
+                SmsProcessor.SendMessage(new SmsMessage(Settings.AdministratorPhone, $"A new ClinicArrivals update is available - {tag}. " +
+                    $"https://github.com/grahamegrieve/ClinicArrivals/releases/tag/{tag}"));
+
+                Settings.AdminNotifiedOfUpdate = version;
+            }
+            catch
+            {
+                // nothing at all
             }
         }
 #endif

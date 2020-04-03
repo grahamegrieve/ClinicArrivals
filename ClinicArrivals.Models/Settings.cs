@@ -57,6 +57,8 @@ namespace ClinicArrivals.Models
 
         [JsonIgnore]
         public bool UpdateAvailable { get; set; }
+        // the latest update that the admin received an sms text about
+        public string AdminNotifiedOfUpdate { get; set; }
 
         public void CopyFrom(Settings other)
         {

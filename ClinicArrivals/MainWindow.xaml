@@ -45,7 +45,14 @@
                         <local:StatusControl DataContext="{Binding Path=serverStatuses, Mode=OneTime}" />
                     </Border>
                 </StackPanel>
-                <Label Content="A newer ClinicArrivals is available!" Grid.Row="1" Visibility="{Binding Path=UpdateAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <Label Grid.Row="1" Visibility="{Binding Path=Settings.UpdateAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock>
+                        A newer ClinicArrivals is available! 
+                        <local:ExternalBrowserHyperlink NavigateUri="https://github.com/grahamegrieve/ClinicArrivals/releases/latest">
+                             Download update
+                        </local:ExternalBrowserHyperlink>.
+                    </TextBlock>
+                </Label>
             </Grid>
         </TabItem>
         <TabItem Header="Appointments">
