@@ -7,8 +7,9 @@
         xmlns:local="clr-namespace:ClinicArrivals"
         x:Class="ClinicArrivals.MainWindow"
         mc:Ignorable="d"
-        Title="Clinic Arrivals - Virtual Waiting room" Height="556" Width="991" Icon="ClinicArrivals.ico">
+        Title="{Binding WindowTitle}" Height="556" Width="991" Icon="ClinicArrivals.ico">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <markdown:Markdown x:Key="Markdown"
                         DocumentStyle="{StaticResource DocumentStyle}"
                         Heading1Style="{StaticResource H1Style}"
@@ -44,6 +45,14 @@
                         <local:StatusControl DataContext="{Binding Path=serverStatuses, Mode=OneTime}" />
                     </Border>
                 </StackPanel>
+                <Label Grid.Row="1" Visibility="{Binding Path=Settings.UpdateAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock>
+                        A newer ClinicArrivals is available! 
+                        <local:ExternalBrowserHyperlink NavigateUri="https://github.com/grahamegrieve/ClinicArrivals/releases/latest">
+                             Download update
+                        </local:ExternalBrowserHyperlink>.
+                    </TextBlock>
+                </Label>
             </Grid>
         </TabItem>
         <TabItem Header="Appointments">

@@ -43,7 +43,7 @@ jobs:
     - name: Restore packages
       run: nuget restore
 
-    - name: Update version number in assemblies
+    - name: Update version number files
       shell: powershell
       run: |
         $regex = 'Assembly(File)?Version\(".+?"\)'
@@ -56,8 +56,13 @@ jobs:
         $assemblyinfo = "ClinicArrivals.Server\Properties\AssemblyInfo.cs"
         (Get-Content $assemblyinfo -Raw) -replace $regex, $replacement | Set-Content $assemblyinfo
 
+        $viewmodel = "ClinicArrivals\ViewModel.cs"
+        $regex = 'APP_VERSION = "0.0.0"'
+        $replacement = "APP_VERSION = `"$env:SHORT_TAG_NAME`""
+        (Get-Content $viewmodel -Raw) -replace $regex, $replacement | Set-Content $viewmodel
+
     - name: Compile ClinicArrivals
-      run: msbuild /p:Configuration=${{env.buildtype}} -maxcpucount:2 ClinicArrivals.sln
+      run: msbuild /p:Configuration=${{env.buildtype}} /p:DefineConstants="INCLUDE_UPDATER" -maxcpucount:2 ClinicArrivals.sln
 
     - name: Build installer
       shell: powershell
@@ -107,7 +112,7 @@ jobs:
 
         echo "::set-env name=RELEASEDIR::$RELEASEDIR"
 
-    - name: Upload installer to release
+    - name: Upload installer .exe
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
