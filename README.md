@@ -1,7 +1,6 @@
 ![Build ClinicArrivals](https://github.com/grahamegrieve/ClinicArrivals/workflows/Build%20ClinicArrivals/badge.svg)
 ![Publish release](https://github.com/grahamegrieve/ClinicArrivals/workflows/Publish%20release/badge.svg)
-![Video preview](https://github.com/grahamegrieve/ClinicArrivals/workflows/Video%20preview/badge.svg)
-![Video provision](https://github.com/grahamegrieve/ClinicArrivals/workflows/Video%20provision/badge.svg)
+![Video](https://github.com/grahamegrieve/ClinicArrivals/workflows/Video/badge.svg)
 # ClinicArrivals 
  
 This program should help a General Practitioner (GP) manage increased workload during the [COVID-19](https://en.wikipedia.org/wiki/Coronavirus_disease_2019) crisis in Australia. It is designed to fit into an existing clinic workflow using common Practice Management Systems (PMS).

@@ -1,4 +1,4 @@
-name: Video preview
+name: Video
 on:
   - pull_request
 jobs:
