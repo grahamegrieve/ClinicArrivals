@@ -1,10 +1,15 @@
 ﻿using ClinicArrivals.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
@@ -14,6 +19,11 @@ namespace ClinicArrivals
     {
         public string Text { get { return System.IO.File.ReadAllText("about.md"); } }
         private readonly NLogAdapter logger = new NLogAdapter();
+        private const string API_LATEST_RELEASE_URL = "https://api.github.com/repos/grahamegrieve/ClinicArrivals/releases/latest";
+        private static readonly Regex versionRegex = new Regex(@"^v(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[0-9a-z-.]+)?$",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+        // this is set by the build process and is used instead of AssemblyInfo because .NET mutates that string
+        private const string APP_VERSION = "0.0.0";
 
         public BackgroundProcess ReadSmsMessage;
         public BackgroundProcess ScanAppointments;
@@ -30,6 +40,12 @@ namespace ClinicArrivals
         private IFhirAppointmentUpdater FhirApptUpdater;
         public ISmsProcessor SmsProcessor;
 
+        private string _windowTitle = $"Clinic Arrivals - Virtual Waiting room - {APP_VERSION}";
+        public string WindowTitle
+        { 
+            get => _windowTitle;
+            set => _windowTitle = value;
+        }
 
         public ViewModel()
         {
@@ -69,6 +85,13 @@ namespace ClinicArrivals
                 FhirApptUpdater = new FhirAppointmentUpdater(FhirAppointmentReader.GetServerConnection);
                 SmsProcessor = new TwilioSmsProcessor();
             }
+
+            // ensure default is 1.2+ as Github dropped support for 1.1
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
+#if INCLUDE_UPDATER
+            CheckForUpdates(2); 
+#endif
         }
 
 
@@ -262,5 +285,77 @@ namespace ClinicArrivals
             
 #endif
         }
+
+#if INCLUDE_UPDATER
+        private async void CheckForUpdates(int afterSeconds)
+        {
+            // don't slow down initialisation by checking for updates right away
+            await Task.Delay(afterSeconds * 1000);
+
+            var releaseData = await GetLatestRelease();
+            if (!string.IsNullOrEmpty(releaseData.version) && releaseData.version != APP_VERSION)
+            {
+                Settings.UpdateAvailable = true;
+                if (string.IsNullOrEmpty(Settings.AdminNotifiedOfUpdate) || Settings.AdminNotifiedOfUpdate != releaseData.version)
+                {
+                    NotifyOfUpdate(releaseData.version, releaseData.tag);
+                }
+            }
+        }
+
+        private static async Task<(string tag, string version)> GetLatestRelease()
+        {
+            try
+            {
+                using (var webClient = new HttpClient())
+                {
+                    webClient.DefaultRequestHeaders.Add("User-Agent", nameof(ClinicArrivals));
+                    var result = await webClient.GetAsync(API_LATEST_RELEASE_URL);
+                    var textData = await result.Content.ReadAsStringAsync();
+                    JObject releaseJson = (JObject)JsonConvert.DeserializeObject(textData);
+                    if (releaseJson["tag_name"] is null)
+                    {
+                        System.Diagnostics.Trace.WriteLine($"Latest release does not seem to be valid - received the following from Github:\n  {textData}");
+                        return (null, null);
+                    }
+                    String tag = releaseJson["tag_name"].ToString();
+                    if (string.IsNullOrEmpty(tag))
+                    {
+                        System.Diagnostics.Trace.WriteLine("Release tag seems to be invalid - it's empty.");
+                        return (null, null);
+                    }
+                    else if (!releaseJson["assets"].HasValues)
+                    {
+                        System.Diagnostics.Trace.WriteLine($"Release {tag} hasn't got any files yet, ignoring for now.");
+                        return (null, null);
+                    }
+
+                    var match = versionRegex.Match(tag.Trim());
+                    var releaseVersion = match.Groups["Version"].Value;
+                    return (tag, releaseVersion);
+                }
+            }
+            catch (Exception ex)
+            {
+                new NLog.LogFactory().GetLogger("ClinicArrivals").Error("Exception checking for latest release: " + ex.Message);
+                return (null, null);
+            }
+        }
+
+        private void NotifyOfUpdate(string version, string tag)
+        {
+            try
+            {
+                SmsProcessor.SendMessage(new SmsMessage(Settings.AdministratorPhone, $"A new ClinicArrivals update is available - {tag}. " +
+                    $"https://github.com/grahamegrieve/ClinicArrivals/releases/tag/{tag}"));
+
+                Settings.AdminNotifiedOfUpdate = version;
+            }
+            catch
+            {
+                // nothing at all
+            }
+        }
+#endif
     }
 }

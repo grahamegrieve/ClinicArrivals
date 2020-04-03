@@ -1,6 +1,9 @@
 ﻿using ClinicArrivals.Models;
 using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Navigation;
 
 namespace ClinicArrivals
 {
@@ -75,6 +78,24 @@ namespace ClinicArrivals
                     model.ProcessUpcomingAppointments.Start();
                 }
             });
+        }
+    }
+
+    /// <summary>
+    /// Opens <see cref="Hyperlink.NavigateUri"/> in a default system browser
+    /// credit: https://stackoverflow.com/a/27609749/72944
+    /// </summary>
+    public class ExternalBrowserHyperlink : Hyperlink
+    {
+        public ExternalBrowserHyperlink()
+        {
+            RequestNavigate += OnRequestNavigate;
+        }
+
+        private void OnRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
     }
 }

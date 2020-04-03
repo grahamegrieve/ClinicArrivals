@@ -56,6 +56,12 @@ namespace ClinicArrivals.Models
         public int MinutesBeforeVideoInvitation { get; set; }
 
         public bool AutoStartServices { get; set; }
+
+        [JsonIgnore]
+        public bool UpdateAvailable { get; set; }
+        // the latest update that the admin received an sms text about
+        public string AdminNotifiedOfUpdate { get; set; }
+
         public void CopyFrom(Settings other)
         {
             FromTwilioMobileNumber = other.FromTwilioMobileNumber;
