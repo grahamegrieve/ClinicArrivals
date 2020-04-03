@@ -19,7 +19,7 @@ namespace ClinicArrivals
     {
         public string Text { get { return System.IO.File.ReadAllText("about.md"); } }
         private readonly NLogAdapter logger = new NLogAdapter();
-        private const string API_LATEST_RELEASE_URL = "https://api.github.com/repos/vadi2/ClinicArrivals/releases/latest";
+        private const string API_LATEST_RELEASE_URL = "https://api.github.com/repos/grahamegrieve/ClinicArrivals/releases/latest";
         private static readonly Regex versionRegex = new Regex(@"^v(?<Version>\d+(\s*\.\s*\d+){0,3})(?<Release>-[0-9a-z-.]+)?$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
         // this is set by the build process and is used instead of AssemblyInfo because .NET mutates that string
