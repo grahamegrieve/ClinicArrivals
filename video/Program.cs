@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
+using System;
 
 using Pulumi;
 using CloudFormation = Pulumi.Aws.CloudFormation;
@@ -13,6 +14,9 @@ class Program
 
             // Use a copy of the OpenVidu project's CloudFormation template
             var template = System.IO.File.ReadAllText("CF-OpenVidu-latest.yaml");
+
+            // Retrieve OpenViduSecret environment variable
+            string OpenViduSecret = Environment.GetEnvironmentVariable("OpenViduSecret");
         
             // Build a CloudFormation Stack using the template and parameters
             var stack = new CloudFormation.Stack("video", new CloudFormation.StackArgs
@@ -24,11 +28,9 @@ class Program
                     { "LetsEncryptEmail", "admin@synthesys.com.au" },
                     { "MyDomainName", "video.synthesys.com.au" },
                     { "PublicElasticIP", "13.55.83.223" },
-                    { "OpenViduSecret", "MY_SECRET" },
+                    { "OpenViduSecret", OpenViduSecret },
                     { "InstanceType", "t2.large" },
                     { "KeyName", "ssh1.synthesys.com.au"},
-                    // Experimental settings
-                    { "FreeHTTPAccesToRecordingVideos", "true" },
                     { "WantToDeployDemos", "true" },
                     // Template settings required not needed
                     { "OwnCertKEY", "not needed" },
