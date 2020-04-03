@@ -1,4 +1,4 @@
-name: Pulumi
+name: Video
 on:
   - pull_request
 jobs:
