@@ -346,10 +346,12 @@ namespace ClinicArrivals
         {
             try
             {
-                SmsProcessor.SendMessage(new SmsMessage(Settings.AdministratorPhone, $"A new ClinicArrivals update is available - {tag}. " +
-                    $"https://github.com/grahamegrieve/ClinicArrivals/releases/tag/{tag}"));
+                if (!String.IsNullOrEmpty(Settings.AdministratorPhone)) {
+                    SmsProcessor.SendMessage(new SmsMessage(Settings.AdministratorPhone, $"A new ClinicArrivals update is available - {tag}. " +
+                        $"https://github.com/grahamegrieve/ClinicArrivals/releases/tag/{tag}"));
 
-                Settings.AdminNotifiedOfUpdate = version;
+                    Settings.AdminNotifiedOfUpdate = version;
+                }
             }
             catch
             {
