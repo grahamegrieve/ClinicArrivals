@@ -9,7 +9,7 @@ There are 2 main purposes of the application:
 * Support the use of teleconsulation for patients who are an infection risk
 
 The application uses SMS messages (due to their wide ubiquity) for patient communication,
-and [OpenVidu](https://openvidu.org/) for the video consultations. 
+and [OpenVidu](https://openvidu.io/) for the video consultations. 
 
 Documentation:
 
