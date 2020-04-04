@@ -4,7 +4,7 @@
 
 * The application is distributed as a zipped binary through the GitHub release mechanism - see https://github.com/grahamegrieve/ClinicArrivals/releases
 * Download the latest release
-* The actual download is a self-installing signed executable - download and run
+* The actual download is a self-installing signed executable - download and run and a PC where your Practice Management System (PMS) is installed
 * It's often convenient to create a short cut to ```$appdata$\roaming\ClinicArrivals``` where the program keeps it's settings, records, and log files for easy access (you have to do this manually)
 
 Then [configure the program](Settings.md), and set it to autostart thereafter. Usually, Windows should be configured to autostart the program.
