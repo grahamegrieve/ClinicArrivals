@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using IWshRuntimeLibrary;
 
 namespace ClinicArrivals.Models
 {
@@ -56,6 +57,61 @@ namespace ClinicArrivals.Models
         public int MinutesBeforeVideoInvitation { get; set; }
 
         public bool AutoStartServices { get; set; }
+
+        private bool _loadOnStartup;
+        private readonly string SHORTCUT_TO_APP =
+            $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\Microsoft\\Windows\\Start Menu\\Programs\\ClinicArrivals Authors\\ClinicArrivals.lnk";
+
+        public bool LoadOnStartup
+        {
+            get { return _loadOnStartup; }
+            set 
+            {
+                if (_loadOnStartup == value)
+                {
+                    return;
+                }
+
+                _loadOnStartup = value;
+                UpdateStartupShortcut(value);
+            }
+        }
+
+        private void UpdateStartupShortcut(bool loadOnStartup)
+        {
+            if (loadOnStartup)
+            {
+                createStartupShortcut();
+            } else
+            {
+                removeStartupShortcut();
+            }
+        }
+
+        // credit: https://gist.github.com/Mierenga/a8a1fcdbee5555ac9249aab7837da0bd
+        private string getShortcutPath()
+        {
+            string startupPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+            return System.IO.Path.Combine(startupPath, "ClinicArrivals.lnk");
+        }
+
+        private void createStartupShortcut()
+        {
+            WshShell shell = new WshShell();
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(getShortcutPath());
+            shortcut.Description = "Open ClinicArrivals on computer start";
+            shortcut.TargetPath = SHORTCUT_TO_APP;
+            shortcut.Save();
+        }
+
+        private void removeStartupShortcut()
+        {
+            string shortcutPath = getShortcutPath();
+            if (System.IO.File.Exists(shortcutPath))
+            {
+                System.IO.File.Delete(shortcutPath);
+            }
+        }
 
         [JsonIgnore]
         public bool UpdateAvailable { get; set; }
