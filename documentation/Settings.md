@@ -45,6 +45,9 @@ A series of settings that control how the engine that drives the application wor
 
 For Support...  see [Support](Support.md)
 
+## Settings location
+
+Settings are stored in `$AppData$\Roaming\ClinicArrivals`.
 
 ## Todo
 
