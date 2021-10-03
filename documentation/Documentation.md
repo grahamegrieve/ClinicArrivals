@@ -9,7 +9,14 @@ There are 2 main purposes of the application:
 * Support the use of teleconsulation for patients who are an infection risk
 
 The application uses SMS messages (due to their wide ubiquity) for patient communication,
-and [OpenVidu](https://openvidu.org/) for the video consultations. 
+and [OpenVidu](https://openvidu.io/) for the video consultations. 
+
+This application supports the following Practice Management Systems:
+* Best Practice 
+* Medical Director
+* ZedMed
+
+For use with other PMS systems, or use outside Australia, see https://chat.fhir.org/#narrow/stream/227888-clinic-arrivals
 
 Documentation:
 
