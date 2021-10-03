@@ -1,0 +1,3 @@
+name: video
+runtime: dotnet
+description: Deploy OpenVidu in AWS using C# with Pulumi
